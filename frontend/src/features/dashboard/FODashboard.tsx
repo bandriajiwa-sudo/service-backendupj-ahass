@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ShoppingCart, Wrench, Package, AlertTriangle } from "lucide-react";
+import {
+  ShoppingCart,
+  Wrench,
+  Package,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
 import { apiClient } from "../../lib/api";
 import styles from "./FODashboard.module.css";
 
@@ -176,13 +182,35 @@ const FODashboard: React.FC = () => {
             {criticalStocks.length === 0 && (
               <div
                 style={{
-                  color: "#16a34a",
-                  fontSize: "0.9rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "40px 20px",
                   textAlign: "center",
-                  padding: "20px 0",
+                  backgroundColor: "#f0fdf4",
+                  borderRadius: "12px",
+                  border: "1px dashed #bbf7d0",
+                  marginTop: "12px",
                 }}
               >
-                Semua stok aman terkendali.
+                <CheckCircle
+                  size={48}
+                  color="#16a34a"
+                  style={{ marginBottom: "16px" }}
+                />
+                <h4
+                  style={{
+                    margin: "0 0 8px 0",
+                    color: "#166534",
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  Stok Terkendali
+                </h4>
+                <p style={{ margin: 0, color: "#15803d", fontSize: "0.9rem" }}>
+                  Semua suku cadang berada di atas batas minimum.
+                </p>
               </div>
             )}
           </div>
