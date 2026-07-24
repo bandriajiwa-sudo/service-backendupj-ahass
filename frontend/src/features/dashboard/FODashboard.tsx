@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Wrench, Package, AlertTriangle } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import styles from "./FODashboard.module.css";
 
 const FODashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [metrics, setMetrics] = useState({
     transaksiHariIni: 0,
     layananJasa: 0,
@@ -22,41 +20,18 @@ const FODashboard: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      // 1. Fetch Transactions
-      const txRes = await apiClient.get("/transactions");
-      const txs = txRes.data.data;
-
-      // Calculate basic metrics from client-side for "Hari Ini"
-      const today = new Date().toISOString().split("T")[0];
-      let todayTxs = 0;
-      let totalParts = 0;
-
-      txs.forEach((tx: any) => {
-        if (tx.tanggal.startsWith(today)) {
-          todayTxs++;
-          totalParts += tx.spare_parts?.length || 0;
-        }
-      });
-
-      setRecentTransactions(txs.slice(0, 5)); // Latest 5
-
-      // 2. Fetch Stocks
-      const spRes = await apiClient.get("/spare-parts");
-      const parts = spRes.data.data;
-
-      const critical = parts.filter(
-        (p: any) => p.stock && p.stock.stok_sekarang <= p.stock.stok_minimum,
-      );
-      setCriticalStocks(critical.slice(0, 5)); // Show up to 5 critical items
-
-      setMetrics({
-        transaksiHariIni: todayTxs,
-        layananJasa: txs.filter(
-          (t: any) => t.services?.length > 0 && t.tanggal.startsWith(today),
-        ).length,
-        sukuCadangTerjual: totalParts,
-        stokMinimumCount: critical.length,
-      });
+      const res = await apiClient.get("/dashboard/fo/stats");
+      if (res.data.success) {
+        const d = res.data.data;
+        setMetrics({
+          transaksiHariIni: d.transaksiHariIni,
+          layananJasa: d.layananJasa,
+          sukuCadangTerjual: d.sukuCadangTerjual,
+          stokMinimumCount: d.stokMinimumCount,
+        });
+        setRecentTransactions(d.recentTransactions);
+        setCriticalStocks(d.criticalStocks);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -161,7 +136,7 @@ const FODashboard: React.FC = () => {
                   </td>
                   <td>{formatJenis(tx)}</td>
                   <td style={{ fontWeight: 600, color: "#0f172a" }}>
-                    {formatRupiah(tx.total_harga)}
+                    {formatRupiah(tx.total_jasa_part)}
                   </td>
                 </tr>
               ))}
@@ -211,13 +186,6 @@ const FODashboard: React.FC = () => {
               </div>
             )}
           </div>
-
-          <button
-            className={styles.btnCta}
-            onClick={() => navigate("/front-office/transactions")}
-          >
-            Buat Transaksi Baru
-          </button>
         </div>
       </div>
     </div>

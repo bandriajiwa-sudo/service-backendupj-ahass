@@ -120,4 +120,73 @@ class DashboardController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get statistics for Front Office Dashboard.
+     */
+    public function frontOfficeStats(Request $request)
+    {
+        try {
+            $today = today();
+
+            // Count today's transactions
+            $transaksiHariIni = Transaction::whereDate('tanggal', $today)->count();
+
+            // Count today's services
+            $layananJasa = Transaction::whereDate('tanggal', $today)
+                ->whereHas('transactionServices')
+                ->count();
+
+            // Suku cadang terjual hari ini
+            $sukuCadangTerjual = \App\Models\TransactionSparePart::whereHas('transaction', function ($q) use ($today) {
+                $q->whereDate('tanggal', $today);
+            })->sum('jumlah');
+
+            // Stok Minimum Critical
+            $stokMinimumCount = SparePartStock::whereColumn('stok_sekarang', '<=', 'stok_minimum')->count();
+
+            // Transaksi Terbaru
+            $recentTransactions = Transaction::with(['transactionServices', 'transactionSpareParts'])
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($tx) {
+                    $totalHarga = 0;
+                    if ($tx->transactionServices) {
+                        $totalHarga += $tx->transactionServices->sum('biaya_jasa');
+                    }
+                    if ($tx->transactionSpareParts) {
+                        $totalHarga += $tx->transactionSpareParts->sum('total_harga');
+                    }
+                    $tx->total_jasa_part = $totalHarga;
+                    return $tx;
+                });
+
+            // Suku cadang minimum
+            $criticalStocks = SparePart::with('stock')
+                ->whereHas('stock', function ($q) {
+                    $q->whereColumn('stok_sekarang', '<=', 'stok_minimum');
+                })
+                ->take(5)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'transaksiHariIni' => $transaksiHariIni,
+                    'layananJasa' => $layananJasa,
+                    'sukuCadangTerjual' => (int) $sukuCadangTerjual,
+                    'stokMinimumCount' => $stokMinimumCount,
+                    'recentTransactions' => $recentTransactions,
+                    'criticalStocks' => $criticalStocks
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil statistik front office.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

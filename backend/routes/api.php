@@ -82,8 +82,9 @@ $apiRoutes = function () {
             Route::get('/stocks/{stock}', [StockController::class, 'show']);
         });
 
-        // Front Office Focus
-        Route::middleware('role:front_office')->group(function () {
+        // Front Office Specific Routes
+        Route::middleware('role:front_office,admin')->group(function () {
+            Route::get('/dashboard/fo/stats', [DashboardController::class, 'frontOfficeStats']);
             Route::post('/transactions', [TransactionController::class, 'store']);
             Route::get('/stocks-minimum', [StockController::class, 'minimum']); // Special minimum readout
 
