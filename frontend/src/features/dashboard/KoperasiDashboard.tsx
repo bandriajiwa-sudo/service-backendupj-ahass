@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { FileText, Loader, CheckCircle, Package } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import styles from "./KoperasiDashboard.module.css";
@@ -97,9 +96,9 @@ const KoperasiDashboard: React.FC = () => {
       <div className={styles.pageHeader}>
         <h2
           className={styles.pageSubtitle}
-          style={{ fontSize: "1.1rem", marginTop: 0 }}
+          style={{ fontSize: "1.3rem", marginTop: 0 }}
         >
-          Pemantauan order dan penerimaan suku cadang
+          Dashboard Pemantauan order dan penerimaan suku cadang
         </h2>
       </div>
 
@@ -145,7 +144,7 @@ const KoperasiDashboard: React.FC = () => {
             <span className={styles.metricLabel}>Penerimaan Hari Ini</span>
           </div>
           <h3 className={styles.metricValue}>{metrics.penerimaanHariIni}</h3>
-          <p className={styles.metricSubtext}>Surat DO Logistik turun</p>
+          <p className={styles.metricSubtext}>Logistik Suku Cadang turun</p>
         </div>
       </div>
 
@@ -192,10 +191,6 @@ const KoperasiDashboard: React.FC = () => {
           </tbody>
         </table>
       </div>
-
-      <Link to="/koperasi/orders" className={styles.btnOutline}>
-        Lihat Semua Order
-      </Link>
     </div>
   );
 };

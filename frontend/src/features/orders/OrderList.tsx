@@ -313,13 +313,6 @@ const OrderList: React.FC = () => {
                     <td style={{ fontWeight: 500 }}>
                       {o.user?.nama_user || "-"}
                     </td>
-                    <td>
-                      <div>{o.spare_part?.nama_suku_cadang}</div>
-                      <small style={{ color: "#64748b" }}>
-                        Stok Sekarang: {o.spare_part?.stok_sekarang ?? "?"} /
-                        Minimum: {o.spare_part?.stok_minimum ?? "?"}
-                      </small>
-                    </td>
                     <td style={{ fontWeight: 600 }}>{o.jumlah}</td>
                     <td>{statusBadge(o.status)}</td>
                     <td
