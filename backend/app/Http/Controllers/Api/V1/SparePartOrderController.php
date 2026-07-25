@@ -63,14 +63,6 @@ class SparePartOrderController extends Controller
             'catatan' => 'required_if:status,ditolak|nullable|string',
         ]);
 
-        // Prevent modification if already processed
-        if ($order->status->value !== OrderStatus::Menunggu->value) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Status order ini sudah diputuskan sebelumnya.',
-            ], 422);
-        }
-
         $updateData = [
             'status' => $request->status,
             'tanggal_keputusan' => now(),

@@ -39,6 +39,14 @@ const OrderList: React.FC = () => {
     catatan: "",
   });
 
+  // Decision State (For Koperasi)
+  const [isKoperasiModalOpen, setIsKoperasiModalOpen] = useState(false);
+  const [koperasiData, setKoperasiData] = useState({
+    id: 0,
+    status: "",
+    catatan: "",
+  });
+
   useEffect(() => {
     fetchOrders();
     if (user?.role === "front_office") {
@@ -160,59 +168,50 @@ const OrderList: React.FC = () => {
     }
   };
 
-  const handleDecision = async (orderId: number, isApprove: boolean) => {
-    if (isApprove) {
-      try {
-        await apiClient.patch(`/spare-part-orders/${orderId}/decision`, {
-          status: "disetujui",
-        });
-        fetchOrders();
-        Swal.fire({
-          icon: "success",
-          title: "Disetujui",
-          timer: 1000,
-          showConfirmButton: false,
-        });
-      } catch (err: any) {
-        Swal.fire({
-          icon: "error",
-          text: err.response?.data?.message || "Terjadi kesalahan",
-        });
-      }
-    } else {
-      // Tolak requires reason
-      const { value: catatan } = await Swal.fire({
-        title: "Tolak Order",
-        input: "text",
-        inputLabel: "Alasan Penolakan",
-        inputPlaceholder: "Cth: Stok di gudang utama masih banyak",
-        showCancelButton: true,
-        inputValidator: (val) => {
-          if (!val) return "Alasan penolakan wajib diisi!";
-          return null;
-        },
-      });
+  const handleOpenKoperasiModal = (o: Order) => {
+    setKoperasiData({
+      id: o.id,
+      status: o.status === "menunggu" ? "" : o.status,
+      catatan: o.catatan || "",
+    });
+    setIsKoperasiModalOpen(true);
+  };
 
-      if (catatan) {
-        try {
-          await apiClient.patch(`/spare-part-orders/${orderId}/decision`, {
-            status: "ditolak",
-            catatan: catatan,
-          });
-          fetchOrders();
-          Swal.fire({
-            icon: "success",
-            title: "Ditolak",
-            timer: 1000,
-            showConfirmButton: false,
-          });
-        } catch (err: any) {
-          Swal.fire({
-            icon: "error",
-            text: err.response?.data?.message || "Terjadi kesalahan",
-          });
-        }
-      }
+  const handleKoperasiSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!koperasiData.status) {
+      Swal.fire({ icon: "warning", text: "Pilih keputusan terlebih dahulu." });
+      return;
+    }
+
+    if (koperasiData.status === "ditolak" && !koperasiData.catatan) {
+      Swal.fire({
+        icon: "warning",
+        text: "Wajib mengisi catatan jika penolakan.",
+      });
+      return;
+    }
+
+    try {
+      await apiClient.patch(`/spare-part-orders/${koperasiData.id}/decision`, {
+        status: koperasiData.status,
+        catatan: koperasiData.catatan,
+      });
+      fetchOrders();
+      setIsKoperasiModalOpen(false);
+      Swal.fire({
+        icon: "success",
+        title: "Tersimpan",
+        text: "Keputusan order berhasil disimpan.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: err.response?.data?.message || "Gagal menyimpan keputusan.",
+      });
     }
   };
 
@@ -362,30 +361,39 @@ const OrderList: React.FC = () => {
                     )}
                     {user?.role === "koperasi" && (
                       <td>
-                        {o.status === "menunggu" ? (
-                          <div className={styles.actionGroup}>
-                            <button
-                              className={styles.btnApprove}
-                              onClick={() => handleDecision(o.id, true)}
-                            >
-                              Setujui
-                            </button>
-                            <button
-                              className={styles.btnReject}
-                              onClick={() => handleDecision(o.id, false)}
-                            >
-                              Tolak
-                            </button>
-                          </div>
-                        ) : (
-                          <div
-                            style={{ fontSize: "0.85rem", color: "#64748b" }}
+                        <div
+                          className={styles.actionGroup}
+                          style={{
+                            flexDirection: "column",
+                            gap: "8px",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <button
+                            className={styles.btnApprove}
+                            style={{ background: "#3b82f6" }}
+                            onClick={() => handleOpenKoperasiModal(o)}
+                            title="Edit Keputusan"
                           >
-                            <span style={{ fontWeight: 600 }}>Diputuskan:</span>
-                            <br />
-                            {formatDate(o.tanggal_keputusan!)}
-                          </div>
-                        )}
+                            <Pencil size={14} /> Edit Keputusan
+                          </button>
+
+                          {o.status !== "menunggu" && (
+                            <div
+                              style={{
+                                fontSize: "0.85rem",
+                                color: "#64748b",
+                                marginTop: "4px",
+                              }}
+                            >
+                              <span style={{ fontWeight: 600 }}>
+                                Diputuskan:
+                              </span>
+                              <br />
+                              {formatDate(o.tanggal_keputusan!)}
+                            </div>
+                          )}
+                        </div>
                       </td>
                     )}
                   </tr>
@@ -461,6 +469,63 @@ const OrderList: React.FC = () => {
                 </button>
                 <button type="submit" className={styles.btnPrimary}>
                   Submit Order
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* MODAL KOPERASI DECISION */}
+      {isKoperasiModalOpen && user?.role === "koperasi" && (
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
+            <h2 className={styles.modalTitle}>Keputusan Order</h2>
+            <form onSubmit={handleKoperasiSubmit}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Status Keputusan *</label>
+                <select
+                  className={styles.formInput}
+                  value={koperasiData.status}
+                  onChange={(e) =>
+                    setKoperasiData({ ...koperasiData, status: e.target.value })
+                  }
+                  required
+                >
+                  <option value="">-- Pilih Keputusan --</option>
+                  <option value="disetujui">Disetujui 🟢</option>
+                  <option value="menunggu">Pending / Menunggu 🟡</option>
+                  <option value="ditolak">Ditolak 🔴</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  Catatan (Wajib jika ditolak)
+                </label>
+                <textarea
+                  className={styles.formInput}
+                  style={{ minHeight: "80px", resize: "vertical" }}
+                  placeholder="Tambahkan catatan untuk FO (opsional jika disetujui / pending)"
+                  value={koperasiData.catatan}
+                  onChange={(e) =>
+                    setKoperasiData({
+                      ...koperasiData,
+                      catatan: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.btnCancel}
+                  onClick={() => setIsKoperasiModalOpen(false)}
+                >
+                  Batal
+                </button>
+                <button type="submit" className={styles.btnPrimary}>
+                  Simpan Keputusan
                 </button>
               </div>
             </form>
