@@ -446,7 +446,7 @@ const OrderList: React.FC = () => {
                             onClick={() => handleOpenKoperasiModal(o)}
                             title="Edit Keputusan"
                           >
-                            <Pencil size={14} /> Edit Keputusan
+                            <Pencil size={14} /> Edit
                           </button>
 
                           {o.status !== "menunggu"}
@@ -483,7 +483,7 @@ const OrderList: React.FC = () => {
                     <option key={p.id} value={p.id}>
                       {p.nama_suku_cadang}{" "}
                       {p.stok_sekarang <= p.stok_minimum
-                        ? "(⚠️ STOK MINIMUM)"
+                        ? "(⚠️)"
                         : ""}
                     </option>
                   ))}
