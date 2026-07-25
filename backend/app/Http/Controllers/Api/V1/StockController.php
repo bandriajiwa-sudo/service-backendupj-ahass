@@ -10,7 +10,7 @@ class StockController extends Controller
 {
     public function index(Request $request)
     {
-        $stocks = SparePartStock::with('sparePart')->paginate($request->query('per_page', 20));
+        $stocks = SparePartStock::with('sparePart')->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,
@@ -28,7 +28,7 @@ class StockController extends Controller
         // View for FO: Get all stocks <= minimum limit
         $stocks = SparePartStock::with('sparePart')
             ->whereColumn('stok_sekarang', '<=', 'stok_minimum')
-            ->paginate($request->query('per_page', 20));
+            ->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,

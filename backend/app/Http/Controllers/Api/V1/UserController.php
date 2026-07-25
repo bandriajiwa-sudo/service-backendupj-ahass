@@ -16,7 +16,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('login')->paginate(10);
+        $users = User::with('login')->paginate(1000);
 
         return response()->json([
             'success' => true,

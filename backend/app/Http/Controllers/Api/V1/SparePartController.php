@@ -11,7 +11,7 @@ class SparePartController extends Controller
 {
     public function index()
     {
-        $spareParts = SparePart::with('stock')->paginate(10);
+        $spareParts = SparePart::with('stock')->paginate(1000);
 
         return response()->json([
             'success' => true,
@@ -81,7 +81,7 @@ class SparePartController extends Controller
     public function update(Request $request, SparePart $sparePart)
     {
         $validated = $request->validate([
-            'kode_suku_cadang' => 'sometimes|string|max:100|unique:spare_parts,kode_suku_cadang,'.$sparePart->id,
+            'kode_suku_cadang' => 'sometimes|string|max:100|unique:spare_parts,kode_suku_cadang,' . $sparePart->id,
             'nama_suku_cadang' => 'sometimes|string|max:200',
             'kategori' => 'sometimes|string|max:100',
             'harga_jual' => 'sometimes|numeric|min:0',

@@ -14,7 +14,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['user'])->orderBy('tanggal', 'desc')->paginate(10);
+        $transactions = Transaction::with(['user'])->orderBy('tanggal', 'desc')->paginate(1000);
 
         return response()->json([
             'success' => true,

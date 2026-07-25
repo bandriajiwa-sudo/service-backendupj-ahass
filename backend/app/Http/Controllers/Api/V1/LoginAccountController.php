@@ -11,7 +11,7 @@ class LoginAccountController extends Controller
 {
     public function index()
     {
-        $logins = Login::with('user')->paginate(10);
+        $logins = Login::with('user')->paginate(1000);
 
         return response()->json([
             'success' => true,
@@ -58,7 +58,7 @@ class LoginAccountController extends Controller
     public function update(Request $request, Login $loginAccount)
     {
         $validated = $request->validate([
-            'username' => 'sometimes|string|max:100|unique:logins,username,'.$loginAccount->id,
+            'username' => 'sometimes|string|max:100|unique:logins,username,' . $loginAccount->id,
             'password' => 'sometimes|string|min:6',
         ]);
 

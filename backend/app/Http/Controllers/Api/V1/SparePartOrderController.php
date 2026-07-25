@@ -12,7 +12,7 @@ class SparePartOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = SparePartOrder::with(['user', 'sparePart'])->orderBy('created_at', 'desc')->paginate($request->query('per_page', 20));
+        $orders = SparePartOrder::with(['user', 'sparePart'])->orderBy('created_at', 'desc')->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,

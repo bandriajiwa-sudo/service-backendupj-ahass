@@ -10,7 +10,7 @@ class MechanicController extends Controller
 {
     public function index()
     {
-        $mechanics = Mechanic::paginate(10);
+        $mechanics = Mechanic::paginate(1000);
 
         return response()->json([
             'success' => true,

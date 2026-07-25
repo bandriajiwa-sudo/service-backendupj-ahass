@@ -18,7 +18,7 @@ class SparePartReceiptController extends Controller
     {
         $receipts = SparePartReceipt::with(['sparePartOrder.sparePart', 'sparePartOrder.user'])
             ->orderBy('created_at', 'desc')
-            ->paginate($request->query('per_page', 20));
+            ->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,
