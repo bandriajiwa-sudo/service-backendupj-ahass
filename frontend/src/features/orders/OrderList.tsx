@@ -378,21 +378,7 @@ const OrderList: React.FC = () => {
                             <Pencil size={14} /> Edit Keputusan
                           </button>
 
-                          {o.status !== "menunggu" && (
-                            <div
-                              style={{
-                                fontSize: "0.85rem",
-                                color: "#64748b",
-                                marginTop: "4px",
-                              }}
-                            >
-                              <span style={{ fontWeight: 600 }}>
-                                Diputuskan:
-                              </span>
-                              <br />
-                              {formatDate(o.tanggal_keputusan!)}
-                            </div>
-                          )}
+                          {o.status !== "menunggu"}
                         </div>
                       </td>
                     )}
@@ -479,7 +465,7 @@ const OrderList: React.FC = () => {
       {isKoperasiModalOpen && user?.role === "koperasi" && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2 className={styles.modalTitle}>Keputusan Order</h2>
+            <h2 className={styles.modalTitle}>Edit Order</h2>
             <form onSubmit={handleKoperasiSubmit}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Status Keputusan *</label>
@@ -492,20 +478,20 @@ const OrderList: React.FC = () => {
                   required
                 >
                   <option value="">-- Pilih Keputusan --</option>
-                  <option value="disetujui">Disetujui 🟢</option>
-                  <option value="menunggu">Pending / Menunggu 🟡</option>
-                  <option value="ditolak">Ditolak 🔴</option>
+                  <option value="disetujui">Disetujui</option>
+                  <option value="menunggu">Pending</option>
+                  <option value="ditolak">Ditolak</option>
                 </select>
               </div>
 
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>
-                  Catatan (Wajib jika ditolak)
+                  Catatan
                 </label>
                 <textarea
                   className={styles.formInput}
                   style={{ minHeight: "80px", resize: "vertical" }}
-                  placeholder="Tambahkan catatan untuk FO (opsional jika disetujui / pending)"
+                  placeholder="Tambahkan catatan untuk FO (opsional jika ditolak / pending)"
                   value={koperasiData.catatan}
                   onChange={(e) =>
                     setKoperasiData({
@@ -525,7 +511,7 @@ const OrderList: React.FC = () => {
                   Batal
                 </button>
                 <button type="submit" className={styles.btnPrimary}>
-                  Simpan Keputusan
+                  Simpan
                 </button>
               </div>
             </form>
