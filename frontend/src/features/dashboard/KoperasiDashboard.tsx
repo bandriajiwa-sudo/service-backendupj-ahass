@@ -28,36 +28,37 @@ const KoperasiDashboard: React.FC = () => {
       const receipts = receiptsRes.data.data;
 
       // Calculate Metrics
-      const today = new Date().toISOString().split("T")[0];
-
-      const orderBaru = orders.filter((o: any) =>
-        o.created_at.startsWith(today),
+      const orderBaru = orders.filter(
+        (o: any) => o.status === "menunggu",
       ).length;
 
       const orderDitolak = orders.filter(
         (o: any) => o.status === "ditolak",
       ).length;
 
-      // Sedang diproses: Setujui order, tapi blm diverifikasi final
+      // Selesai Bulan Ini: Order yang receipt-nya sudah di verifikasi FO (Lunas)
+      const currentMonthIndex = new Date().getMonth();
+      const selesaiBulanIni = orders.filter((o: any) => {
+        if (!o.sparePartReceipt) return false;
+        const d = new Date(o.sparePartReceipt.created_at);
+        return (
+          d.getMonth() === currentMonthIndex &&
+          o.sparePartReceipt.status_verifikasi === "disetujui"
+        );
+      }).length;
+
+      // Sedang diproses: Disetujui koperasi, tapi receipt FO belum disetujui
       const sedangDiproses = orders.filter(
         (o: any) =>
           o.status === "disetujui" &&
           (!o.sparePartReceipt ||
-            o.sparePartReceipt?.status_verifikasi === "menunggu"),
+            o.sparePartReceipt.status_verifikasi !== "disetujui"),
       ).length;
 
+      const today = new Date().toISOString().split("T")[0];
       const penerimaanHariIni = receipts.filter((r: any) =>
         r.created_at.startsWith(today),
       ).length;
-
-      const currentMonthIndex = new Date().getMonth();
-      const selesaiBulanIni = receipts.filter((r: any) => {
-        const d = new Date(r.created_at);
-        return (
-          d.getMonth() === currentMonthIndex &&
-          r.status_verifikasi === "disetujui"
-        );
-      }).length;
 
       setMetrics({
         orderBaru,
