@@ -11,7 +11,7 @@ class SparePartSeeder extends Seeder
     public function run(): void
     {
         $now = Carbon::now();
-        
+
         $data = [
             // Kategori: Mesin (MSN-001 s/d MSN-025)
             ['kode_suku_cadang' => 'MSN-001', 'nama_suku_cadang' => 'Piston Kit Standard', 'kategori' => 'Mesin', 'harga_jual' => 175000],
@@ -231,16 +231,41 @@ class SparePartSeeder extends Seeder
         ];
 
         // Memasukkan array created_at dan updated_at secara dinamis
-        $data = array_map(function($item) use ($now) {
+        $data = array_map(function ($item) use ($now) {
             $item['created_at'] = $now;
             $item['updated_at'] = $now;
             return $item;
         }, $data);
 
-        // Memasukkan ke database (chunk digunakan agar tidak overload jika data sangat banyak)
+        // Reset data secara aman tanpa error foreign keys (PostgreSQL)
+        DB::statement('TRUNCATE TABLE spare_parts CASCADE');
+        DB::statement('TRUNCATE TABLE spare_part_stocks CASCADE');
+
+        // Memasukkan ke database suku cadang master
         $chunks = array_chunk($data, 50);
         foreach ($chunks as $chunk) {
             DB::table('spare_parts')->insert($chunk);
+        }
+
+        // Mengambil semua data yg barusan masuk buat dipasangkan dengan stok awal (10-50 random) dan batas minimum 10
+        $allParts = \App\Models\SparePart::all();
+        $stockData = [];
+
+        foreach ($allParts as $part) {
+            $stockData[] = [
+                'spare_part_id' => $part->id,
+                'stok_sekarang' => rand(15, 60),
+                'stok_minimum' => 15,
+                'terakhir_diperbarui' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        // Insert stock data dalam chunk (supaya enteng)
+        $stockChunks = array_chunk($stockData, 50);
+        foreach ($stockChunks as $chunk) {
+            DB::table('spare_part_stocks')->insert($chunk);
         }
     }
 }

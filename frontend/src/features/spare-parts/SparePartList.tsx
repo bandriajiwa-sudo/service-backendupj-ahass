@@ -23,6 +23,12 @@ const SparePartList: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editPartId, setEditPartId] = useState<number | null>(null);
 
+  // Dynamic Categories Memo
+  const uniqueCategories = React.useMemo(() => {
+    const cats = parts.map((p) => p.kategori).filter(Boolean);
+    return Array.from(new Set(cats)).sort();
+  }, [parts]);
+
   // Filter State
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
@@ -270,9 +276,11 @@ const SparePartList: React.FC = () => {
               onChange={(e) => setFilterCategory(e.target.value)}
             >
               <option value="">Semua kategori</option>
-              <option value="pengereman">Pengereman</option>
-              <option value="transmisi">Transmisi</option>
-              <option value="pelumas">Pelumas</option>
+              {uniqueCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
           <div className={styles.filterGroup}>
