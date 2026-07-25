@@ -91,13 +91,13 @@ $apiRoutes = function () {
             Route::post('/spare-part-orders', [SparePartOrderController::class, 'store']);
             Route::put('/spare-part-orders/{order}', [SparePartOrderController::class, 'update']);
             Route::delete('/spare-part-orders/{order}', [SparePartOrderController::class, 'destroy']);
-            Route::patch('/spare-part-receipts/{receipt}/verification', [SparePartReceiptController::class, 'verification']);
         });
 
         // Koperasi Focus
         Route::middleware('role:koperasi')->group(function () {
             Route::patch('/spare-part-orders/{order}/decision', [SparePartOrderController::class, 'decision']);
             Route::post('/spare-part-receipts', [SparePartReceiptController::class, 'store']);
+            Route::patch('/spare-part-receipts/{receipt}/verification', [SparePartReceiptController::class, 'verification']);
         });
 
         // Shared Transaction & Order Reads (FO & UPJ mostly)

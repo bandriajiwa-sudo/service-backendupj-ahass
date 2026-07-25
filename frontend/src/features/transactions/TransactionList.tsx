@@ -229,13 +229,13 @@ const TransactionList: React.FC = () => {
       user_id: parseInt(selectedFoUser),
       no_nota: nomorNota,
       services: jasaList.map((c) => ({
-        id_mekanik: c.id_mekanik,
+        mechanic_id: c.id_mekanik,
         nama_jasa: c.nama_jasa,
         biaya_jasa: c.biaya_jasa,
         keterangan_jasa: c.keterangan,
       })),
       spare_parts: partList.map((c) => ({
-        id_master_suku_cadang: c.id_master_suku_cadang,
+        spare_part_id: c.id_master_suku_cadang,
         jumlah: c.qty,
       })),
     };

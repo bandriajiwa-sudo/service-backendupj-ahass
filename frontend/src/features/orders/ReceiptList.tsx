@@ -95,7 +95,7 @@ const ReceiptList: React.FC = () => {
       Swal.fire({
         icon: "success",
         title: "Penerimaan Dicatat",
-        text: "Barang menunggu verifikasi akhir dari Front Office.",
+        text: "Menunggu verifikasi fisik barang.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -233,16 +233,16 @@ const ReceiptList: React.FC = () => {
                 <th>Tanggal Terima (Koperasi)</th>
                 <th>Suku Cadang</th>
                 <th>Qty Diterima / Diorder</th>
-                <th>Status (Front Office)</th>
+                <th>Status (Koperasi)</th>
                 <th>Catatan Verifikasi</th>
-                {user?.role === "front_office" && <th>Aksi Verifikasi</th>}
+                {user?.role === "koperasi" && <th>Aksi Verifikasi</th>}
               </tr>
             </thead>
             <tbody>
               {receipts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={user?.role === "front_office" ? 6 : 5}
+                    colSpan={user?.role === "koperasi" ? 6 : 5}
                     style={{
                       textAlign: "center",
                       padding: "30px",
@@ -283,7 +283,7 @@ const ReceiptList: React.FC = () => {
                     >
                       {r.catatan || "-"}
                     </td>
-                    {user?.role === "front_office" && (
+                    {user?.role === "koperasi" && (
                       <td>
                         {r.status_verifikasi === "menunggu" ? (
                           <div className={styles.actionGroup}>
