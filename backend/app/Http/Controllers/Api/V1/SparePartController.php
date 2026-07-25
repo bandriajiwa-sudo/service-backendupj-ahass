@@ -86,16 +86,24 @@ class SparePartController extends Controller
             'kategori' => 'sometimes|string|max:100',
             'harga_jual' => 'sometimes|numeric|min:0',
             'stok_minimum' => 'sometimes|integer|min:0',
+            'stok_sekarang' => 'sometimes|integer|min:0',
         ]);
 
         DB::beginTransaction();
         try {
             $sparePart->update($request->only('kode_suku_cadang', 'nama_suku_cadang', 'kategori', 'harga_jual'));
 
+            // Memperbarui stok jika ada request stok_sekarang atau stok_minimum
+            $stockUpdates = [];
             if ($request->has('stok_minimum')) {
-                $sparePart->stock()->update([
-                    'stok_minimum' => $validated['stok_minimum'],
-                ]);
+                $stockUpdates['stok_minimum'] = $validated['stok_minimum'];
+            }
+            if ($request->has('stok_sekarang')) {
+                $stockUpdates['stok_sekarang'] = $validated['stok_sekarang'];
+            }
+
+            if (!empty($stockUpdates)) {
+                $sparePart->stock()->update($stockUpdates);
             }
 
             DB::commit();
