@@ -216,8 +216,16 @@ const OrderList: React.FC = () => {
     }
   };
 
-  const statusBadge = (s: string) => {
-    switch (s) {
+  const statusBadge = (o: any) => {
+    if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
+      return (
+        <span className={`${styles.badge} ${styles.badgeDisetujui}`}>
+          Selesai
+        </span>
+      );
+    }
+
+    switch (o.status) {
       case "menunggu":
         return (
           <span className={`${styles.badge} ${styles.badgeMenunggu}`}>
@@ -237,7 +245,7 @@ const OrderList: React.FC = () => {
           </span>
         );
       default:
-        return <span className={styles.badge}>{s}</span>;
+        return <span className={styles.badge}>{o.status}</span>;
     }
   };
 
@@ -317,7 +325,7 @@ const OrderList: React.FC = () => {
                       <div>{o.spare_part?.nama_suku_cadang}</div>
                     </td>
                     <td style={{ fontWeight: 600 }}>{o.jumlah}</td>
-                    <td>{statusBadge(o.status)}</td>
+                    <td>{statusBadge(o)}</td>
                     <td
                       style={{
                         minWidth: "220px",

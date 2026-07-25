@@ -39,20 +39,20 @@ const KoperasiDashboard: React.FC = () => {
       // Selesai Bulan Ini: Order yang receipt-nya sudah di verifikasi FO (Lunas)
       const currentMonthIndex = new Date().getMonth();
       const selesaiBulanIni = orders.filter((o: any) => {
-        if (!o.sparePartReceipt) return false;
-        const d = new Date(o.sparePartReceipt.created_at);
+        if (!o.spare_part_receipt) return false;
+        const d = new Date(o.spare_part_receipt.created_at);
         return (
           d.getMonth() === currentMonthIndex &&
-          o.sparePartReceipt.status_verifikasi === "disetujui"
+          o.spare_part_receipt.status_verifikasi === "disetujui"
         );
       }).length;
 
-      // Sedang diproses: Disetujui koperasi, tapi receipt FO belum disetujui
+      // Sedang diproses: Disetujui koperasi, tapi receipt FO belum disetujui (atau blm ada)
       const sedangDiproses = orders.filter(
         (o: any) =>
           o.status === "disetujui" &&
-          (!o.sparePartReceipt ||
-            o.sparePartReceipt.status_verifikasi !== "disetujui"),
+          (!o.spare_part_receipt ||
+            o.spare_part_receipt.status_verifikasi !== "disetujui"),
       ).length;
 
       const today = new Date().toISOString().split("T")[0];
@@ -74,8 +74,17 @@ const KoperasiDashboard: React.FC = () => {
     }
   };
 
-  const statusBadge = (s: string) => {
-    switch (s) {
+  const statusBadge = (o: any) => {
+    // Check if fully verified by FO
+    if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
+      return (
+        <span className={`${styles.badge} ${styles.badgeSelesai}`}>
+          Selesai
+        </span>
+      );
+    }
+
+    switch (o.status) {
       case "menunggu":
         return (
           <span className={`${styles.badge} ${styles.badgeBaru}`}>Baru</span>
@@ -96,7 +105,7 @@ const KoperasiDashboard: React.FC = () => {
           </span>
         );
       default:
-        return <span className={styles.badge}>{s}</span>;
+        return <span className={styles.badge}>{o.status}</span>;
     }
   };
 
@@ -198,7 +207,7 @@ const KoperasiDashboard: React.FC = () => {
                 <td style={{ fontWeight: 600, textAlign: "right" }}>
                   {o.jumlah}
                 </td>
-                <td>{statusBadge(o.status)}</td>
+                <td>{statusBadge(o)}</td>
                 <td>
                   <Link to="/koperasi/orders" className={styles.btnDetail}>
                     Detail
