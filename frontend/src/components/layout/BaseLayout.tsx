@@ -7,7 +7,6 @@ import {
   ShoppingCart,
   FileText,
   Menu,
-  X,
   Users,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthContext";
@@ -159,8 +158,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
             <button
               className={styles.menuToggle}
               onClick={() => setSidebarOpen(!isSidebarOpen)}
+              title="Toggle Sidebar"
             >
-              {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
+              {isSidebarOpen ? <Menu size={24} /> : <Menu size={24} />}
             </button>
             <h1 className={styles.pageTitle}>{title}</h1>
           </div>

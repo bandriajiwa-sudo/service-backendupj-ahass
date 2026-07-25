@@ -160,3 +160,29 @@
 .btnOutline:hover {
   background: #eff6ff;
 }
+
+.iconRed {
+  background: #ef4444;
+}
+
+.btnDetail {
+  display: inline-block;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btnDetail:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btnDetail:active {
+  transform: translateY(0) scale(0.97);
+}

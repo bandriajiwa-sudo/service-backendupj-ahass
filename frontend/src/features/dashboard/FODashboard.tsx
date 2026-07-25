@@ -127,7 +127,7 @@ const FODashboard: React.FC = () => {
                 <th>No. Nota</th>
                 <th>Waktu</th>
                 <th>Jenis</th>
-                <th>Total</th>
+                <th style={{ textAlign: "right" }}>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -141,7 +141,13 @@ const FODashboard: React.FC = () => {
                     })}
                   </td>
                   <td>{formatJenis(tx)}</td>
-                  <td style={{ fontWeight: 600, color: "#0f172a" }}>
+                  <td
+                    style={{
+                      fontWeight: 600,
+                      color: "#0f172a",
+                      textAlign: "right",
+                    }}
+                  >
                     {formatRupiah(tx.total_jasa_part)}
                   </td>
                 </tr>

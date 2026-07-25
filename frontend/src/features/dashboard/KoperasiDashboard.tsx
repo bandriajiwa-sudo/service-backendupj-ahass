@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FileText, Loader, CheckCircle, Package } from "lucide-react";
+import { FileText, Loader, CheckCircle, Package, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
 import styles from "./KoperasiDashboard.module.css";
 
@@ -7,6 +8,7 @@ const KoperasiDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState({
     orderBaru: 0,
     sedangDiproses: 0,
+    orderDitolak: 0,
     selesaiBulanIni: 0,
     penerimaanHariIni: 0,
   });
@@ -26,11 +28,17 @@ const KoperasiDashboard: React.FC = () => {
       const receipts = receiptsRes.data.data;
 
       // Calculate Metrics
-      const orderBaru = orders.filter(
-        (o: any) => o.status === "menunggu",
+      const today = new Date().toISOString().split("T")[0];
+
+      const orderBaru = orders.filter((o: any) =>
+        o.created_at.startsWith(today),
       ).length;
 
-      // Sedang diproses: Disetujui order, tapi blm diverifikasi final
+      const orderDitolak = orders.filter(
+        (o: any) => o.status === "ditolak",
+      ).length;
+
+      // Sedang diproses: Setujui order, tapi blm diverifikasi final
       const sedangDiproses = orders.filter(
         (o: any) =>
           o.status === "disetujui" &&
@@ -38,7 +46,6 @@ const KoperasiDashboard: React.FC = () => {
             o.sparePartReceipt?.status_verifikasi === "menunggu"),
       ).length;
 
-      const today = new Date().toISOString().split("T")[0];
       const penerimaanHariIni = receipts.filter((r: any) =>
         r.created_at.startsWith(today),
       ).length;
@@ -55,6 +62,7 @@ const KoperasiDashboard: React.FC = () => {
       setMetrics({
         orderBaru,
         sedangDiproses,
+        orderDitolak,
         selesaiBulanIni,
         penerimaanHariIni,
       });
@@ -127,13 +135,24 @@ const KoperasiDashboard: React.FC = () => {
 
         <div className={styles.metricCard}>
           <div className={styles.metricHeader}>
+            <div className={`${styles.iconWrapper} ${styles.iconRed}`}>
+              <XCircle size={20} />
+            </div>
+            <span className={styles.metricLabel}>Order Ditolak</span>
+          </div>
+          <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
+          <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
+        </div>
+
+        <div className={styles.metricCard}>
+          <div className={styles.metricHeader}>
             <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
               <CheckCircle size={20} />
             </div>
             <span className={styles.metricLabel}>Selesai Bulan Ini</span>
           </div>
           <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
-          <p className={styles.metricSubtext}>Stok berhasil di-verify</p>
+          <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
         </div>
 
         <div className={styles.metricCard}>
@@ -141,10 +160,10 @@ const KoperasiDashboard: React.FC = () => {
             <div className={`${styles.iconWrapper} ${styles.iconDarkBlue}`}>
               <Package size={20} />
             </div>
-            <span className={styles.metricLabel}>Penerimaan Hari Ini</span>
+            <span className={styles.metricLabel}>Total Item Diterima</span>
           </div>
           <h3 className={styles.metricValue}>{metrics.penerimaanHariIni}</h3>
-          <p className={styles.metricSubtext}>Logistik Suku Cadang turun</p>
+          <p className={styles.metricSubtext}>Barang Masuk Gudang hari ini</p>
         </div>
       </div>
 
@@ -156,8 +175,9 @@ const KoperasiDashboard: React.FC = () => {
               <th>No. Pengajuan (FO)</th>
               <th>Tanggal</th>
               <th>Suku Cadang</th>
-              <th>Total Qty</th>
+              <th style={{ textAlign: "right" }}>Total Qty</th>
               <th>Status</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -174,8 +194,15 @@ const KoperasiDashboard: React.FC = () => {
                   })}
                 </td>
                 <td>{o.spare_part?.nama_suku_cadang}</td>
-                <td style={{ fontWeight: 600 }}>{o.jumlah}</td>
+                <td style={{ fontWeight: 600, textAlign: "right" }}>
+                  {o.jumlah}
+                </td>
                 <td>{statusBadge(o.status)}</td>
+                <td>
+                  <Link to="/koperasi/orders" className={styles.btnDetail}>
+                    Detail
+                  </Link>
+                </td>
               </tr>
             ))}
             {recentOrders.length === 0 && (
