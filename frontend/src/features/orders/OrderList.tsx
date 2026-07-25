@@ -336,26 +336,32 @@ const OrderList: React.FC = () => {
                       {o.catatan_fo && (
                         <div
                           style={{
-                            marginBottom: o.catatan_koperasi ? "8px" : "0",
+                            marginBottom: o.catatan_koperasi ? "6px" : "0",
                             backgroundColor: "#f8fafc",
-                            padding: "8px",
-                            borderRadius: "8px",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
                             border: "1px solid #e2e8f0",
+                            transition: "background 0.2s ease",
                           }}
                         >
                           <span
                             style={{
-                              fontSize: "0.75rem",
+                              fontSize: "0.7rem",
                               fontWeight: 700,
                               color: "#3b82f6",
                               display: "block",
                               marginBottom: "2px",
+                              letterSpacing: "0.02em",
                             }}
                           >
                             FRONT OFFICE:
                           </span>
                           <span
-                            style={{ fontSize: "0.85rem", color: "#334155" }}
+                            style={{
+                              fontSize: "0.82rem",
+                              color: "#334155",
+                              lineHeight: "1.3",
+                            }}
                           >
                             {o.catatan_fo}
                           </span>
@@ -366,24 +372,30 @@ const OrderList: React.FC = () => {
                         <div
                           style={{
                             backgroundColor: "#faf5ff",
-                            padding: "8px",
-                            borderRadius: "8px",
+                            padding: "6px 10px",
+                            borderRadius: "6px",
                             border: "1px solid #e9d5ff",
+                            transition: "background 0.2s ease",
                           }}
                         >
                           <span
                             style={{
-                              fontSize: "0.75rem",
+                              fontSize: "0.7rem",
                               fontWeight: 700,
                               color: "#9333ea",
                               display: "block",
                               marginBottom: "2px",
+                              letterSpacing: "0.02em",
                             }}
                           >
                             KOPERASI:
                           </span>
                           <span
-                            style={{ fontSize: "0.85rem", color: "#334155" }}
+                            style={{
+                              fontSize: "0.82rem",
+                              color: "#334155",
+                              lineHeight: "1.3",
+                            }}
                           >
                             {o.catatan_koperasi}
                           </span>

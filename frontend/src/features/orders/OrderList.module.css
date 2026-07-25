@@ -1,6 +1,6 @@
 /* OrderList.module.css — Premium Dashboard */
 .container {
-  padding: 28px 32px;
+  padding: 16px 24px; /* tighter container padding */
   min-height: 100%;
 }
 
@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 20px; /* tightened space */
 }
 
 .pageTitle {
@@ -57,13 +57,13 @@
 /* ── Table Card ── */
 .tableCard {
   background: white;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
   box-shadow:
-    0 4px 16px rgba(15, 23, 42, 0.06),
-    0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.3s ease;
+    0 4px 12px rgba(15, 23, 42, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.25s ease;
 }
 
 .tableCard:hover {
@@ -86,19 +86,19 @@
 
 .table th {
   background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  padding: 14px 18px;
-  font-size: 0.78rem;
+  padding: 12px 14px; /* tighter cells */
+  font-size: 0.76rem;
   font-weight: 700;
   color: #475569;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   border-bottom: 2px solid #e2e8f0;
   white-space: nowrap;
 }
 
 .table td {
-  padding: 16px 18px;
-  font-size: 0.9rem;
+  padding: 14px; /* tighter cells */
+  font-size: 0.88rem;
   color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
@@ -150,21 +150,25 @@
 .actionGroup {
   display: flex;
   gap: 6px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .btnApprove,
 .btnReject {
-  padding: 6px 14px;
+  padding: 7px 12px;
   border-radius: 8px;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
 }
 
 .btnApprove {
