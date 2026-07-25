@@ -43,6 +43,8 @@ const ReceiptList: React.FC = () => {
   const [formData, setFormData] = useState({
     spare_part_order_id: "",
     jumlah_diterima: "1",
+    harga_beli: "",
+    harga_jual: "",
     catatan: "",
   });
 
@@ -79,8 +81,16 @@ const ReceiptList: React.FC = () => {
   const handleCreateReceipt = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (!formData.spare_part_order_id || !formData.jumlah_diterima) {
-        Swal.fire({ icon: "warning", text: "Lengkapi field wajib (*)" });
+      if (
+        !formData.spare_part_order_id ||
+        !formData.jumlah_diterima ||
+        !formData.harga_beli ||
+        !formData.harga_jual
+      ) {
+        Swal.fire({
+          icon: "warning",
+          text: "Lengkapi field wajib (*) termasuk harga beli & jual",
+        });
         return;
       }
       await apiClient.post("/spare-part-receipts", formData);
@@ -90,6 +100,8 @@ const ReceiptList: React.FC = () => {
       setFormData({
         spare_part_order_id: "",
         jumlah_diterima: "1",
+        harga_beli: "",
+        harga_jual: "",
         catatan: "",
       });
       Swal.fire({
@@ -381,6 +393,44 @@ const ReceiptList: React.FC = () => {
                   value={formData.catatan}
                   onChange={(e) =>
                     setFormData({ ...formData, catatan: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  Harga Beli dari Vendor (HPP) *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className={styles.formInput}
+                  placeholder="Harga modal koperasi"
+                  value={formData.harga_beli}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      harga_beli: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  Harga Jual Baru (HET Kasir FO) *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className={styles.formInput}
+                  placeholder="Harga display etalase"
+                  value={formData.harga_jual}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      harga_jual: e.target.value,
+                    })
                   }
                 />
               </div>

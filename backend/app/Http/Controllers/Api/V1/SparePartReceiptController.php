@@ -44,10 +44,12 @@ class SparePartReceiptController extends Controller
         $validated = $request->validate([
             'spare_part_order_id' => 'required|exists:spare_part_orders,id',
             'jumlah_diterima' => 'required|integer|min:1',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
             'catatan' => 'nullable|string',
         ]);
 
-        $order = SparePartOrder::find($validated['spare_part_order_id']);
+        $order = SparePartOrder::findOrFail($validated['spare_part_order_id']);
 
         if ($order->status->value !== OrderStatus::Disetujui->value) {
             return response()->json([
@@ -67,6 +69,8 @@ class SparePartReceiptController extends Controller
         $receipt = SparePartReceipt::create([
             'spare_part_order_id' => $order->id,
             'jumlah_diterima' => $validated['jumlah_diterima'],
+            'harga_beli' => $validated['harga_beli'],
+            'harga_jual' => $validated['harga_jual'],
             'status_verifikasi' => ReceiptStatus::Menunggu,
             'catatan' => $validated['catatan'] ?? null,
         ]);
@@ -109,6 +113,13 @@ class SparePartReceiptController extends Controller
                     $stock->stok_sekarang += $receipt->jumlah_diterima;
                     $stock->terakhir_diperbarui = now();
                     $stock->save();
+
+                    // Cascade update the definitive selling price to the master SparePart catalog
+                    $sparePart = $receipt->sparePartOrder->sparePart;
+                    if ($sparePart && $receipt->harga_jual) {
+                        $sparePart->harga_jual = $receipt->harga_jual;
+                        $sparePart->save();
+                    }
                 }
             }
 

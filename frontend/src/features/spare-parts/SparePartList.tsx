@@ -453,21 +453,7 @@ const SparePartList: React.FC = () => {
                   }
                 />
               </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Harga Jual *</label>
-                <input
-                  type="number"
-                  className={styles.formInput}
-                  placeholder="Rp0"
-                  value={formData.harga_jual}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      harga_jual: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
+
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Stok Awal *</label>
                 <input

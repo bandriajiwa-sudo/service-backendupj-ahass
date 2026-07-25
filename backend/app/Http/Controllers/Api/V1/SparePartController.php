@@ -31,7 +31,7 @@ class SparePartController extends Controller
             'kode_suku_cadang' => 'required|string|max:100|unique:spare_parts,kode_suku_cadang',
             'nama_suku_cadang' => 'required|string|max:200',
             'kategori' => 'required|string|max:100',
-            'harga_jual' => 'required|numeric|min:0',
+            'kategori' => 'required|string|max:100',
             'stok_awal' => 'sometimes|integer|min:0',
             'stok_minimum' => 'sometimes|integer|min:0',
         ]);
@@ -42,7 +42,8 @@ class SparePartController extends Controller
                 'kode_suku_cadang' => $validated['kode_suku_cadang'],
                 'nama_suku_cadang' => $validated['nama_suku_cadang'],
                 'kategori' => $validated['kategori'],
-                'harga_jual' => $validated['harga_jual'],
+                'kategori' => $validated['kategori'],
+                'harga_jual' => $validated['harga_jual'] ?? 0,
             ]);
 
             $sparePart->stock()->create([
@@ -84,14 +85,14 @@ class SparePartController extends Controller
             'kode_suku_cadang' => 'sometimes|string|max:100|unique:spare_parts,kode_suku_cadang,' . $sparePart->id,
             'nama_suku_cadang' => 'sometimes|string|max:200',
             'kategori' => 'sometimes|string|max:100',
-            'harga_jual' => 'sometimes|numeric|min:0',
+            'kategori' => 'sometimes|string|max:100',
             'stok_minimum' => 'sometimes|integer|min:0',
             'stok_sekarang' => 'sometimes|integer|min:0',
         ]);
 
         DB::beginTransaction();
         try {
-            $sparePart->update($request->only('kode_suku_cadang', 'nama_suku_cadang', 'kategori', 'harga_jual'));
+            $sparePart->update($request->only('kode_suku_cadang', 'nama_suku_cadang', 'kategori'));
 
             // Memperbarui stok jika ada request stok_sekarang atau stok_minimum
             $stockUpdates = [];
