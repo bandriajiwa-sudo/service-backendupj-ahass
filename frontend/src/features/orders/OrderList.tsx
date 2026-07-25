@@ -283,7 +283,7 @@ const OrderList: React.FC = () => {
                 <th>Status</th>
                 <th>Catatan (FO & Koperasi)</th>
                 {user?.role === "front_office" && <th>Aksi</th>}
-                {user?.role === "koperasi" && <th>Keputusan</th>}
+                {user?.role === "koperasi" && <th>Aksi</th>}
               </tr>
             </thead>
             <tbody>
@@ -381,6 +381,8 @@ const OrderList: React.FC = () => {
                           <div
                             style={{ fontSize: "0.85rem", color: "#64748b" }}
                           >
+                            <span style={{ fontWeight: 600 }}>Diputuskan:</span>
+                            <br />
                             {formatDate(o.tanggal_keputusan!)}
                           </div>
                         )}
