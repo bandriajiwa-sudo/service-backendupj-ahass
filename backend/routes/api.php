@@ -89,6 +89,8 @@ $apiRoutes = function () {
             Route::get('/stocks-minimum', [StockController::class, 'minimum']); // Special minimum readout
 
             Route::post('/spare-part-orders', [SparePartOrderController::class, 'store']);
+            Route::put('/spare-part-orders/{order}', [SparePartOrderController::class, 'update']);
+            Route::delete('/spare-part-orders/{order}', [SparePartOrderController::class, 'destroy']);
             Route::patch('/spare-part-receipts/{receipt}/verification', [SparePartReceiptController::class, 'verification']);
         });
 

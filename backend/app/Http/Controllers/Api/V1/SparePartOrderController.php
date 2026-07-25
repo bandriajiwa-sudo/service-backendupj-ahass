@@ -83,4 +83,47 @@ class SparePartOrderController extends Controller
             'data' => $order,
         ]);
     }
+
+    public function update(Request $request, SparePartOrder $order)
+    {
+        // Only allow editing orders that are still pending
+        if ($order->status->value !== OrderStatus::Menunggu->value) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order yang sudah diproses tidak bisa diedit.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'spare_part_id' => 'sometimes|exists:spare_parts,id',
+            'jumlah' => 'sometimes|integer|min:1',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $order->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order berhasil diperbarui.',
+            'data' => $order->fresh(['user', 'sparePart']),
+        ]);
+    }
+
+    public function destroy(SparePartOrder $order)
+    {
+        // Only allow deleting orders that are still pending
+        if ($order->status->value !== OrderStatus::Menunggu->value) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order yang sudah diproses tidak bisa dihapus.',
+            ], 422);
+        }
+
+        $order->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order berhasil dihapus.',
+        ]);
+    }
 }

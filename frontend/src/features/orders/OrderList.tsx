@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
-// lucide-react not used yet
+import { Trash2, Pencil } from "lucide-react";
 import Swal from "sweetalert2";
 import styles from "./OrderList.module.css";
 
@@ -32,6 +32,7 @@ const OrderList: React.FC = () => {
 
   // Creation State (For FO)
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editOrderId, setEditOrderId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     spare_part_id: "",
     jumlah: "1",
@@ -80,24 +81,82 @@ const OrderList: React.FC = () => {
         Swal.fire({ icon: "warning", text: "Lengkapi field wajib (*)" });
         return;
       }
-      await apiClient.post("/spare-part-orders", formData);
+
+      if (editOrderId) {
+        // UPDATE existing order
+        await apiClient.put(`/spare-part-orders/${editOrderId}`, formData);
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil Diperbarui",
+          text: "Order berhasil diperbarui.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        // CREATE new order
+        await apiClient.post("/spare-part-orders", formData);
+        Swal.fire({
+          icon: "success",
+          title: "Order Dikirim",
+          text: "Order logistik berhasil dibuat dan menunggu persetujuan koperasi.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+
       fetchOrders();
       setIsFormOpen(false);
+      setEditOrderId(null);
       setFormData({ spare_part_id: "", jumlah: "1", catatan: "" });
-      Swal.fire({
-        icon: "success",
-        title: "Order Dikirim",
-        text: "Order logistik berhasil dibuat dan menunggu persetujuan koperasi.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
     } catch (err: any) {
       console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Gagal membuat order",
+        title: "Gagal",
         text: err.response?.data?.message || err.message,
       });
+    }
+  };
+
+  const handleEditOrder = (o: Order) => {
+    setEditOrderId(o.id);
+    setFormData({
+      spare_part_id: String(o.spare_part?.id || ""),
+      jumlah: String(o.jumlah),
+      catatan: o.catatan || "",
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    const result = await Swal.fire({
+      title: "Hapus Order?",
+      text: "Order yang dihapus tidak bisa dikembalikan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f43f5e",
+      cancelButtonText: "Batal",
+      confirmButtonText: "Ya, Hapus!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiClient.delete(`/spare-part-orders/${orderId}`);
+        fetchOrders();
+        Swal.fire({
+          icon: "success",
+          title: "Dihapus",
+          text: "Order berhasil dihapus.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (err: any) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: err.response?.data?.message || "Gagal menghapus order.",
+        });
+      }
     }
   };
 
@@ -223,6 +282,7 @@ const OrderList: React.FC = () => {
                 <th>Qty</th>
                 <th>Status</th>
                 <th>Catatan (FO & Koperasi)</th>
+                {user?.role === "front_office" && <th>Aksi</th>}
                 {user?.role === "koperasi" && <th>Keputusan</th>}
               </tr>
             </thead>
@@ -230,7 +290,13 @@ const OrderList: React.FC = () => {
               {orders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={user?.role === "koperasi" ? 7 : 6}
+                    colSpan={
+                      user?.role === "koperasi"
+                        ? 7
+                        : user?.role === "front_office"
+                          ? 7
+                          : 6
+                    }
                     style={{
                       textAlign: "center",
                       padding: "30px",
@@ -266,6 +332,34 @@ const OrderList: React.FC = () => {
                     >
                       {o.catatan || "-"}
                     </td>
+                    {user?.role === "front_office" && (
+                      <td>
+                        {o.status === "menunggu" ? (
+                          <div className={styles.actionGroup}>
+                            <button
+                              className={styles.btnApprove}
+                              onClick={() => handleEditOrder(o)}
+                              title="Edit Order"
+                            >
+                              <Pencil size={14} /> Edit
+                            </button>
+                            <button
+                              className={styles.btnReject}
+                              onClick={() => handleDeleteOrder(o.id)}
+                              title="Hapus Order"
+                            >
+                              <Trash2 size={14} /> Hapus
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            style={{ fontSize: "0.85rem", color: "#94a3b8" }}
+                          >
+                            —
+                          </span>
+                        )}
+                      </td>
+                    )}
                     {user?.role === "koperasi" && (
                       <td>
                         {o.status === "menunggu" ? (
@@ -304,7 +398,9 @@ const OrderList: React.FC = () => {
       {isFormOpen && user?.role === "front_office" && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2 className={styles.modalTitle}>Buat Pengajuan Order</h2>
+            <h2 className={styles.modalTitle}>
+              {editOrderId ? "Edit Order" : "Buat Pengajuan Order"}
+            </h2>
             <form onSubmit={handleCreateOrder}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Suku Cadang *</label>
