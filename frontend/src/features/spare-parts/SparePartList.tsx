@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
+import { useAuth } from "../../app/AuthContext";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
 import styles from "./SparePartList.module.css";
@@ -17,8 +18,18 @@ interface SparePart {
 }
 
 const SparePartList: React.FC = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const [parts, setParts] = useState<SparePart[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // FO Order State
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [orderData, setOrderData] = useState({
+    spare_part_id: "",
+    jumlah: "1",
+    catatan: "",
+  });
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editPartId, setEditPartId] = useState<number | null>(null);
@@ -251,9 +262,13 @@ const SparePartList: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Master Suku Cadang</h1>
+        <h1 className={styles.pageTitle}>
+          {isAdmin ? "Master Suku Cadang" : "Informasi Stok"}
+        </h1>
         <p className={styles.pageSubtitle}>
-          Kelola referensi barang, harga jual, dan batas stok minimum
+          {isAdmin
+            ? "Kelola referensi barang, harga jual, dan batas stok minimum"
+            : "Informasi ketersediaan barang untuk mendukung operasional"}
         </p>
       </div>
 
@@ -298,9 +313,18 @@ const SparePartList: React.FC = () => {
           </div>
         </div>
 
-        <button className={styles.addBtn} onClick={handleToggleForm}>
-          + Tambah Suku Cadang
-        </button>
+        {isAdmin ? (
+          <button className={styles.addBtn} onClick={handleToggleForm}>
+            + Tambah Suku Cadang
+          </button>
+        ) : (
+          <button
+            className={styles.addBtn}
+            onClick={() => setIsOrderFormOpen(true)}
+          >
+            + Order Suku Cadang
+          </button>
+        )}
       </div>
 
       <div className={styles.tableCard}>
@@ -315,7 +339,7 @@ const SparePartList: React.FC = () => {
                 <th>Stok</th>
                 <th>Minimum</th>
                 <th>Status</th>
-                <th>Aksi</th>
+                {isAdmin && <th>Aksi</th>}
               </tr>
             </thead>
             <tbody>
@@ -354,22 +378,24 @@ const SparePartList: React.FC = () => {
                         p.stok_minimum || 0,
                       )}
                     </td>
-                    <td>
-                      <div className={styles.actionLinks}>
-                        <span
-                          className={styles.actionLink}
-                          onClick={() => handleEdit(p)}
-                        >
-                          Edit
-                        </span>
-                        <Trash2
-                          size={18}
-                          className={styles.actionIconDanger}
-                          onClick={() => handleDelete(p.id)}
-                          style={{ cursor: "pointer", color: "#f43f5e" }}
-                        />
-                      </div>
-                    </td>
+                    {isAdmin && (
+                      <td>
+                        <div className={styles.actionLinks}>
+                          <span
+                            className={styles.actionLink}
+                            onClick={() => handleEdit(p)}
+                          >
+                            Edit
+                          </span>
+                          <Trash2
+                            size={18}
+                            className={styles.actionIconDanger}
+                            onClick={() => handleDelete(p.id)}
+                            style={{ cursor: "pointer", color: "#f43f5e" }}
+                          />
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -516,6 +542,129 @@ const SparePartList: React.FC = () => {
                 onClick={handleSave}
               >
                 Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FO ORDER MODAL */}
+      {isOrderFormOpen && !isAdmin && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setIsOrderFormOpen(false)}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className={styles.panelTitle}>Order Suku Cadang</h2>
+            <p
+              style={{
+                color: "#64748b",
+                fontSize: "0.9rem",
+                marginBottom: "20px",
+              }}
+            >
+              Pilih suku cadang yang ingin di-order ke Koperasi untuk restok
+            </p>
+            <div className={styles.formGrid}>
+              <div
+                className={styles.formGroup}
+                style={{ gridColumn: "1 / -1" }}
+              >
+                <label className={styles.formLabel}>Nama Suku Cadang *</label>
+                <select
+                  className={styles.formSelect}
+                  value={orderData.spare_part_id}
+                  onChange={(e) =>
+                    setOrderData({
+                      ...orderData,
+                      spare_part_id: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Pilih suku cadang...</option>
+                  {parts.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.kode_suku_cadang} - {p.nama_suku_cadang}{" "}
+                      {(p.stok_sekarang || 0) <= (p.stok_minimum || 0)
+                        ? "(⚠️ STOK MINIMUM)"
+                        : `(Stok: ${p.stok_sekarang})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Jumlah Order *</label>
+                <input
+                  type="number"
+                  min="1"
+                  className={styles.formInput}
+                  value={orderData.jumlah}
+                  onChange={(e) =>
+                    setOrderData({ ...orderData, jumlah: e.target.value })
+                  }
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Catatan (Opsional)</label>
+                <input
+                  type="text"
+                  className={styles.formInput}
+                  placeholder="Mis: Stok darurat, tolong segera approve"
+                  value={orderData.catatan}
+                  onChange={(e) =>
+                    setOrderData({ ...orderData, catatan: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.btnCancel}
+                onClick={() => setIsOrderFormOpen(false)}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                className={styles.btnSave}
+                onClick={async () => {
+                  try {
+                    if (!orderData.spare_part_id || !orderData.jumlah) {
+                      Swal.fire({
+                        icon: "warning",
+                        text: "Lengkapi field wajib (*)",
+                      });
+                      return;
+                    }
+                    await apiClient.post("/spare-part-orders", orderData);
+                    setIsOrderFormOpen(false);
+                    setOrderData({
+                      spare_part_id: "",
+                      jumlah: "1",
+                      catatan: "",
+                    });
+                    Swal.fire({
+                      icon: "success",
+                      title: "Order Terkirim!",
+                      text: "Order suku cadang berhasil dikirim, menunggu persetujuan Koperasi.",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                  } catch (err: any) {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Gagal",
+                      text:
+                        err.response?.data?.message || "Gagal membuat order.",
+                    });
+                  }
+                }}
+              >
+                Kirim Order
               </button>
             </div>
           </div>
