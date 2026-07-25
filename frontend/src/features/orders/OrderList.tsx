@@ -281,11 +281,7 @@ const OrderList: React.FC = () => {
                 <th>Suku Cadang</th>
                 <th>Qty</th>
                 <th>Status</th>
-                <th>
-                  {user?.role === "front_office"
-                    ? "Catatan Koperasi"
-                    : "Catatan FO"}
-                </th>
+                <th>Catatan</th>
                 {user?.role === "front_office" && <th>Aksi</th>}
                 {user?.role === "koperasi" && <th>Aksi</th>}
               </tr>
@@ -328,15 +324,71 @@ const OrderList: React.FC = () => {
                     <td>{statusBadge(o.status)}</td>
                     <td
                       style={{
-                        maxWidth: "250px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        minWidth: "220px",
+                        maxWidth: "300px",
+                        whiteSpace: "normal",
                       }}
                     >
-                      {user?.role === "front_office"
-                        ? o.catatan_koperasi || "-"
-                        : o.catatan_fo || "-"}
+                      {!o.catatan_fo && !o.catatan_koperasi && (
+                        <span style={{ color: "#94a3b8" }}>-</span>
+                      )}
+
+                      {o.catatan_fo && (
+                        <div
+                          style={{
+                            marginBottom: o.catatan_koperasi ? "8px" : "0",
+                            backgroundColor: "#f8fafc",
+                            padding: "8px",
+                            borderRadius: "8px",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              fontWeight: 700,
+                              color: "#3b82f6",
+                              display: "block",
+                              marginBottom: "2px",
+                            }}
+                          >
+                            FRONT OFFICE:
+                          </span>
+                          <span
+                            style={{ fontSize: "0.85rem", color: "#334155" }}
+                          >
+                            {o.catatan_fo}
+                          </span>
+                        </div>
+                      )}
+
+                      {o.catatan_koperasi && (
+                        <div
+                          style={{
+                            backgroundColor: "#faf5ff",
+                            padding: "8px",
+                            borderRadius: "8px",
+                            border: "1px solid #e9d5ff",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              fontWeight: 700,
+                              color: "#9333ea",
+                              display: "block",
+                              marginBottom: "2px",
+                            }}
+                          >
+                            KOPERASI:
+                          </span>
+                          <span
+                            style={{ fontSize: "0.85rem", color: "#334155" }}
+                          >
+                            {o.catatan_koperasi}
+                          </span>
+                        </div>
+                      )}
                     </td>
                     {user?.role === "front_office" && (
                       <td>
