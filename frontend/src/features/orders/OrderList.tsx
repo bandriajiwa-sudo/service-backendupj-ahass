@@ -256,9 +256,9 @@ const OrderList: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Order Logistik & Restok</h1>
+          <h1 className={styles.pageTitle}>Dashboard Order Suku Cadang</h1>
           <p className={styles.pageSubtitle}>
-            Pantau dan kelola pengajuan pengadaan suku cadang
+            Pantau dan kelola pengadaan suku cadang
           </p>
         </div>
         {user?.role === "front_office" && (
@@ -347,7 +347,7 @@ const OrderList: React.FC = () => {
                               letterSpacing: "0.02em",
                             }}
                           >
-                            FRONT OFFICE:
+                            FrontOffice:
                           </span>
                           <span
                             style={{
@@ -381,7 +381,7 @@ const OrderList: React.FC = () => {
                               letterSpacing: "0.02em",
                             }}
                           >
-                            KOPERASI:
+                            Koperasi:
                           </span>
                           <span
                             style={{

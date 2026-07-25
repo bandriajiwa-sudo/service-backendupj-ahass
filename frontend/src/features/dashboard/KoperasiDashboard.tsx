@@ -98,7 +98,7 @@ const KoperasiDashboard: React.FC = () => {
           className={styles.pageSubtitle}
           style={{ fontSize: "1.3rem", marginTop: 0 }}
         >
-          Dashboard Pemantauan order dan penerimaan suku cadang
+          Dashboard Pemantauan Order dan Penerimaan Suku Cadang
         </h2>
       </div>
 
