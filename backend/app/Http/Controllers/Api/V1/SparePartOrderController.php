@@ -71,11 +71,17 @@ class SparePartOrderController extends Controller
             ], 422);
         }
 
-        $order->update([
+        $updateData = [
             'status' => $request->status,
-            'catatan' => $request->catatan,
             'tanggal_keputusan' => now(),
-        ]);
+        ];
+
+        // Hanya overwrite catatan jika Koperasi mengirim alasan (biasanya saat ditolak)
+        if ($request->filled('catatan')) {
+            $updateData['catatan'] = $request->catatan;
+        }
+
+        $order->update($updateData);
 
         return response()->json([
             'success' => true,
