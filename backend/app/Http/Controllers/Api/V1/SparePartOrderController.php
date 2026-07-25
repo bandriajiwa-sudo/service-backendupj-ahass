@@ -46,7 +46,7 @@ class SparePartOrderController extends Controller
             'spare_part_id' => $validated['spare_part_id'],
             'jumlah' => $validated['jumlah'],
             'status' => OrderStatus::Menunggu,
-            'catatan' => $validated['catatan'] ?? null,
+            'catatan_fo' => $validated['catatan'] ?? null,
         ]);
 
         return response()->json([
@@ -68,9 +68,9 @@ class SparePartOrderController extends Controller
             'tanggal_keputusan' => now(),
         ];
 
-        // Hanya overwrite catatan jika Koperasi mengirim alasan (biasanya saat ditolak)
+        // Hanya overwrite catatan_koperasi jika Koperasi mengirim alasan (biasanya saat ditolak)
         if ($request->filled('catatan')) {
-            $updateData['catatan'] = $request->catatan;
+            $updateData['catatan_koperasi'] = $request->catatan;
         }
 
         $order->update($updateData);
@@ -98,7 +98,15 @@ class SparePartOrderController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        $order->update($validated);
+        $updateData = [];
+        if (isset($validated['spare_part_id']))
+            $updateData['spare_part_id'] = $validated['spare_part_id'];
+        if (isset($validated['jumlah']))
+            $updateData['jumlah'] = $validated['jumlah'];
+        if (array_key_exists('catatan', $validated))
+            $updateData['catatan_fo'] = $validated['catatan'];
+
+        $order->update($updateData);
 
         return response()->json([
             'success' => true,

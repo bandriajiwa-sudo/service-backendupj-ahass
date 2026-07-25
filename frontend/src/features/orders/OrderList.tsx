@@ -20,7 +20,8 @@ interface Order {
   };
   jumlah: number;
   status: "menunggu" | "disetujui" | "ditolak";
-  catatan: string | null;
+  catatan_fo: string | null;
+  catatan_koperasi: string | null;
   created_at: string;
   tanggal_keputusan: string | null;
 }
@@ -131,7 +132,7 @@ const OrderList: React.FC = () => {
     setFormData({
       spare_part_id: String(o.spare_part?.id || ""),
       jumlah: String(o.jumlah),
-      catatan: o.catatan || "",
+      catatan: o.catatan_fo || "",
     });
     setIsFormOpen(true);
   };
@@ -172,7 +173,7 @@ const OrderList: React.FC = () => {
     setKoperasiData({
       id: o.id,
       status: o.status === "menunggu" ? "" : o.status,
-      catatan: o.catatan || "",
+      catatan: o.catatan_koperasi || "",
     });
     setIsKoperasiModalOpen(true);
   };
@@ -280,7 +281,11 @@ const OrderList: React.FC = () => {
                 <th>Suku Cadang</th>
                 <th>Qty</th>
                 <th>Status</th>
-                <th>Catatan (FO & Koperasi)</th>
+                <th>
+                  {user?.role === "front_office"
+                    ? "Catatan Koperasi"
+                    : "Catatan FO"}
+                </th>
                 {user?.role === "front_office" && <th>Aksi</th>}
                 {user?.role === "koperasi" && <th>Aksi</th>}
               </tr>
@@ -329,7 +334,9 @@ const OrderList: React.FC = () => {
                         textOverflow: "ellipsis",
                       }}
                     >
-                      {o.catatan || "-"}
+                      {user?.role === "front_office"
+                        ? o.catatan_koperasi || "-"
+                        : o.catatan_fo || "-"}
                     </td>
                     {user?.role === "front_office" && (
                       <td>
@@ -485,9 +492,7 @@ const OrderList: React.FC = () => {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  Catatan
-                </label>
+                <label className={styles.formLabel}>Catatan</label>
                 <textarea
                   className={styles.formInput}
                   style={{ minHeight: "80px", resize: "vertical" }}
