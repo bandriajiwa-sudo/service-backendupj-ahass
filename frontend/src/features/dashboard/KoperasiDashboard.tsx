@@ -403,7 +403,10 @@ const KoperasiDashboard: React.FC = () => {
                   })}
                 </td>
                 <td>{o.spare_part?.nama_suku_cadang}</td>
-                <td style={{ fontWeight: 600, textAlign: "right" }}>
+                <td
+                  className={styles.fontMono}
+                  style={{ fontWeight: 600, textAlign: "right" }}
+                >
                   {o.jumlah}
                 </td>
                 <td>{statusBadge(o)}</td>
