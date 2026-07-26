@@ -5,6 +5,7 @@ import {
   CheckCircle,
   XCircle,
   Eye,
+  Search,
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
@@ -351,91 +352,98 @@ const KoperasiDashboard: React.FC = () => {
 
         {/* Table Filters Integration */}
         <div className={styles.tableToolbar}>
-          <input
-            type="text"
-            placeholder="Cari No. FO atau Suku Cadang..."
-            className={styles.toolbarInput}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className={styles.toolbarSelect}
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="semua">Semua Status</option>
-            <option value="baru">Baru</option>
-            <option value="diproses">Sedang Diproses</option>
-            <option value="ditolak">Ditolak</option>
-            <option value="selesai">Selesai</option>
-          </select>
-          <input
-            type="date"
-            className={styles.toolbarInput}
-            style={{ width: "150px", minWidth: "150px" }}
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-          />
+          <div className={styles.searchGroup}>
+            <Search className={styles.searchIcon} size={18} />
+            <input
+              type="text"
+              placeholder="Cari No. FO atau Suku Cadang..."
+              className={styles.toolbarInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "12px" }}>
+            <select
+              className={styles.toolbarSelect}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="semua">Semua Status</option>
+              <option value="baru">Baru</option>
+              <option value="diproses">Sedang Diproses</option>
+              <option value="ditolak">Ditolak</option>
+              <option value="selesai">Selesai</option>
+            </select>
+            <input
+              type="date"
+              className={styles.toolbarInput}
+              style={{ width: "150px", minWidth: "150px" }}
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+            />
+          </div>
         </div>
 
-        <table className={styles.tableGroup}>
-          <thead>
-            <tr>
-              <th>No. Pengajuan (FO)</th>
-              <th>Tanggal</th>
-              <th>Suku Cadang</th>
-              <th style={{ textAlign: "right" }}>Total Qty</th>
-              <th>Status</th>
-              <th style={{ textAlign: "center", width: "100px" }}>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayedOrders.map((o) => (
-              <tr key={o.id}>
-                <td className={styles.fontMono} style={{ fontWeight: 600 }}>
-                  ORD-{String(o.id).padStart(5, "0")}
-                </td>
-                <td>
-                  {new Date(o.created_at).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </td>
-                <td>{o.spare_part?.nama_suku_cadang}</td>
-                <td
-                  className={styles.fontMono}
-                  style={{ fontWeight: 600, textAlign: "right" }}
-                >
-                  {o.jumlah}
-                </td>
-                <td>{statusBadge(o)}</td>
-                <td style={{ textAlign: "center" }}>
-                  <Link
-                    to="/koperasi/orders"
-                    className={styles.btnActionOutline}
-                  >
-                    <Eye size={16} /> Detail
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {displayedOrders.length === 0 && (
+        <div className={styles.tableWrapper}>
+          <table className={styles.tableGroup}>
+            <thead>
               <tr>
-                <td
-                  colSpan={6}
-                  style={{
-                    textAlign: "center",
-                    color: "#64748b",
-                    padding: "32px 0",
-                  }}
-                >
-                  Tidak ada order yang sesuai dengan filter.
-                </td>
+                <th>No. Pengajuan (FO)</th>
+                <th>Tanggal</th>
+                <th>Suku Cadang</th>
+                <th style={{ textAlign: "right" }}>Total Qty</th>
+                <th>Status</th>
+                <th style={{ textAlign: "center", width: "100px" }}>Aksi</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {displayedOrders.map((o) => (
+                <tr key={o.id}>
+                  <td className={styles.fontMono} style={{ fontWeight: 600 }}>
+                    ORD-{String(o.id).padStart(5, "0")}
+                  </td>
+                  <td>
+                    {new Date(o.created_at).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td>{o.spare_part?.nama_suku_cadang}</td>
+                  <td
+                    className={styles.fontMono}
+                    style={{ fontWeight: 600, textAlign: "right" }}
+                  >
+                    {o.jumlah}
+                  </td>
+                  <td>{statusBadge(o)}</td>
+                  <td style={{ textAlign: "center" }}>
+                    <Link
+                      to="/koperasi/orders"
+                      className={styles.btnActionOutline}
+                    >
+                      <Eye size={16} /> Detail
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {displayedOrders.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={6}
+                    style={{
+                      textAlign: "center",
+                      color: "#64748b",
+                      padding: "32px 0",
+                    }}
+                  >
+                    Tidak ada order yang sesuai dengan filter.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
