@@ -20,21 +20,38 @@
   margin-top: 4px;
 }
 
+.topSection {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 32px;
 }
 
 .metricCard {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  position: relative;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .metricHeader {
@@ -66,22 +83,85 @@
 .iconDarkBlue {
   background: #1e40af;
 }
+.iconRed {
+  background: #ef4444;
+}
+
+.trendBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.trendPositive {
+  background: #dcfce7;
+  color: #15803d;
+}
+.trendNegative {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.trendNeutral {
+  background: #f1f5f9;
+  color: #64748b;
+}
 
 .metricLabel {
   font-size: 0.85rem;
   font-weight: 600;
   color: #64748b;
 }
+
 .metricValue {
   font-size: 1.8rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
+
 .metricSubtext {
   font-size: 0.8rem;
   color: #94a3b8;
   margin-top: 4px;
+}
+
+.chartCard {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chartTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 16px 0;
+}
+
+.chartPlaceholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  gap: 8px;
 }
 
 .card {
@@ -90,7 +170,11 @@
   border: 1px solid #e2e8f0;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .cardTitle {
@@ -101,88 +185,149 @@
   margin-bottom: 16px;
 }
 
+.tableToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.toolbarInput {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  min-width: 200px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  color: #334155;
+  background: white;
+}
+
+.toolbarInput:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+}
+
+.toolbarSelect {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  color: #334155;
+  background: white;
+  cursor: pointer;
+}
+
 .tableGroup {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
+
 .tableGroup th {
   text-align: left;
   font-size: 0.85rem;
   color: #64748b;
-  padding: 12px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 16px;
+  border-bottom: 2px solid #f1f5f9;
+  font-weight: 600;
 }
+
 .tableGroup td {
-  padding: 16px 12px;
+  padding: 16px;
   font-size: 0.9rem;
   color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
 }
+
+/* Zebra / Hover Rows */
+.tableGroup tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
 .tableGroup tr:last-child td {
   border-bottom: none;
 }
 
+/* Badge Utilities (Tailwind Mapping) */
 .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 10px;
-  border-radius: 99px;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.badge::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
 .badgeBaru {
-  background: #ffedd5;
-  color: #c2410c;
+  background: #dbeafe; /* blue-100 */
+  color: #1d4ed8; /* blue-700 */
 }
-.badgeDiproses {
-  background: #e0f2fe;
-  color: #0369a1;
-}
-.badgeSelesai {
-  background: #dcfce7;
-  color: #15803d;
+.badgeBaru::before {
+  background: #3b82f6;
 }
 
-.btnOutline {
-  display: block;
-  width: max-content;
-  margin: 0 0 0 auto;
-  padding: 10px 24px;
-  border: 1px solid #3b82f6;
-  color: #3b82f6;
-  border-radius: 8px;
+.badgeDiproses {
+  background: #fef3c7; /* amber-100 */
+  color: #b45309; /* amber-700 */
+}
+.badgeDiproses::before {
+  background: #f59e0b;
+}
+
+.badgeSelesai {
+  background: #d1fae5; /* emerald-100 */
+  color: #047857; /* emerald-700 */
+}
+.badgeSelesai::before {
+  background: #10b981;
+}
+
+.badgeDitolak {
+  background: #ffe4e6; /* rose-100 */
+  color: #be123c; /* rose-700 */
+}
+.badgeDitolak::before {
+  background: #f43f5e;
+}
+
+/* Outlined Eye Icon Button */
+.btnActionOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #0ea5e9; /* sky-500 */
+  color: #0ea5e9;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   text-decoration: none;
-  background: white;
-  text-align: center;
+  background: transparent;
   transition: all 0.2s;
 }
 
-.btnOutline:hover {
-  background: #eff6ff;
-}
-
-.iconRed {
-  background: #ef4444;
-}
-
-.btnDetail {
-  display: inline-block;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.btnDetail:hover {
+.btnActionOutline:hover {
+  background: #e0f2fe; /* sky-100 */
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.btnDetail:active {
-  transform: translateY(0) scale(0.97);
+.btnActionOutline:active {
+  transform: translateY(0);
 }

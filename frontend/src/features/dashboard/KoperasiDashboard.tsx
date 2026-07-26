@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { FileText, Loader, CheckCircle, XCircle } from "lucide-react";
+import {
+  FileText,
+  Loader,
+  CheckCircle,
+  XCircle,
+  Eye,
+  TrendingUp,
+  BarChart3,
+  TrendingDown,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
 import styles from "./KoperasiDashboard.module.css";
@@ -110,54 +119,101 @@ const KoperasiDashboard: React.FC = () => {
         </h2>
       </div>
 
-      <div className={styles.metricsGrid}>
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
-              <FileText size={20} />
+      {/* 70/30 Grid Partition */}
+      <div className={styles.topSection}>
+        {/* Left Column: Stat Cards */}
+        <div className={styles.metricsGrid}>
+          <div className={styles.metricCard}>
+            <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
+              <TrendingUp size={12} /> +8%
             </div>
-            <span className={styles.metricLabel}>Order Baru</span>
+            <div className={styles.metricHeader}>
+              <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
+                <FileText size={20} />
+              </div>
+              <span className={styles.metricLabel}>Order Baru</span>
+            </div>
+            <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
+            <p className={styles.metricSubtext}>Menunggu diproses</p>
           </div>
-          <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
-          <p className={styles.metricSubtext}>Menunggu diproses</p>
+
+          <div className={styles.metricCard}>
+            <div className={`${styles.trendBadge} ${styles.trendNeutral}`}>
+              <TrendingUp size={12} /> 0%
+            </div>
+            <div className={styles.metricHeader}>
+              <div className={`${styles.iconWrapper} ${styles.iconLightBlue}`}>
+                <Loader size={20} />
+              </div>
+              <span className={styles.metricLabel}>Sedang Diproses</span>
+            </div>
+            <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
+            <p className={styles.metricSubtext}>Menunggu DO</p>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={`${styles.trendBadge} ${styles.trendNegative}`}>
+              <TrendingDown size={12} /> -2%
+            </div>
+            <div className={styles.metricHeader}>
+              <div className={`${styles.iconWrapper} ${styles.iconRed}`}>
+                <XCircle size={20} />
+              </div>
+              <span className={styles.metricLabel}>Order Ditolak</span>
+            </div>
+            <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
+            <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
+              <TrendingUp size={12} /> +14%
+            </div>
+            <div className={styles.metricHeader}>
+              <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
+                <CheckCircle size={20} />
+              </div>
+              <span className={styles.metricLabel}>Selesai Bulan Ini</span>
+            </div>
+            <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
+            <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
+          </div>
         </div>
 
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconLightBlue}`}>
-              <Loader size={20} />
-            </div>
-            <span className={styles.metricLabel}>Sedang Diproses</span>
+        {/* Right Column: Activity Summary / Mini Chart Tren */}
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Ringkasan Aktivitas</h3>
+          <div className={styles.chartPlaceholder}>
+            <BarChart3 size={32} />
+            <span>Tren Order Mingguan</span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
-          <p className={styles.metricSubtext}>Menunggu DO</p>
-        </div>
-
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconRed}`}>
-              <XCircle size={20} />
-            </div>
-            <span className={styles.metricLabel}>Order Ditolak</span>
-          </div>
-          <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
-          <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
-        </div>
-
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
-              <CheckCircle size={20} />
-            </div>
-            <span className={styles.metricLabel}>Selesai Bulan Ini</span>
-          </div>
-          <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
-          <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
         </div>
       </div>
 
       <div className={styles.card}>
         <h2 className={styles.cardTitle}>Order Terbaru</h2>
+
+        {/* Table Filters Integration */}
+        <div className={styles.tableToolbar}>
+          <input
+            type="text"
+            placeholder="Cari No. FO atau Suku Cadang..."
+            className={styles.toolbarInput}
+          />
+          <select className={styles.toolbarSelect}>
+            <option value="semua">Semua Status</option>
+            <option value="baru">Baru</option>
+            <option value="diproses">Sedang Diproses</option>
+            <option value="ditolak">Ditolak</option>
+            <option value="selesai">Selesai</option>
+          </select>
+          <input
+            type="date"
+            className={styles.toolbarInput}
+            style={{ width: "150px", minWidth: "150px" }}
+          />
+        </div>
+
         <table className={styles.tableGroup}>
           <thead>
             <tr>
@@ -188,8 +244,11 @@ const KoperasiDashboard: React.FC = () => {
                 </td>
                 <td>{statusBadge(o)}</td>
                 <td>
-                  <Link to="/koperasi/orders" className={styles.btnDetail}>
-                    Detail
+                  <Link
+                    to="/koperasi/orders"
+                    className={styles.btnActionOutline}
+                  >
+                    <Eye size={16} /> Detail
                   </Link>
                 </td>
               </tr>
