@@ -124,59 +124,67 @@ const KoperasiDashboard: React.FC = () => {
         {/* Left Column: Stat Cards */}
         <div className={styles.metricsGrid}>
           <div className={styles.metricCard}>
-            <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
-              <TrendingUp size={12} /> +8%
-            </div>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricTopRow}>
               <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
                 <FileText size={20} />
               </div>
-              <span className={styles.metricLabel}>Order Baru</span>
+              <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
+                <TrendingUp size={12} /> +8%
+              </div>
             </div>
-            <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
-            <p className={styles.metricSubtext}>Menunggu diproses</p>
+            <div className={styles.metricContent}>
+              <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
+              <span className={styles.metricLabel}>Order Baru</span>
+              <p className={styles.metricSubtext}>Menunggu diproses</p>
+            </div>
           </div>
 
           <div className={styles.metricCard}>
-            <div className={`${styles.trendBadge} ${styles.trendNeutral}`}>
-              <TrendingUp size={12} /> 0%
-            </div>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricTopRow}>
               <div className={`${styles.iconWrapper} ${styles.iconLightBlue}`}>
                 <Loader size={20} />
               </div>
-              <span className={styles.metricLabel}>Sedang Diproses</span>
+              <div className={`${styles.trendBadge} ${styles.trendNeutral}`}>
+                <TrendingUp size={12} /> 0%
+              </div>
             </div>
-            <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
-            <p className={styles.metricSubtext}>Menunggu DO</p>
+            <div className={styles.metricContent}>
+              <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
+              <span className={styles.metricLabel}>Sedang Diproses</span>
+              <p className={styles.metricSubtext}>Menunggu DO</p>
+            </div>
           </div>
 
           <div className={styles.metricCard}>
-            <div className={`${styles.trendBadge} ${styles.trendNegative}`}>
-              <TrendingDown size={12} /> -2%
-            </div>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricTopRow}>
               <div className={`${styles.iconWrapper} ${styles.iconRed}`}>
                 <XCircle size={20} />
               </div>
-              <span className={styles.metricLabel}>Order Ditolak</span>
+              <div className={`${styles.trendBadge} ${styles.trendNegative}`}>
+                <TrendingDown size={12} /> -2%
+              </div>
             </div>
-            <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
-            <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
+            <div className={styles.metricContent}>
+              <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
+              <span className={styles.metricLabel}>Order Ditolak</span>
+              <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
+            </div>
           </div>
 
           <div className={styles.metricCard}>
-            <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
-              <TrendingUp size={12} /> +14%
-            </div>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricTopRow}>
               <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
                 <CheckCircle size={20} />
               </div>
-              <span className={styles.metricLabel}>Selesai Bulan Ini</span>
+              <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
+                <TrendingUp size={12} /> +14%
+              </div>
             </div>
-            <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
-            <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
+            <div className={styles.metricContent}>
+              <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
+              <span className={styles.metricLabel}>Selesai Bulan Ini</span>
+              <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
+            </div>
           </div>
         </div>
 

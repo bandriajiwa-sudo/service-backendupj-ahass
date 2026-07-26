@@ -54,6 +54,19 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* Stacked Layout Support */
+.metricTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.metricContent {
+  display: flex;
+  flex-direction: column;
+}
+
 .metricHeader {
   display: flex;
   align-items: center;
@@ -88,16 +101,14 @@
 }
 
 .trendBadge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  height: max-content;
 }
 
 .trendPositive {
@@ -117,13 +128,15 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #64748b;
+  margin-top: 4px;
 }
 
 .metricValue {
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #0f172a;
   margin: 0;
+  line-height: 1;
 }
 
 .metricSubtext {
