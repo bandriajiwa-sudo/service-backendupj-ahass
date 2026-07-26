@@ -16,7 +16,7 @@ const ParticleNetwork: React.FC = () => {
     if (!ctx) return;
 
     let particlesArray: Particle[] = [];
-    const colors = ["#cbd5e1", "#94a3b8", "#64748b"];
+    const colors = ["#0f2c4a", "#1d4ed8", "#38bdf8"]; // Navy, Blue, Light Blue
 
     // Resize canvas
     const setCanvasSize = () => {
@@ -37,9 +37,9 @@ const ParticleNetwork: React.FC = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
+        this.size = Math.random() * 3 + 1.5; // Slightly larger nodes
+        this.speedX = Math.random() * 1.5 - 0.75; // Slightly faster network
+        this.speedY = Math.random() * 1.5 - 0.75;
         this.color = colors[Math.floor(Math.random() * colors.length)];
       }
       update() {
@@ -61,8 +61,9 @@ const ParticleNetwork: React.FC = () => {
 
     const init = () => {
       particlesArray = [];
+      // Increase density by dividing by a smaller number
       const numberOfParticles = Math.floor(
-        (canvas.width * canvas.height) / 14000,
+        (canvas.width * canvas.height) / 7000,
       );
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new Particle());
@@ -80,10 +81,11 @@ const ParticleNetwork: React.FC = () => {
           const dy = particlesArray[i].y - particlesArray[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
+          // Increase connection distance radius
+          if (distance < 160) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(148, 163, 184, ${1 - distance / 120})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(15, 44, 74, ${0.8 - distance / 160})`;
+            ctx.lineWidth = 1; // Thicker lines
             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
             ctx.stroke();
