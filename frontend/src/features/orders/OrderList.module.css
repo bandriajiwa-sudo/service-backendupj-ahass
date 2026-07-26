@@ -1,6 +1,6 @@
 /* OrderList.module.css — Premium Dashboard */
 .container {
-  padding: 16px 24px; /* tighter container padding */
+  padding: 0;
   min-height: 100%;
 }
 
@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 2px;
 }
 
 .searchGroup {
