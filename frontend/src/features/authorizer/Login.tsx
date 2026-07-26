@@ -5,6 +5,110 @@ import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./Login.module.css";
+// Dynamic Particle Network Background Component
+const ParticleNetwork: React.FC = () => {
+  useEffect(() => {
+    const canvas = document.getElementById(
+      "particleCanvas",
+    ) as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let particlesArray: Particle[] = [];
+    const colors = ["#cbd5e1", "#94a3b8", "#64748b"];
+
+    // Resize canvas
+    const setCanvasSize = () => {
+      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+    };
+    window.addEventListener("resize", setCanvasSize);
+    setCanvasSize();
+
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Bounce edges
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    const init = () => {
+      particlesArray = [];
+      const numberOfParticles = Math.floor(
+        (canvas.width * canvas.height) / 14000,
+      );
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    };
+
+    const handleParticles = () => {
+      if (!ctx) return;
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+
+        for (let j = i; j < particlesArray.length; j++) {
+          const dx = particlesArray[i].x - particlesArray[j].x;
+          const dy = particlesArray[i].y - particlesArray[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(148, 163, 184, ${1 - distance / 120})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+            ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    const animate = () => {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      handleParticles();
+      requestAnimationFrame(animate);
+    };
+
+    init();
+    animate();
+
+    return () => {
+      window.removeEventListener("resize", setCanvasSize);
+    };
+  }, []);
+
+  return <canvas id="particleCanvas" className={styles.particleCanvas} />;
+};
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -128,6 +232,8 @@ const Login: React.FC = () => {
 
       {/* RIGHT PANEL - Login Form */}
       <div className={styles.rightPanel}>
+        <ParticleNetwork />
+
         <div className={styles.loginCard}>
           <div className={styles.cardHeader}>
             <h2>Masuk ke Sistem</h2>
