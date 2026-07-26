@@ -65,14 +65,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
     } else if (role === "koperasi") {
       menu.push({ path: "orders", icon: FileText, label: "Order Suku Cadang" });
       menu.push({
-        path: "penerimaan",
-        icon: Package,
-        label: "Penerimaan Suku Cadang",
-      });
-      menu.push({
         path: "riwayat-penerimaan",
         icon: FileText,
-        label: "Riwayat Penerimaan",
+        label: "Penerimaan Suku Cadang",
       });
     } else if (role === "kepala_upj") {
       menu.push({

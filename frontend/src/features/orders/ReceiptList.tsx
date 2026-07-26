@@ -222,7 +222,9 @@ const ReceiptList: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Log Penerimaan Suku Cadang</h1>
+          <h1 className={styles.pageTitle}>
+            Konfirmasi Penerimaan Suku Cadang
+          </h1>
           <p className={styles.pageSubtitle}>
             Catat kedatangan logistik gudang & verifikasi final stok
           </p>
@@ -340,7 +342,7 @@ const ReceiptList: React.FC = () => {
       {isFormOpen && user?.role === "koperasi" && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2 className={styles.modalTitle}>Catat Penerimaan Surat DO</h2>
+            <h2 className={styles.modalTitle}>Catat Penerimaan</h2>
             <form onSubmit={handleCreateReceipt}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>
@@ -451,7 +453,7 @@ const ReceiptList: React.FC = () => {
                   Batal
                 </button>
                 <button type="submit" className={styles.btnPrimary}>
-                  Tandai Siap Verifikasi
+                  Simpan Penerimaan
                 </button>
               </div>
             </form>
