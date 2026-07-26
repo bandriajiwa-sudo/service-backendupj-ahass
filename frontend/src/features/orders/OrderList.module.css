@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px; /* tightened space */
+  margin-bottom: 24px;
 }
 
 .pageTitle {
@@ -97,7 +97,7 @@
 }
 
 .table td {
-  padding: 14px; /* tighter cells */
+  padding: 12px 16px;
   font-size: 0.88rem;
   color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
@@ -135,15 +135,78 @@
 }
 
 .badgeDisetujui {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
+  box-shadow: 0 1px 3px rgba(14, 165, 233, 0.12);
+}
+
+.badgeSelesai {
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   color: #15803d;
   box-shadow: 0 1px 3px rgba(22, 163, 74, 0.12);
 }
 
 .badgeDitolak {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #b91c1c;
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  color: #991b1b;
   box-shadow: 0 1px 3px rgba(220, 38, 38, 0.12);
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.searchGroup {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.toolbarInput {
+  padding: 0 14px 0 38px;
+  height: 38px;
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  transition: all 0.2s;
+  outline: none;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toolbarSelect {
+  padding: 0 14px;
+  height: 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  transition: all 0.2s;
+  outline: none;
+  background: white;
+  cursor: pointer;
+  min-width: 160px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toolbarInput:focus,
+.toolbarSelect:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 /* ── Action Buttons ── */
@@ -157,8 +220,8 @@
 
 .btnApprove,
 .btnReject {
-  padding: 7px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
   border: none;

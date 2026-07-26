@@ -224,27 +224,24 @@ const KoperasiDashboard: React.FC = () => {
         </div>
 
         {/* Right Column: Activity Summary / Mini Chart Tren */}
-        <div
-          className={styles.chartCard}
-          style={{ flex: 1, display: "flex", flexDirection: "column" }}
-        >
-          <h3 className={styles.chartTitle}>Ringkasan Aktivitas</h3>
+        <div className={styles.chartCard}>
+          <h3
+            className={styles.chartTitle}
+            style={{ marginBottom: "12px", fontSize: "1rem" }}
+          >
+            Ringkasan Aktivitas
+          </h3>
 
           <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-              marginTop: "16px",
-            }}
+            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
           >
             <div>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "8px",
-                  fontSize: "0.85rem",
+                  marginBottom: "4px",
+                  fontSize: "0.8rem",
                   fontWeight: 600,
                 }}
               >
@@ -257,8 +254,8 @@ const KoperasiDashboard: React.FC = () => {
                 style={{
                   width: "100%",
                   background: "#f1f5f9",
-                  borderRadius: "8px",
-                  height: "8px",
+                  borderRadius: "4px",
+                  height: "6px",
                   overflow: "hidden",
                 }}
               >
@@ -267,7 +264,7 @@ const KoperasiDashboard: React.FC = () => {
                     width: `${Math.min((metrics.selesaiBulanIni / Math.max(allOrders.length, 1)) * 100, 100)}%`,
                     background: "#10b981",
                     height: "100%",
-                    borderRadius: "8px",
+                    borderRadius: "4px",
                     transition: "width 0.5s ease",
                   }}
                 ></div>
@@ -279,13 +276,13 @@ const KoperasiDashboard: React.FC = () => {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "8px",
-                  fontSize: "0.85rem",
+                  marginBottom: "4px",
+                  fontSize: "0.8rem",
                   fontWeight: 600,
                 }}
               >
                 <span>Sedang Diproses (DO)</span>
-                <span style={{ color: "#0284c7" }}>
+                <span style={{ color: "#0ea5e9" }}>
                   {metrics.sedangDiproses}
                 </span>
               </div>
@@ -293,8 +290,8 @@ const KoperasiDashboard: React.FC = () => {
                 style={{
                   width: "100%",
                   background: "#f1f5f9",
-                  borderRadius: "8px",
-                  height: "8px",
+                  borderRadius: "4px",
+                  height: "6px",
                   overflow: "hidden",
                 }}
               >
@@ -303,7 +300,7 @@ const KoperasiDashboard: React.FC = () => {
                     width: `${Math.min((metrics.sedangDiproses / Math.max(allOrders.length, 1)) * 100, 100)}%`,
                     background: "#0ea5e9",
                     height: "100%",
-                    borderRadius: "8px",
+                    borderRadius: "4px",
                     transition: "width 0.5s ease",
                   }}
                 ></div>
@@ -315,13 +312,13 @@ const KoperasiDashboard: React.FC = () => {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginBottom: "8px",
-                  fontSize: "0.85rem",
+                  marginBottom: "4px",
+                  fontSize: "0.8rem",
                   fontWeight: 600,
                 }}
               >
                 <span>Order Baru / Ditolak</span>
-                <span style={{ color: "#be123c" }}>
+                <span style={{ color: "#e11d48" }}>
                   {metrics.orderBaru + metrics.orderDitolak}
                 </span>
               </div>
@@ -329,17 +326,17 @@ const KoperasiDashboard: React.FC = () => {
                 style={{
                   width: "100%",
                   background: "#f1f5f9",
-                  borderRadius: "8px",
-                  height: "8px",
+                  borderRadius: "4px",
+                  height: "6px",
                   overflow: "hidden",
                 }}
               >
                 <div
                   style={{
                     width: `${Math.min(((metrics.orderBaru + metrics.orderDitolak) / Math.max(allOrders.length, 1)) * 100, 100)}%`,
-                    background: "#f43f5e",
+                    background: "#e11d48",
                     height: "100%",
-                    borderRadius: "8px",
+                    borderRadius: "4px",
                     transition: "width 0.5s ease",
                   }}
                 ></div>

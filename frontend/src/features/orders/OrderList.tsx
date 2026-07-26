@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, Search } from "lucide-react";
 import Swal from "sweetalert2";
 import styles from "./OrderList.module.css";
 
@@ -30,6 +30,11 @@ const OrderList: React.FC = () => {
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [spareParts, setSpareParts] = useState<SparePart[]>([]);
+
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("semua");
+  const [filterDate, setFilterDate] = useState("");
 
   // Creation State (For FO)
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -219,7 +224,7 @@ const OrderList: React.FC = () => {
   const statusBadge = (o: any) => {
     if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
       return (
-        <span className={`${styles.badge} ${styles.badgeDisetujui}`}>
+        <span className={`${styles.badge} ${styles.badgeSelesai}`}>
           Selesai
         </span>
       );
@@ -260,6 +265,32 @@ const OrderList: React.FC = () => {
     }).format(new Date(ds));
   };
 
+  const displayedOrders = orders.filter((o: any) => {
+    // 1. Search
+    const searchLow = searchTerm.toLowerCase();
+    const namaSuku = (o.spare_part?.nama_suku_cadang || "").toLowerCase();
+    const sub = (o.user?.nama_user || "").toLowerCase();
+    if (searchTerm && !namaSuku.includes(searchLow) && !sub.includes(searchLow))
+      return false;
+
+    // 2. Status
+    if (filterStatus !== "semua") {
+      let derived = o.status;
+      if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
+        derived = "selesai";
+      }
+      if (filterStatus !== derived) return false;
+    }
+
+    // 3. Date
+    if (filterDate) {
+      const dbDate = new Date(o.created_at).toISOString().split("T")[0];
+      if (dbDate !== filterDate) return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
@@ -280,6 +311,42 @@ const OrderList: React.FC = () => {
       </div>
 
       <div className={styles.tableCard}>
+        <div
+          className={styles.toolbar}
+          style={{ margin: "16px 20px 4px 20px" }}
+        >
+          <div className={styles.searchGroup}>
+            <Search className={styles.searchIcon} size={18} />
+            <input
+              type="text"
+              placeholder="Cari suku cadang atau pengaju..."
+              className={styles.toolbarInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "12px" }}>
+            <select
+              className={styles.toolbarSelect}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="semua">Semua Status</option>
+              <option value="menunggu">Menunggu</option>
+              <option value="disetujui">Disetujui</option>
+              <option value="ditolak">Ditolak</option>
+              <option value="selesai">Selesai</option>
+            </select>
+            <input
+              type="date"
+              className={styles.toolbarInput}
+              style={{ width: "150px" }}
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
@@ -315,7 +382,7 @@ const OrderList: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                orders.map((o) => (
+                displayedOrders.map((o) => (
                   <tr key={o.id}>
                     <td>{formatDate(o.created_at)}</td>
                     <td style={{ fontWeight: 500 }}>

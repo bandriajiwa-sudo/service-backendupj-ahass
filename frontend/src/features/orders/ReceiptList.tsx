@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
+import { Search } from "lucide-react";
 import styles from "./ReceiptList.module.css";
 
 interface SparePart {
@@ -37,6 +38,11 @@ const ReceiptList: React.FC = () => {
   const { user } = useAuth();
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [approvedOrders, setApprovedOrders] = useState<Order[]>([]);
+
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("semua");
+  const [filterDate, setFilterDate] = useState("");
 
   // Creation State (For Koperasi)
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -218,6 +224,28 @@ const ReceiptList: React.FC = () => {
     }).format(new Date(ds));
   };
 
+  const displayedReceipts = receipts.filter((r) => {
+    // 1. Search (Nama suku cadang or pembuat order)
+    const suku = (
+      r.spare_part_order?.spare_part?.nama_suku_cadang || ""
+    ).toLowerCase();
+    const sub = (r.spare_part_order?.user?.nama_user || "").toLowerCase();
+    const s = searchTerm.toLowerCase();
+    if (searchTerm && !suku.includes(s) && !sub.includes(s)) return false;
+
+    // 2. Status
+    if (filterStatus !== "semua" && r.status_verifikasi !== filterStatus)
+      return false;
+
+    // 3. Date
+    if (filterDate) {
+      const dbDate = new Date(r.created_at).toISOString().split("T")[0];
+      if (dbDate !== filterDate) return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
@@ -240,6 +268,41 @@ const ReceiptList: React.FC = () => {
       </div>
 
       <div className={styles.tableCard}>
+        <div
+          className={styles.toolbar}
+          style={{ margin: "16px 20px 4px 20px" }}
+        >
+          <div className={styles.searchGroup}>
+            <Search className={styles.searchIcon} size={18} />
+            <input
+              type="text"
+              placeholder="Cari suku cadang atau pengaju..."
+              className={styles.toolbarInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "12px" }}>
+            <select
+              className={styles.toolbarSelect}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="semua">Semua Status</option>
+              <option value="disetujui">Stok Masuk Lunas</option>
+              <option value="menunggu">Tahap Verifikasi</option>
+              <option value="ditolak">Batal Verifikasi</option>
+            </select>
+            <input
+              type="date"
+              className={styles.toolbarInput}
+              style={{ width: "150px" }}
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
@@ -273,7 +336,7 @@ const ReceiptList: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                receipts.map((r) => (
+                displayedReceipts.map((r) => (
                   <tr key={r.id}>
                     <td>{formatDate(r.created_at)}</td>
                     <td>
