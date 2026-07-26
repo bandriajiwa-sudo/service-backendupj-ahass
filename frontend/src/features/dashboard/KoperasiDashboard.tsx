@@ -6,7 +6,6 @@ import {
   XCircle,
   Eye,
   TrendingUp,
-  BarChart3,
   TrendingDown,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -21,7 +20,12 @@ const KoperasiDashboard: React.FC = () => {
     selesaiBulanIni: 0,
   });
 
-  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [allOrders, setAllOrders] = useState<any[]>([]);
+
+  // Filters State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("semua");
+  const [filterDate, setFilterDate] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -67,11 +71,42 @@ const KoperasiDashboard: React.FC = () => {
         selesaiBulanIni,
       });
 
-      setRecentOrders(orders.slice(0, 5)); // First 5 orders
+      setAllOrders(orders);
     } catch (err) {
       console.error(err);
     }
   };
+
+  const displayedOrders = allOrders.filter((o: any) => {
+    // 1. Search (ID or Part Name)
+    const idStr = `ORD-${String(o.id).padStart(5, "0")}`.toLowerCase();
+    const namaSuku = (o.spare_part?.nama_suku_cadang || "").toLowerCase();
+    const s = searchTerm.toLowerCase();
+    if (s && !idStr.includes(s) && !namaSuku.includes(s)) return false;
+
+    // 2. Status
+    if (filterStatus !== "semua") {
+      let derived = "";
+      if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
+        derived = "selesai";
+      } else if (o.status === "menunggu") {
+        derived = "baru";
+      } else if (o.status === "disetujui") {
+        derived = "diproses";
+      } else if (o.status === "ditolak") {
+        derived = "ditolak";
+      }
+      if (filterStatus !== derived) return false;
+    }
+
+    // 3. Date
+    if (filterDate) {
+      const dbDate = new Date(o.created_at).toISOString().split("T")[0];
+      if (dbDate !== filterDate) return false;
+    }
+
+    return true;
+  });
 
   const statusBadge = (o: any) => {
     // Check if fully verified by FO
@@ -189,11 +224,127 @@ const KoperasiDashboard: React.FC = () => {
         </div>
 
         {/* Right Column: Activity Summary / Mini Chart Tren */}
-        <div className={styles.chartCard}>
+        <div
+          className={styles.chartCard}
+          style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        >
           <h3 className={styles.chartTitle}>Ringkasan Aktivitas</h3>
-          <div className={styles.chartPlaceholder}>
-            <BarChart3 size={32} />
-            <span>Tren Order Mingguan</span>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              marginTop: "16px",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                }}
+              >
+                <span>Order Selesai Lunas</span>
+                <span style={{ color: "#047857" }}>
+                  {metrics.selesaiBulanIni}
+                </span>
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  background: "#f1f5f9",
+                  borderRadius: "8px",
+                  height: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min((metrics.selesaiBulanIni / Math.max(allOrders.length, 1)) * 100, 100)}%`,
+                    background: "#10b981",
+                    height: "100%",
+                    borderRadius: "8px",
+                    transition: "width 0.5s ease",
+                  }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                }}
+              >
+                <span>Sedang Diproses (DO)</span>
+                <span style={{ color: "#0284c7" }}>
+                  {metrics.sedangDiproses}
+                </span>
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  background: "#f1f5f9",
+                  borderRadius: "8px",
+                  height: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min((metrics.sedangDiproses / Math.max(allOrders.length, 1)) * 100, 100)}%`,
+                    background: "#0ea5e9",
+                    height: "100%",
+                    borderRadius: "8px",
+                    transition: "width 0.5s ease",
+                  }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                }}
+              >
+                <span>Order Baru / Ditolak</span>
+                <span style={{ color: "#be123c" }}>
+                  {metrics.orderBaru + metrics.orderDitolak}
+                </span>
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  background: "#f1f5f9",
+                  borderRadius: "8px",
+                  height: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${Math.min(((metrics.orderBaru + metrics.orderDitolak) / Math.max(allOrders.length, 1)) * 100, 100)}%`,
+                    background: "#f43f5e",
+                    height: "100%",
+                    borderRadius: "8px",
+                    transition: "width 0.5s ease",
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -207,8 +358,14 @@ const KoperasiDashboard: React.FC = () => {
             type="text"
             placeholder="Cari No. FO atau Suku Cadang..."
             className={styles.toolbarInput}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <select className={styles.toolbarSelect}>
+          <select
+            className={styles.toolbarSelect}
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
             <option value="semua">Semua Status</option>
             <option value="baru">Baru</option>
             <option value="diproses">Sedang Diproses</option>
@@ -219,6 +376,8 @@ const KoperasiDashboard: React.FC = () => {
             type="date"
             className={styles.toolbarInput}
             style={{ width: "150px", minWidth: "150px" }}
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
           />
         </div>
 
@@ -234,7 +393,7 @@ const KoperasiDashboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {recentOrders.map((o) => (
+            {displayedOrders.map((o) => (
               <tr key={o.id}>
                 <td style={{ fontWeight: 600 }}>
                   ORD-{String(o.id).padStart(5, "0")}
@@ -261,13 +420,17 @@ const KoperasiDashboard: React.FC = () => {
                 </td>
               </tr>
             ))}
-            {recentOrders.length === 0 && (
+            {displayedOrders.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
-                  style={{ textAlign: "center", color: "#64748b" }}
+                  colSpan={6}
+                  style={{
+                    textAlign: "center",
+                    color: "#64748b",
+                    padding: "32px 0",
+                  }}
                 >
-                  Semua order selesai.
+                  Tidak ada order yang sesuai dengan filter.
                 </td>
               </tr>
             )}
