@@ -347,40 +347,42 @@ const KoperasiDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.card}>
-        <h2 className={styles.cardTitle}>Order Terbaru</h2>
+      <div className={styles.tableCard}>
+        <div style={{ padding: "20px 24px 0" }}>
+          <h2 className={styles.cardTitle}>Order Terbaru</h2>
 
-        {/* Table Filters Integration */}
-        <div className={styles.tableToolbar}>
-          <div className={styles.searchGroup}>
-            <Search className={styles.searchIcon} size={18} />
-            <input
-              type="text"
-              placeholder="Cari No. FO atau Suku Cadang..."
-              className={styles.toolbarInput}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div style={{ display: "flex", gap: "12px" }}>
-            <select
-              className={styles.toolbarSelect}
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="semua">Semua Status</option>
-              <option value="baru">Baru</option>
-              <option value="diproses">Sedang Diproses</option>
-              <option value="ditolak">Ditolak</option>
-              <option value="selesai">Selesai</option>
-            </select>
-            <input
-              type="date"
-              className={styles.toolbarInput}
-              style={{ width: "150px", minWidth: "150px" }}
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-            />
+          {/* Table Filters Integration */}
+          <div className={styles.tableToolbar}>
+            <div className={styles.searchGroup}>
+              <Search className={styles.searchIcon} size={18} />
+              <input
+                type="text"
+                placeholder="Cari No. FO atau Suku Cadang..."
+                className={styles.toolbarInput}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <select
+                className={styles.toolbarSelect}
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="semua">Semua Status</option>
+                <option value="baru">Baru</option>
+                <option value="diproses">Sedang Diproses</option>
+                <option value="ditolak">Ditolak</option>
+                <option value="selesai">Selesai</option>
+              </select>
+              <input
+                type="date"
+                className={styles.toolbarInput}
+                style={{ width: "150px", minWidth: "150px" }}
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
@@ -420,7 +422,7 @@ const KoperasiDashboard: React.FC = () => {
                   <td style={{ textAlign: "center" }}>
                     <Link
                       to="/koperasi/orders"
-                      className={styles.btnActionOutline}
+                      className={styles.btnActionSolid}
                     >
                       <Eye size={16} /> Detail
                     </Link>

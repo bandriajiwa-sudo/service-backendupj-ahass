@@ -262,6 +262,23 @@
   padding-right: 2.5rem;
 }
 
+.tableCard {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.25s ease;
+}
+
+.tableCard:hover {
+  box-shadow:
+    0 8px 30px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
 .tableWrapper {
   width: 100%;
   overflow-x: auto;
@@ -351,15 +368,15 @@
   box-shadow: 0 1px 3px rgba(220, 38, 38, 0.12);
 }
 
-/* Outlined Eye Icon Button */
-.btnActionOutline {
+/* Outlined Eye Icon Button -> Solid Pill Button */
+.btnActionSolid {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   padding: 6px 14px;
-  background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
-  color: #2b6cb0;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -369,7 +386,7 @@
   white-space: nowrap;
 }
 
-.btnActionOutline:hover {
+.btnActionSolid:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(43, 108, 176, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
