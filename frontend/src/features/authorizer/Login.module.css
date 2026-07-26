@@ -12,19 +12,49 @@
 .leftPanel {
   flex: 1;
   background-color: #0f2c4a;
-  background-image:
-    linear-gradient(to bottom, rgba(15, 44, 74, 0.85), rgba(15, 44, 74, 0.98)),
-    url("/gambar_blpt.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   color: white;
-  padding: 60px 80px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.videoBackground {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 0;
+}
+
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 44, 74, 0.82),
+    rgba(15, 44, 74, 0.98)
+  );
+  z-index: 1;
+}
+
+.leftPanelContent {
+  position: relative;
+  z-index: 2;
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
 }
 
 .brandLogo {
