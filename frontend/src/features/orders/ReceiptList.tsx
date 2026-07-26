@@ -247,14 +247,20 @@ const ReceiptList: React.FC = () => {
                 <th>Qty Diterima / Diorder</th>
                 <th>Status (Koperasi)</th>
                 <th>Catatan Verifikasi</th>
-                {user?.role === "koperasi" && <th>Aksi Verifikasi</th>}
+                {(user?.role === "front_office" || user?.role === "admin") && (
+                  <th>Aksi Verifikasi</th>
+                )}
               </tr>
             </thead>
             <tbody>
               {receipts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={user?.role === "koperasi" ? 6 : 5}
+                    colSpan={
+                      user?.role === "front_office" || user?.role === "admin"
+                        ? 6
+                        : 5
+                    }
                     style={{
                       textAlign: "center",
                       padding: "30px",
@@ -295,7 +301,8 @@ const ReceiptList: React.FC = () => {
                     >
                       {r.catatan || "-"}
                     </td>
-                    {user?.role === "koperasi" && (
+                    {(user?.role === "front_office" ||
+                      user?.role === "admin") && (
                       <td>
                         {r.status_verifikasi === "menunggu" ? (
                           <div className={styles.actionGroup}>
