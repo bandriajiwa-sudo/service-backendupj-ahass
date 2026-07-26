@@ -15,9 +15,11 @@
   margin: 0;
 }
 .pageSubtitle {
-  font-size: 0.95rem;
-  color: #64748b;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #334155;
   margin-top: 4px;
+  margin-bottom: 24px;
 }
 
 .topSection {
@@ -54,17 +56,17 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Stacked Layout Support */
 .metricTopRow {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .metricContent {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .metricHeader {
@@ -127,22 +129,22 @@
 .metricLabel {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #64748b;
-  margin-top: 4px;
+  color: #475569;
 }
 
 .metricValue {
-  font-size: 1.8rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   color: #0f172a;
   margin: 0;
-  line-height: 1;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .metricSubtext {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #94a3b8;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .chartCard {
@@ -206,34 +208,37 @@
   flex-wrap: wrap;
 }
 
-.toolbarInput {
-  padding: 8px 12px;
+.toolbarInput,
+.toolbarSelect {
+  padding: 0 12px;
+  height: 38px;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
   outline: none;
-  min-width: 200px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-  color: #334155;
+  min-width: 180px;
+  transition: all 0.2s;
+  color: #1e293b;
   background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
 }
 
-.toolbarInput:focus {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+.toolbarInput:focus,
+.toolbarSelect:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .toolbarSelect {
-  padding: 8px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  outline: none;
-  color: #334155;
-  background: white;
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
 }
 
 .tableGroup {
@@ -252,7 +257,7 @@
 }
 
 .tableGroup td {
-  padding: 16px;
+  padding: 12px 16px;
   font-size: 0.9rem;
   color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
@@ -262,10 +267,18 @@
 /* Zebra / Hover Rows */
 .tableGroup tbody tr:hover td {
   background-color: #f8fafc;
+  cursor: pointer;
 }
 
 .tableGroup tr:last-child td {
   border-bottom: none;
+}
+
+.fontMono {
+  font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+  color: #475569;
+  letter-spacing: 0.05em;
 }
 
 /* Badge Utilities (Tailwind Mapping) */
@@ -323,24 +336,18 @@
 .btnActionOutline {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid #0ea5e9; /* sky-500 */
-  color: #0ea5e9;
-  border-radius: 6px;
+  padding: 6px 14px;
+  color: #2563eb; /* blue-600 */
+  background: transparent;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   text-decoration: none;
-  background: transparent;
   transition: all 0.2s;
 }
 
 .btnActionOutline:hover {
-  background: #e0f2fe; /* sky-100 */
-  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.15);
-  transform: translateY(-1px);
-}
-
-.btnActionOutline:active {
-  transform: translateY(0);
+  background: #eff6ff; /* blue-50 */
 }

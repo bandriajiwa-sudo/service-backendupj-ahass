@@ -389,13 +389,13 @@ const KoperasiDashboard: React.FC = () => {
               <th>Suku Cadang</th>
               <th style={{ textAlign: "right" }}>Total Qty</th>
               <th>Status</th>
-              <th>Aksi</th>
+              <th style={{ textAlign: "center", width: "100px" }}>Aksi</th>
             </tr>
           </thead>
           <tbody>
             {displayedOrders.map((o) => (
               <tr key={o.id}>
-                <td style={{ fontWeight: 600 }}>
+                <td className={styles.fontMono} style={{ fontWeight: 600 }}>
                   ORD-{String(o.id).padStart(5, "0")}
                 </td>
                 <td>
@@ -410,7 +410,7 @@ const KoperasiDashboard: React.FC = () => {
                   {o.jumlah}
                 </td>
                 <td>{statusBadge(o)}</td>
-                <td>
+                <td style={{ textAlign: "center" }}>
                   <Link
                     to="/koperasi/orders"
                     className={styles.btnActionOutline}
