@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FileText, Loader, CheckCircle, Package, XCircle } from "lucide-react";
+import { FileText, Loader, CheckCircle, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
 import styles from "./KoperasiDashboard.module.css";
@@ -10,7 +10,6 @@ const KoperasiDashboard: React.FC = () => {
     sedangDiproses: 0,
     orderDitolak: 0,
     selesaiBulanIni: 0,
-    penerimaanHariIni: 0,
   });
 
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
@@ -23,9 +22,6 @@ const KoperasiDashboard: React.FC = () => {
     try {
       const ordersRes = await apiClient.get("/spare-part-orders");
       const orders = ordersRes.data.data;
-
-      const receiptsRes = await apiClient.get("/spare-part-receipts");
-      const receipts = receiptsRes.data.data;
 
       // Calculate Metrics
       const orderBaru = orders.filter(
@@ -55,17 +51,11 @@ const KoperasiDashboard: React.FC = () => {
             o.spare_part_receipt.status_verifikasi !== "disetujui"),
       ).length;
 
-      const today = new Date().toISOString().split("T")[0];
-      const penerimaanHariIni = receipts.filter((r: any) =>
-        r.created_at.startsWith(today),
-      ).length;
-
       setMetrics({
         orderBaru,
         sedangDiproses,
         orderDitolak,
         selesaiBulanIni,
-        penerimaanHariIni,
       });
 
       setRecentOrders(orders.slice(0, 5)); // First 5 orders
@@ -163,17 +153,6 @@ const KoperasiDashboard: React.FC = () => {
           </div>
           <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
           <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
-        </div>
-
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconDarkBlue}`}>
-              <Package size={20} />
-            </div>
-            <span className={styles.metricLabel}>Total Item Diterima</span>
-          </div>
-          <h3 className={styles.metricValue}>{metrics.penerimaanHariIni}</h3>
-          <p className={styles.metricSubtext}>Barang Masuk Gudang hari ini</p>
         </div>
       </div>
 
