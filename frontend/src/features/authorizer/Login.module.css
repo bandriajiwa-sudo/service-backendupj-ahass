@@ -10,7 +10,7 @@
 
 /* LEFT PANEL */
 .leftPanel {
-  flex: 1;
+  flex: 6;
   background-color: #0f2c4a;
   color: white;
   display: flex;
@@ -41,8 +41,8 @@
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(15, 44, 74, 0.82),
-    rgba(15, 44, 74, 0.98)
+    rgba(15, 44, 74, 0.4),
+    rgba(15, 44, 74, 0.7)
   );
   z-index: 1;
 }
@@ -139,7 +139,7 @@
 
 /* RIGHT PANEL */
 .rightPanel {
-  flex: 1;
+  flex: 4;
   background-color: #f8fafc;
   display: flex;
   align-items: center;
@@ -165,12 +165,24 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
   padding: 50px;
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   opacity: 0;
-  animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 0.3s;
+  transform: perspective(1200px) rotateX(12deg) translateY(40px) scale(0.95);
+  animation: cardEntrance3D 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.2s;
   position: relative;
   z-index: 10;
+}
+
+@keyframes cardEntrance3D {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(12deg) translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1);
+  }
 }
 
 .cardHeader {
@@ -192,6 +204,36 @@
 
 .formGroup {
   margin-bottom: 22px;
+  opacity: 0;
+  animation: inputStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.formGroup:nth-child(1) {
+  animation-delay: 0.5s;
+}
+.formGroup:nth-child(2) {
+  animation-delay: 0.65s;
+}
+.optionsRow {
+  animation-delay: 0.8s;
+  opacity: 0;
+  animation: inputStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.loginCard button[type="submit"] {
+  animation-delay: 0.95s;
+  opacity: 0;
+  animation: inputStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes inputStagger {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .formGroup label {
