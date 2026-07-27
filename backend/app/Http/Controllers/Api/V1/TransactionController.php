@@ -144,4 +144,20 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    public function print(Transaction $transaction)
+    {
+        // Eager load everything needed for the nota
+        $transaction->load(['transactionServices.mechanic', 'transactionSpareParts.sparePart', 'user']);
+
+        // Default paper is A4, but for thermal we use custom size in pt.
+        // 58mm is ~164.4pt width.
+        $pdf = Pdf::loadView('pdf.nota', ['transaction' => $transaction])
+                  ->setPaper([0, 0, 164.4, 2000], 'portrait');
+
+        $fileName = $transaction->no_nota . '.pdf';
+        
+        // Return inline stream back to browser window
+        return $pdf->stream($fileName);
+    }
 }

@@ -114,11 +114,11 @@
             <td>:</td>
             <td>{{ $transaction->user->name ?? '-' }}</td>
         </tr>
-        @if($transaction->services->count() > 0)
+        @if($transaction->transactionServices->count() > 0)
             <tr>
                 <td>Mekanik</td>
                 <td>:</td>
-                <td>{{ $transaction->services->first()->mechanic->nama_mekanik ?? '-' }}</td>
+                <td>{{ $transaction->transactionServices->first()->mechanic->nama_mekanik ?? '-' }}</td>
             </tr>
         @endif
     </table>
@@ -136,7 +136,7 @@
 
     <!-- Services -->
     <div style="font-size: 10px;">
-        @foreach($transaction->services as $svc)
+        @foreach($transaction->transactionServices as $svc)
             <div class="item-row">
                 <span class="item-name">{{ $svc->nama_jasa }}</span>
                 <table>
@@ -150,14 +150,14 @@
         @endforeach
 
         <!-- Spare Parts -->
-        @foreach($transaction->spareParts as $part)
+        @foreach($transaction->transactionSpareParts as $part)
             <div class="item-row">
-                <span class="item-name">{{ $part->part->nama_suku_cadang ?? '-' }}</span>
+                <span class="item-name">{{ $part->sparePart->nama_suku_cadang ?? '-' }}</span>
                 <table>
                     <tr>
                         <td width="30%">{{ $part->jumlah }}</td>
                         <td width="40%" class="text-right">{{ number_format($part->harga_satuan, 0, ',', '.') }}</td>
-                        <td width="30%" class="text-right">{{ number_format($part->subtotal, 0, ',', '.') }}</td>
+                        <td width="30%" class="text-right">{{ number_format($part->total_harga, 0, ',', '.') }}</td>
                     </tr>
                 </table>
             </div>
@@ -170,19 +170,25 @@
     <table style="font-size: 10px; margin-top: 4px;">
         <tr>
             <td width="60%">Subtotal (Jasa)</td>
-            <td width="40%" class="text-right">Rp {{ number_format($transaction->total_biaya_jasa, 0, ',', '.') }}</td>
+            <td width="40%" class="text-right">Rp
+                {{ number_format($transaction->transactionServices->sum('biaya_jasa'), 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>Subtotal (Parts)</td>
-            <td class="text-right">Rp {{ number_format($transaction->total_biaya_parts, 0, ',', '.') }}</td>
+            <td class="text-right">Rp
+                {{ number_format($transaction->transactionSpareParts->sum('total_harga'), 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>Total</td>
-            <td class="text-right">Rp {{ number_format($transaction->total_jasa_part, 0, ',', '.') }}</td>
+            <td class="text-right">Rp
+                {{ number_format($transaction->transactionServices->sum('biaya_jasa') + $transaction->transactionSpareParts->sum('total_harga'), 0, ',', '.') }}
+            </td>
         </tr>
         <tr>
             <td class="font-bold">Total Pembayaran</td>
-            <td class="text-right font-bold">Rp {{ number_format($transaction->total_jasa_part, 0, ',', '.') }}</td>
+            <td class="text-right font-bold">Rp
+                {{ number_format($transaction->transactionServices->sum('biaya_jasa') + $transaction->transactionSpareParts->sum('total_harga'), 0, ',', '.') }}
+            </td>
         </tr>
         <tr>
             <td>Payment Method</td>
