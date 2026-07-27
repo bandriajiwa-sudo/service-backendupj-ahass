@@ -227,8 +227,16 @@ const FODashboard: React.FC = () => {
                   }}
                 />
                 <Legend
-                  wrapperStyle={{ paddingTop: "20px" }}
+                  verticalAlign="top"
+                  align="right"
                   iconType="circle"
+                  iconSize={10}
+                  wrapperStyle={{
+                    paddingBottom: "20px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "#1e293b",
+                  }}
                 />
                 {chartCategory === "Semua" ||
                 chartCategory === "Jasa Service" ? (
@@ -256,78 +264,82 @@ const FODashboard: React.FC = () => {
         </div>
 
         {/* Right Side: Stock Warnings */}
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>
+        <div className={`${styles.card} ${styles.cardAlertContainer}`}>
+          <h2 className={styles.cardTitle} style={{ flexShrink: 0 }}>
             Notifikasi Suku Cadang Dibawah Batas Minimum
           </h2>
-          <div className={styles.stockGrid}>
-            {criticalStocks.map((p) => (
-              <div key={p.id} className={styles.stockAlertCard}>
-                <div className={styles.stockAlertHeader}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <AlertTriangle size={18} color="#ef4444" />
-                    <h4
+          <div className={styles.scrollableAlertList}>
+            <div className={styles.stockGrid}>
+              {criticalStocks.map((p) => (
+                <div key={p.id} className={styles.stockAlertCard}>
+                  <div className={styles.stockAlertHeader}>
+                    <div
                       style={{
-                        margin: 0,
-                        fontSize: "0.9rem",
-                        color: "#0f172a",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
                       }}
                     >
-                      {p.nama_suku_cadang}
-                    </h4>
+                      <AlertTriangle size={17} color="#ef4444" />
+                      <h4
+                        style={{
+                          margin: 0,
+                          fontSize: "0.9rem",
+                          color: "#0f172a",
+                        }}
+                      >
+                        {p.nama_suku_cadang}
+                      </h4>
+                    </div>
+                  </div>
+                  <div className={styles.stockAlertBody}>
+                    Stok:{" "}
+                    <strong style={{ color: "#ef4444" }}>
+                      {p.stock?.stok_sekarang}
+                    </strong>{" "}
+                    <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+                      / min {p.stock?.stok_minimum}
+                    </span>
                   </div>
                 </div>
-                <div className={styles.stockAlertBody}>
-                  Stok:{" "}
-                  <strong style={{ color: "#ef4444" }}>
-                    {p.stock?.stok_sekarang}
-                  </strong>{" "}
-                  <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
-                    / min {p.stock?.stok_minimum}
-                  </span>
-                </div>
-              </div>
-            ))}
-            {criticalStocks.length === 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "40px 20px",
-                  textAlign: "center",
-                  backgroundColor: "#f0fdf4",
-                  borderRadius: "12px",
-                  border: "1px dashed #bbf7d0",
-                  marginTop: "12px",
-                }}
-              >
-                <CheckCircle
-                  size={48}
-                  color="#16a34a"
-                  style={{ marginBottom: "16px" }}
-                />
-                <h4
+              ))}
+              {criticalStocks.length === 0 && (
+                <div
                   style={{
-                    margin: "0 0 8px 0",
-                    color: "#166534",
-                    fontSize: "1.1rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "40px 20px",
+                    textAlign: "center",
+                    backgroundColor: "#f0fdf4",
+                    borderRadius: "12px",
+                    border: "1px dashed #bbf7d0",
+                    marginTop: "12px",
                   }}
                 >
-                  Stok Terkendali
-                </h4>
-                <p style={{ margin: 0, color: "#15803d", fontSize: "0.9rem" }}>
-                  Semua suku cadang berada di atas batas minimum.
-                </p>
-              </div>
-            )}
+                  <CheckCircle
+                    size={48}
+                    color="#16a34a"
+                    style={{ marginBottom: "16px" }}
+                  />
+                  <h4
+                    style={{
+                      margin: "0 0 8px 0",
+                      color: "#166534",
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    Stok Terkendali
+                  </h4>
+                  <p
+                    style={{ margin: 0, color: "#15803d", fontSize: "0.9rem" }}
+                  >
+                    Semua suku cadang berada di atas batas minimum.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

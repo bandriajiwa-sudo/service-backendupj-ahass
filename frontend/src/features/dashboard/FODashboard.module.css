@@ -132,6 +132,28 @@
   margin-bottom: 24px;
 }
 
+.cardAlertContainer {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+}
+
+.scrollableAlertList {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 8px;
+}
+
+.scrollableAlertList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableAlertList::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
 .tableGroup {
   width: 100%;
   border-collapse: collapse;
