@@ -88,7 +88,8 @@
 
 .formGroup input,
 .formGroup select {
-  padding: 10px 14px;
+  padding: 6px 10px;
+  height: 34px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -130,31 +131,22 @@
   background: #f0f9ff;
 }
 
-.dataTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
+/* Grid Layout Wrapper */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: 16px;
+  align-items: start;
 }
 
-.dataTable th {
-  background-color: #f8fafc;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
-  padding: 10px 12px;
-  text-align: left;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.dataTable td {
-  padding: 12px;
-  font-size: 0.85rem;
-  color: #475569;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* Summary Card */
+/* Summary Card Override */
 .cardSummary {
   background: white;
   border-radius: 12px;
@@ -162,76 +154,158 @@
   border: 1px solid #f1f5f9;
   padding: 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
 }
 
-.summaryLeft {
-  display: flex;
-  gap: 12px;
-}
-
-.btnDraft {
-  background: white;
-  color: #0284c7;
-  border: 1px solid #cbd5e1;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btnCetak {
-  background: #0ea5e9;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btnBatal {
-  background: #f8fafc;
-  color: #64748b;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.summaryRight {
+.summaryStack {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-width: 300px;
 }
 
 .summaryRow {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.85rem;
   color: #64748b;
+  font-weight: 500;
+}
+
+.summaryRow span:last-child {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.inputMini {
+  width: 90px;
+  padding: 4px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-align: right;
+  height: 28px;
+}
+
+.summaryDivider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 8px 0;
 }
 
 .summaryTotal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1e293b;
-  padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.totalLabel {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f2c4a;
 }
 
 .totalValue {
   font-size: 1.5rem;
-  color: #0284c7;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.paymentMethod {
+  margin-bottom: 24px;
+}
+
+.paymentLabel {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #1e293b;
+  flex-wrap: wrap;
+}
+
+.radioGroup label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.summaryActionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btnDraft,
+.btnCetak,
+.btnBatal,
+.btnPending {
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+}
+
+.btnDraft {
+  background: #e2e8f0;
+  color: #475569;
+  grid-column: span 1;
+}
+
+.btnCetak {
+  background: #0f172a;
+  color: white;
+  grid-column: span 1;
+}
+
+.btnBatal {
+  background: white;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  grid-column: span 1;
+}
+
+.btnPending {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  grid-column: span 2;
+}
+
+/* Ensure data table is extremely clean matching Shadcn */
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.dataTable th {
+  background-color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dataTable td {
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 /* Response Overrides */

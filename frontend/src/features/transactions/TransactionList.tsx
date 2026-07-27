@@ -310,211 +310,264 @@ const TransactionList: React.FC = () => {
           </div>
         </div>
 
-        {/* DETAIL JASA SERVIS */}
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Detail Jasa Servis</h2>
-          <div className={styles.formGridDynamic}>
-            <div className={styles.formGroup}>
-              <label>Jenis Jasa *</label>
-              <input
-                type="text"
-                placeholder="Pilih layanan jasa"
-                value={jasaForm.nama_jasa}
-                onChange={(e) =>
-                  setJasaForm({ ...jasaForm, nama_jasa: e.target.value })
-                }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Mekanik *</label>
-              <select
-                value={jasaForm.id_mekanik}
-                onChange={(e) =>
-                  setJasaForm({ ...jasaForm, id_mekanik: e.target.value })
-                }
-              >
-                <option value="">Pilih mekanik</option>
-                {mechanics.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nama_mekanik}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.formGroup}>
-              <label>Keterangan</label>
-              <input
-                type="text"
-                placeholder="Catatan..."
-                value={jasaForm.keterangan}
-                onChange={(e) =>
-                  setJasaForm({ ...jasaForm, keterangan: e.target.value })
-                }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Harga Jasa *</label>
-              <input
-                type="number"
-                placeholder="Rp0"
-                value={jasaForm.biaya_jasa}
-                onChange={(e) =>
-                  setJasaForm({ ...jasaForm, biaya_jasa: e.target.value })
-                }
-              />
-            </div>
-          </div>
-
-          <div className={styles.btnActionRight}>
-            <button className={styles.btnAddOutline} onClick={addJasa}>
-              + Tambah Jasa
-            </button>
-          </div>
-
-          {jasaList.length > 0 && (
-            <table className={styles.dataTable}>
-              <thead>
-                <tr>
-                  <th>Jasa</th>
-                  <th>Mekanik</th>
-                  <th>Keterangan</th>
-                  <th>Harga</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jasaList.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{item.nama_jasa}</td>
-                    <td>{item.nama_mekanik}</td>
-                    <td>{item.keterangan}</td>
-                    <td>{formatIDR(item.biaya_jasa)}</td>
-                    <td>{formatIDR(item.subtotal)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {/* DETAIL SUKU CADANG */}
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Detail Suku Cadang</h2>
-          <div className={styles.formGridDynamic}>
-            <div className={styles.formGroup}>
-              <label>Suku Cadang *</label>
-              <select
-                value={partForm.id_master_suku_cadang}
-                onChange={handlePartSelect}
-              >
-                <option value="">Cari kode atau nama barang</option>
-                {spareParts.map((p) => (
-                  <option
-                    key={p.id}
-                    value={p.id}
-                    disabled={p.stok_sekarang <= 0}
+        <div className={styles.dashboardGrid}>
+          <div className={styles.leftColumn}>
+            {/* DETAIL JASA SERVIS */}
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>Detail Jasa Servis</h2>
+              <div className={styles.formGridDynamic}>
+                <div className={styles.formGroup}>
+                  <label>Jenis Jasa *</label>
+                  <input
+                    type="text"
+                    placeholder="Pilih layanan jasa"
+                    value={jasaForm.nama_jasa}
+                    onChange={(e) =>
+                      setJasaForm({ ...jasaForm, nama_jasa: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Mekanik *</label>
+                  <select
+                    value={jasaForm.id_mekanik}
+                    onChange={(e) =>
+                      setJasaForm({ ...jasaForm, id_mekanik: e.target.value })
+                    }
                   >
-                    {p.nama_suku_cadang}
-                  </option>
-                ))}
-              </select>
+                    <option value="">Pilih mekanik</option>
+                    {mechanics.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.nama_mekanik}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Keterangan</label>
+                  <input
+                    type="text"
+                    placeholder="Catatan..."
+                    value={jasaForm.keterangan}
+                    onChange={(e) =>
+                      setJasaForm({ ...jasaForm, keterangan: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Harga Jasa *</label>
+                  <input
+                    type="number"
+                    placeholder="Rp0"
+                    value={jasaForm.biaya_jasa}
+                    onChange={(e) =>
+                      setJasaForm({ ...jasaForm, biaya_jasa: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={styles.btnActionRight}>
+                <button className={styles.btnAddOutline} onClick={addJasa}>
+                  + Tambah Jasa
+                </button>
+              </div>
+
+              {jasaList.length > 0 && (
+                <table className={styles.dataTable}>
+                  <thead>
+                    <tr>
+                      <th>Jasa</th>
+                      <th>Mekanik</th>
+                      <th>Keterangan</th>
+                      <th>Harga</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jasaList.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.nama_jasa}</td>
+                        <td>{item.nama_mekanik}</td>
+                        <td>{item.keterangan}</td>
+                        <td>{formatIDR(item.biaya_jasa)}</td>
+                        <td>{formatIDR(item.subtotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
-            <div className={styles.formGroup}>
-              <label>Stok Tersedia</label>
-              <input
-                type="text"
-                disabled
-                value={
-                  partForm.stok_tersedia ? partForm.stok_tersedia + " pcs" : ""
-                }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Jumlah *</label>
-              <input
-                type="number"
-                min="1"
-                value={partForm.qty}
-                onChange={(e) =>
-                  setPartForm({ ...partForm, qty: e.target.value })
-                }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Harga Jual</label>
-              <input
-                type="text"
-                disabled
-                value={
-                  partForm.harga_jual
-                    ? formatIDR(parseFloat(partForm.harga_jual))
-                    : "Rp0"
-                }
-              />
+
+            {/* DETAIL SUKU CADANG */}
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>Detail Suku Cadang</h2>
+              <div className={styles.formGridDynamic}>
+                <div className={styles.formGroup}>
+                  <label>Suku Cadang *</label>
+                  <select
+                    value={partForm.id_master_suku_cadang}
+                    onChange={handlePartSelect}
+                  >
+                    <option value="">Cari kode atau nama barang</option>
+                    {spareParts.map((p) => (
+                      <option
+                        key={p.id}
+                        value={p.id}
+                        disabled={p.stok_sekarang <= 0}
+                      >
+                        {p.nama_suku_cadang}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Stok Tersedia</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={
+                      partForm.stok_tersedia
+                        ? partForm.stok_tersedia + " pcs"
+                        : ""
+                    }
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Jumlah *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={partForm.qty}
+                    onChange={(e) =>
+                      setPartForm({ ...partForm, qty: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Harga Jual</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={
+                      partForm.harga_jual
+                        ? formatIDR(parseFloat(partForm.harga_jual))
+                        : "Rp0"
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className={styles.btnActionRight}>
+                <button className={styles.btnAddOutline} onClick={addPart}>
+                  + Tambah Barang
+                </button>
+              </div>
+
+              {partList.length > 0 && (
+                <table className={styles.dataTable}>
+                  <thead>
+                    <tr>
+                      <th>Suku Cadang</th>
+                      <th>Stok</th>
+                      <th>Qty</th>
+                      <th>Harga</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {partList.map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.nama_suku_cadang}</td>
+                        <td>{item.stok_tersedia}</td>
+                        <td>{item.qty}</td>
+                        <td>{formatIDR(item.harga_satuan)}</td>
+                        <td>{formatIDR(item.subtotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 
-          <div className={styles.btnActionRight}>
-            <button className={styles.btnAddOutline} onClick={addPart}>
-              + Tambah Barang
-            </button>
-          </div>
+          <div className={styles.rightColumn}>
+            {/* RINGKASAN TRANSAKSI */}
+            <div className={styles.cardSummary}>
+              <h2 className={styles.cardTitle}>RANGKUMAN TRANSAKSI</h2>
+              <div className={styles.summaryStack}>
+                <div className={styles.summaryRow}>
+                  <span>Subtotal (Jasa)</span>
+                  <span>{formatIDR(subtotalJasa)}</span>
+                </div>
+                <div className={styles.summaryRow}>
+                  <span>Subtotal (Parts)</span>
+                  <span>{formatIDR(subtotalPart)}</span>
+                </div>
+                <div className={styles.summaryRow}>
+                  <span>Total Tax (VAT 11%)</span>
+                  <span>Rp 0</span>
+                </div>
+                <div className={styles.summaryRow}>
+                  <span>Diskon</span>
+                  <input
+                    type="text"
+                    placeholder="Diskon"
+                    className={styles.inputMini}
+                    disabled
+                  />
+                </div>
 
-          {partList.length > 0 && (
-            <table className={styles.dataTable}>
-              <thead>
-                <tr>
-                  <th>Suku Cadang</th>
-                  <th>Stok</th>
-                  <th>Qty</th>
-                  <th>Harga</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {partList.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{item.nama_suku_cadang}</td>
-                    <td>{item.stok_tersedia}</td>
-                    <td>{item.qty}</td>
-                    <td>{formatIDR(item.harga_satuan)}</td>
-                    <td>{formatIDR(item.subtotal)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+                <hr className={styles.summaryDivider} />
 
-        {/* RINGKASAN TRANSAKSI */}
-        <div className={styles.cardSummary}>
-          <div className={styles.summaryLeft}>
-            <button className={styles.btnDraft}>Simpan Draft</button>
-            <button className={styles.btnCetak} onClick={handleCheckout}>
-              Simpan & Cetak Nota
-            </button>
-            <button
-              className={styles.btnBatal}
-              onClick={() => {
-                setJasaList([]);
-                setPartList([]);
-              }}
-            >
-              Batal
-            </button>
-          </div>
-          <div className={styles.summaryRight}>
-            <div className={styles.summaryRow}>
-              <span>Subtotal Jasa</span>
-              <span>{formatIDR(subtotalJasa)}</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span>Subtotal Suku Cadang</span>
-              <span>{formatIDR(subtotalPart)}</span>
-            </div>
-            <div className={styles.summaryTotal}>
-              <span>Total Transaksi</span>
-              <span className={styles.totalValue}>{formatIDR(grandTotal)}</span>
+                <div className={styles.summaryTotal}>
+                  <span className={styles.totalLabel}>TOTAL TAGIHAN</span>
+                  <span className={styles.totalValue}>
+                    {formatIDR(grandTotal)}
+                  </span>
+                </div>
+
+                <div className={styles.paymentMethod}>
+                  <span className={styles.paymentLabel}>Payment Method</span>
+                  <div className={styles.radioGroup}>
+                    <label>
+                      <input type="radio" name="payment" defaultChecked /> Cash
+                    </label>
+                    <label>
+                      <input type="radio" name="payment" /> Card
+                    </label>
+                    <label>
+                      <input type="radio" name="payment" /> Qris
+                    </label>
+                    <label>
+                      <input type="radio" name="payment" /> Transfer
+                    </label>
+                  </div>
+                </div>
+
+                <div className={styles.summaryActionGrid}>
+                  <button className={styles.btnDraft} type="button">
+                    SIMPAN DRAFT
+                  </button>
+                  <button
+                    className={styles.btnCetak}
+                    type="button"
+                    onClick={handleCheckout}
+                  >
+                    SIMPAN & CETAK NOTA
+                  </button>
+                  <button
+                    className={styles.btnBatal}
+                    type="button"
+                    onClick={() => {
+                      setJasaList([]);
+                      setPartList([]);
+                    }}
+                  >
+                    BATAL
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
