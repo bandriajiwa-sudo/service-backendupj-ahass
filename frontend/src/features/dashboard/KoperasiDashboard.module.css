@@ -328,12 +328,24 @@
   font-weight: 600;
 }
 
-.badgeBaru,
-.badgeDiproses,
-.badgeSelesai,
-.badgeDitolak {
+.badgeBaru {
   background: #f1f5f9;
-  color: #0f172a;
+  color: #475569;
+}
+
+.badgeDiproses {
+  background: #fef3c7; /* amber-50 */
+  color: #b45309; /* amber-700 */
+}
+
+.badgeSelesai {
+  background: #ecfdf5; /* emerald-50 */
+  color: #047857; /* emerald-700 */
+}
+
+.badgeDitolak {
+  background: #fef2f2; /* red-50 */
+  color: #b91c1c; /* red-700 */
 }
 
 /* Shadcn Primary Action Button */
