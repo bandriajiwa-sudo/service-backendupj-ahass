@@ -173,15 +173,16 @@
 
 .loginCard {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-  padding: 50px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  padding: 40px;
   width: 100%;
-  max-width: 480px;
+  max-width: 400px;
   opacity: 0;
   transform: perspective(1200px) rotateX(12deg) translateY(40px) scale(0.95);
-  animation: cardEntrance3D 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 0.2s;
+  animation:
+    cardEntrance3D 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    floatCard 6s ease-in-out infinite 1.2s;
   position: relative;
   z-index: 10;
 }
@@ -194,6 +195,18 @@
   100% {
     opacity: 1;
     transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes floatCard {
+  0%,
+  100% {
+    transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    transform: perspective(1200px) rotateX(0deg) translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(2, 132, 199, 0.15);
   }
 }
 
