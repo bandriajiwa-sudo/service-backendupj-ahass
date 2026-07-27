@@ -302,20 +302,39 @@ const FODashboard: React.FC = () => {
                 }}
               >
                 <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    overflow: "hidden",
+                    flex: 1,
+                  }}
                 >
-                  <AlertTriangle size={15} color="#ef4444" />
+                  <div style={{ flexShrink: 0 }}>
+                    <AlertTriangle size={16} color="#ef4444" />
+                  </div>
                   <span
                     style={{
-                      fontSize: "0.9rem",
-                      color: "#334155",
+                      fontSize: "0.875rem",
+                      color: "#1f2937",
                       fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {p.nama_suku_cadang}
                   </span>
                 </div>
-                <div style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                <div
+                  style={{
+                    flexShrink: 0,
+                    textAlign: "right",
+                    whiteSpace: "nowrap",
+                    fontSize: "0.75rem",
+                    color: "#64748b",
+                  }}
+                >
                   Stok:{" "}
                   <span
                     style={{

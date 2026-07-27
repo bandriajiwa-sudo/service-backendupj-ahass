@@ -60,6 +60,7 @@ const TransactionList: React.FC = () => {
   const [tanggal, setTanggal] = useState("");
   const [selectedFoUser, setSelectedFoUser] = useState("");
   const [selectedKategori, setSelectedKategori] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
 
   // Jasa Form
   const [jasaForm, setJasaForm] = useState({
@@ -446,8 +447,23 @@ const TransactionList: React.FC = () => {
                 </div>
               </div>
 
-              <div className={styles.btnActionRight}>
-                <button className={styles.btnAddOutline} onClick={addJasa}>
+              <div
+                className={styles.btnActionRight}
+                style={{ marginTop: "16px" }}
+              >
+                <button
+                  type="button"
+                  className={styles.btnAddOutline}
+                  onClick={addJasa}
+                  style={{
+                    backgroundColor: "#2563eb",
+                    color: "white",
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    border: "none",
+                    padding: "8px 24px",
+                  }}
+                >
                   Simpan
                 </button>
               </div>
@@ -552,8 +568,23 @@ const TransactionList: React.FC = () => {
                 </div>
               </div>
 
-              <div className={styles.btnActionRight}>
-                <button className={styles.btnAddOutline} onClick={addPart}>
+              <div
+                className={styles.btnActionRight}
+                style={{ marginTop: "16px" }}
+              >
+                <button
+                  type="button"
+                  className={styles.btnAddOutline}
+                  onClick={addPart}
+                  style={{
+                    backgroundColor: "#2563eb",
+                    color: "white",
+                    borderRadius: "6px",
+                    fontWeight: 600,
+                    border: "none",
+                    padding: "8px 24px",
+                  }}
+                >
                   Simpan
                 </button>
               </div>
@@ -646,45 +677,163 @@ const TransactionList: React.FC = () => {
                   <hr className={styles.receiptDivider} />
                 )}
 
-                <div className={styles.summaryRow}>
-                  <span>Subtotal (Jasa)</span>
-                  <span>{formatIDR(subtotalJasa)}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <span style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+                    Subtotal (Jasa)
+                  </span>
+                  <span
+                    style={{
+                      color: "#1f2937",
+                      fontWeight: 500,
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    {formatIDR(subtotalJasa)}
+                  </span>
                 </div>
-                <div className={styles.summaryRow}>
-                  <span>Subtotal (Parts)</span>
-                  <span>{formatIDR(subtotalPart)}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <span style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+                    Subtotal (Parts)
+                  </span>
+                  <span
+                    style={{
+                      color: "#1f2937",
+                      fontWeight: 500,
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    {formatIDR(subtotalPart)}
+                  </span>
                 </div>
-                <div className={styles.summaryRow}>
-                  <span>Total</span>
-                  <span>Rp 0</span>
-                </div>
-
-                <hr className={styles.summaryDivider} />
-
-                <div className={styles.summaryTotal}>
-                  <span className={styles.totalLabel}>Total Pembayaran</span>
-                  <span className={styles.totalValue}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <span style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+                    Total
+                  </span>
+                  <span
+                    style={{
+                      color: "#1f2937",
+                      fontWeight: 500,
+                      fontSize: "0.875rem",
+                    }}
+                  >
                     {formatIDR(grandTotal)}
                   </span>
                 </div>
 
-                <div className={styles.paymentMethod}>
-                  <span className={styles.paymentLabel}>Payment Method</span>
-                  <div className={styles.radioGroup}>
-                    <label>
-                      <input type="radio" name="payment" defaultChecked /> Cash
-                    </label>
-                    <label>
-                      <input type="radio" name="payment" /> Transfer
-                    </label>
+                <div
+                  style={{
+                    borderTop: "1px solid #e5e7eb",
+                    paddingTop: "16px",
+                    marginTop: "16px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ fontWeight: 700, color: "#1f2937" }}>
+                    Total Pembayaran
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "1.5rem",
+                      fontWeight: 700,
+                      color: "#111827",
+                    }}
+                  >
+                    {formatIDR(grandTotal)}
+                  </span>
+                </div>
+
+                <div style={{ marginTop: "24px" }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "0.875rem",
+                      color: "#6b7280",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Payment Method
+                  </span>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Cash")}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        textAlign: "center",
+                        borderRadius: "6px",
+                        fontWeight: 500,
+                        fontSize: "0.875rem",
+                        border: "none",
+                        cursor: "pointer",
+                        backgroundColor:
+                          paymentMethod === "Cash" ? "#2563eb" : "#f3f4f6",
+                        color: paymentMethod === "Cash" ? "#ffffff" : "#6b7280",
+                      }}
+                    >
+                      Cash
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Transfer")}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        textAlign: "center",
+                        borderRadius: "6px",
+                        fontWeight: 500,
+                        fontSize: "0.875rem",
+                        border: "none",
+                        cursor: "pointer",
+                        backgroundColor:
+                          paymentMethod === "Transfer" ? "#2563eb" : "#f3f4f6",
+                        color:
+                          paymentMethod === "Transfer" ? "#ffffff" : "#6b7280",
+                      }}
+                    >
+                      Transfer
+                    </button>
                   </div>
                 </div>
 
-                <div className={styles.summaryActionGrid}>
+                <div style={{ marginTop: "24px" }}>
                   <button
-                    className={styles.btnCetak}
                     type="button"
                     onClick={handleCheckout}
+                    style={{
+                      width: "100%",
+                      padding: "12px 0",
+                      backgroundColor: "#2563eb",
+                      color: "white",
+                      fontWeight: "bold",
+                      border: "none",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                    }}
                   >
                     SIMPAN & CETAK NOTA
                   </button>
