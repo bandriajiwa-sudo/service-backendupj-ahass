@@ -59,6 +59,7 @@ const TransactionList: React.FC = () => {
   const [nomorNota, setNomorNota] = useState("");
   const [tanggal, setTanggal] = useState("");
   const [selectedFoUser, setSelectedFoUser] = useState("");
+  const [selectedKategori, setSelectedKategori] = useState("");
 
   // Jasa Form
   const [jasaForm, setJasaForm] = useState({
@@ -142,13 +143,25 @@ const TransactionList: React.FC = () => {
     }
   };
 
+  const handleKategoriChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedKategori(e.target.value);
+    setPartForm({
+      id_master_suku_cadang: "",
+      kode_suku_cadang: "",
+      kategori: e.target.value,
+      stok_tersedia: "",
+      qty: "1",
+      harga_jual: "",
+    });
+  };
+
   const handlePartSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const pId = e.target.value;
     if (!pId) {
       setPartForm({
         id_master_suku_cadang: "",
         kode_suku_cadang: "",
-        kategori: "",
+        kategori: selectedKategori,
         stok_tersedia: "",
         qty: "1",
         harga_jual: "",
@@ -167,6 +180,13 @@ const TransactionList: React.FC = () => {
       });
     }
   };
+
+  const kategoriList = Array.from(
+    new Set(spareParts.map((p) => p.kategori).filter(Boolean)),
+  );
+  const filteredParts = selectedKategori
+    ? spareParts.filter((p) => p.kategori === selectedKategori)
+    : spareParts;
 
   const addJasa = () => {
     if (!jasaForm.nama_jasa || !jasaForm.id_mekanik || !jasaForm.biaya_jasa) {
@@ -227,7 +247,7 @@ const TransactionList: React.FC = () => {
     setPartForm({
       id_master_suku_cadang: "",
       kode_suku_cadang: "",
-      kategori: "",
+      kategori: selectedKategori,
       stok_tersedia: "",
       qty: "1",
       harga_jual: "",
@@ -314,7 +334,11 @@ const TransactionList: React.FC = () => {
           <div className={styles.formGridInfo}>
             <div className={styles.formGroup}>
               <label>Nomor Nota</label>
-              <input type="text" value={nomorNota} disabled />
+              <input
+                type="text"
+                value={nomorNota}
+                onChange={(e) => setNomorNota(e.target.value)}
+              />
             </div>
             <div className={styles.formGroup}>
               <label>Tanggal</label>
@@ -333,7 +357,7 @@ const TransactionList: React.FC = () => {
                 <option value="">Pilih Petugas (FO)</option>
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.nama_user} ({u.role})
+                    {u.nama_user}
                   </option>
                 ))}
               </select>
@@ -448,13 +472,27 @@ const TransactionList: React.FC = () => {
               <h2 className={styles.cardTitle}>Detail Suku Cadang</h2>
               <div className={styles.formGridDynamic}>
                 <div className={styles.formGroup}>
+                  <label>Kategori</label>
+                  <select
+                    value={selectedKategori}
+                    onChange={handleKategoriChange}
+                  >
+                    <option value="">Semua Kategori</option>
+                    {kategoriList.map((k) => (
+                      <option key={k} value={k}>
+                        {k}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
                   <label>Kode Suku Cadang *</label>
                   <select
                     value={partForm.id_master_suku_cadang}
                     onChange={handlePartSelect}
                   >
-                    <option value="">Pilih kode suku cadang</option>
-                    {spareParts.map((p) => (
+                    <option value="">Pilih kode / nama barang</option>
+                    {filteredParts.map((p) => (
                       <option
                         key={p.id}
                         value={p.id}
@@ -464,10 +502,6 @@ const TransactionList: React.FC = () => {
                       </option>
                     ))}
                   </select>
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Kategori</label>
-                  <input type="text" disabled value={partForm.kategori || ""} />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Stok Tersedia</label>
@@ -550,6 +584,44 @@ const TransactionList: React.FC = () => {
             <div className={styles.cardSummary}>
               <h2 className={styles.cardTitle}>RANGKUMAN TRANSAKSI</h2>
               <div className={styles.summaryStack}>
+                {jasaList.length > 0 && (
+                  <div className={styles.receiptSection}>
+                    <div className={styles.receiptTitle}>Daftar Jasa</div>
+                    {jasaList.map((item, idx) => (
+                      <div className={styles.receiptItem} key={`rj-${idx}`}>
+                        <div className={styles.receiptItemName}>
+                          {item.nama_jasa}
+                        </div>
+                        <div className={styles.receiptItemPrice}>
+                          {formatIDR(item.subtotal)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {partList.length > 0 && (
+                  <div className={styles.receiptSection}>
+                    <div className={styles.receiptTitle}>
+                      Daftar Suku Cadang
+                    </div>
+                    {partList.map((item, idx) => (
+                      <div className={styles.receiptItem} key={`rp-${idx}`}>
+                        <div className={styles.receiptItemName}>
+                          {item.qty}x {item.nama_suku_cadang}
+                        </div>
+                        <div className={styles.receiptItemPrice}>
+                          {formatIDR(item.subtotal)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(jasaList.length > 0 || partList.length > 0) && (
+                  <hr className={styles.receiptDivider} />
+                )}
+
                 <div className={styles.summaryRow}>
                   <span>Subtotal (Jasa)</span>
                   <span>{formatIDR(subtotalJasa)}</span>

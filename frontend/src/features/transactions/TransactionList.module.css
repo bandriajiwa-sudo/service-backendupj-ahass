@@ -170,6 +170,50 @@
   gap: 12px;
 }
 
+.receiptSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.receiptTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.receiptItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #334155;
+  padding: 2px 0;
+}
+
+.receiptItemName {
+  font-weight: 500;
+  max-width: 65%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.receiptItemPrice {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.receiptDivider {
+  border: 0;
+  border-top: 1px dashed #cbd5e1;
+  margin: 4px 0;
+}
+
 .summaryRow {
   display: flex;
   justify-content: space-between;
