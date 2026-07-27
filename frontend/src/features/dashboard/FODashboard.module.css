@@ -156,53 +156,52 @@
   border-bottom: none;
 }
 
-/* Stock Need Attention List */
-.stockList {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.stockGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
 }
 
-.stockItem {
+.stockAlertCard {
+  background: white;
+  border: 1px solid #fee2e2;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.05);
+  transition: all 0.2s;
+}
+
+.stockAlertCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+  border-color: #fca5a5;
+}
+
+.stockAlertHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background 0.2s;
-  padding: 12px;
-  border-radius: 8px;
-}
-.stockItem:hover {
-  background: #f8fafc;
 }
 
-.stockItem:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.stockDetails h4 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.stockDetails p {
-  margin: 2px 0 0;
-  font-size: 0.75rem;
-  color: #ef4444; /* red */
-  font-weight: 500;
+.stockAlertBody {
+  font-size: 0.9rem;
+  color: #334155;
+  background: #fef2f2;
+  padding: 10px 12px;
+  border-radius: 6px;
 }
 
 .badgeWarning {
-  background: #ffedd5;
-  color: #c2410c;
-  font-size: 0.75rem;
-  padding: 4px 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.7rem;
+  padding: 4px 8px;
   border-radius: 99px;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .btnCta {
