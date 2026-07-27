@@ -358,7 +358,7 @@ const KoperasiDashboard: React.FC = () => {
               <input
                 type="text"
                 placeholder="Cari No. FO atau Suku Cadang..."
-                className={styles.toolbarInput}
+                className={styles.searchInput}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -393,15 +393,15 @@ const KoperasiDashboard: React.FC = () => {
                 <th>No. Pengajuan (FO)</th>
                 <th>Tanggal</th>
                 <th>Suku Cadang</th>
-                <th style={{ textAlign: "right" }}>Total Qty</th>
+                <th className={styles.colQty}>Total Qty</th>
                 <th>Status</th>
-                <th style={{ textAlign: "center", width: "100px" }}>Aksi</th>
+                <th className={styles.colAction}>Aksi</th>
               </tr>
             </thead>
             <tbody>
               {displayedOrders.map((o) => (
                 <tr key={o.id}>
-                  <td className={styles.fontMono} style={{ fontWeight: 600 }}>
+                  <td className={styles.fontMono}>
                     ORD-{String(o.id).padStart(5, "0")}
                   </td>
                   <td>
@@ -412,14 +412,11 @@ const KoperasiDashboard: React.FC = () => {
                     })}
                   </td>
                   <td>{o.spare_part?.nama_suku_cadang}</td>
-                  <td
-                    className={styles.fontMono}
-                    style={{ fontWeight: 600, textAlign: "right" }}
-                  >
+                  <td className={`${styles.fontMono} ${styles.colQty}`}>
                     {o.jumlah}
                   </td>
                   <td>{statusBadge(o)}</td>
-                  <td style={{ textAlign: "center" }}>
+                  <td className={styles.colAction}>
                     <Link
                       to="/koperasi/orders"
                       className={styles.btnActionSolid}
