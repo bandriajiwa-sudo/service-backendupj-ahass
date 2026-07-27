@@ -105,6 +105,7 @@ $apiRoutes = function () {
         Route::middleware('role:front_office,kepala_upj,koperasi')->group(function () {
             Route::get('/transactions', [TransactionController::class, 'index']);
             Route::get('/transactions/{transaction}', [TransactionController::class, 'show']);
+            Route::get('/transactions/{transaction}/print', [TransactionController::class, 'print']);
 
             Route::get('/spare-part-orders', [SparePartOrderController::class, 'index']);
             Route::get('/spare-part-orders/{order}', [SparePartOrderController::class, 'show']);

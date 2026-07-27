@@ -298,14 +298,29 @@ const TransactionList: React.FC = () => {
     };
 
     try {
-      await apiClient.post("/transactions", payload);
+      const res = await apiClient.post("/transactions", payload);
+      const txId = res.data.data?.id;
+
+      if (txId) {
+        // Fetch generated PDF blob
+        const pdfRes = await apiClient.get(`/transactions/${txId}/print`, {
+          responseType: "blob",
+        });
+        const file = new Blob([pdfRes.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        // Open PDF in new tab
+        window.open(fileURL, "_blank");
+      }
+
       Swal.fire({
         icon: "success",
         title: "Transaksi Berhasil",
-        text: "Data nota tersimpan.",
+        text: "Data nota tersimpan dan siap dicetak.",
       });
       setJasaList([]);
       setPartList([]);
+
+      // Fetch fresh nota string for next transaction
       fetchDependancies();
     } catch (err: any) {
       console.error(err);
