@@ -112,7 +112,7 @@
         <tr>
             <td>Kasir</td>
             <td>:</td>
-            <td>{{ $transaction->user->name ?? '-' }}</td>
+            <td>{{ $transaction->user->nama_user ?? '-' }}</td>
         </tr>
         @if($transaction->transactionServices->count() > 0)
             <tr>
@@ -171,12 +171,14 @@
         <tr>
             <td width="60%">Subtotal (Jasa)</td>
             <td width="40%" class="text-right">Rp
-                {{ number_format($transaction->transactionServices->sum('biaya_jasa'), 0, ',', '.') }}</td>
+                {{ number_format($transaction->transactionServices->sum('biaya_jasa'), 0, ',', '.') }}
+            </td>
         </tr>
         <tr>
             <td>Subtotal (Parts)</td>
             <td class="text-right">Rp
-                {{ number_format($transaction->transactionSpareParts->sum('total_harga'), 0, ',', '.') }}</td>
+                {{ number_format($transaction->transactionSpareParts->sum('total_harga'), 0, ',', '.') }}
+            </td>
         </tr>
         <tr>
             <td>Total</td>
