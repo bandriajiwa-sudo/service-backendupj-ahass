@@ -321,13 +321,20 @@ const TransactionList: React.FC = () => {
       setPartList([]);
 
       // Fetch fresh nota string for next transaction
+      generateNomorNota(tanggal);
       fetchDependancies();
     } catch (err: any) {
       console.error(err);
+
+      const errorMsg =
+        err.response?.data?.errors?.no_nota?.[0] ||
+        err.response?.data?.message ||
+        err.message;
+
       Swal.fire({
         icon: "error",
         title: "Gagal",
-        text: err.response?.data?.message || err.message,
+        text: errorMsg,
       });
     }
   };
