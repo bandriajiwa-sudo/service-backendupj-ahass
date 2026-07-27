@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
 import styles from "../transactions/TransactionList.module.css";
-// Reusing TransactionList CSS for grid tables as it shares aesthetics.
 
 const FOHistory: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -14,12 +12,16 @@ const FOHistory: React.FC = () => {
 
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [startDate, endDate]);
 
   const fetchTransactions = async () => {
     try {
       setLoading(true);
-      const res = await apiClient.get("/transactions");
+      const params = new URLSearchParams();
+      if (startDate) params.append("start_date", startDate);
+      if (endDate) params.append("end_date", endDate);
+
+      const res = await apiClient.get(`/transactions?${params.toString()}`);
       setTransactions(res.data.data);
     } catch (err: any) {
       console.error(err);
@@ -36,25 +38,6 @@ const FOHistory: React.FC = () => {
       maximumFractionDigits: 0,
     }).format(number);
   };
-
-  // Date Filtering logic
-  const filteredTransactions = transactions.filter((t) => {
-    if (!startDate && !endDate) return true;
-
-    // Parse target date strictly to YYYY-MM-DD
-    const txDate = new Date(t.tanggal).toISOString().split("T")[0];
-
-    if (startDate && endDate) {
-      return txDate >= startDate && txDate <= endDate;
-    }
-    if (startDate) {
-      return txDate >= startDate;
-    }
-    if (endDate) {
-      return txDate <= endDate;
-    }
-    return true;
-  });
 
   const setQuickFilter = (type: "today" | "this_month") => {
     const today = new Date();
@@ -80,13 +63,6 @@ const FOHistory: React.FC = () => {
             Riwayat transaksi jasa dan penjualan suku cadang
           </p>
         </div>
-        <Link
-          to="/front-office/transaksi-baru"
-          className={styles.btnAction}
-          style={{ backgroundColor: "#2563eb", borderRadius: "6px" }}
-        >
-          + Transaksi Baru
-        </Link>
       </div>
 
       {/* Filter Section */}
@@ -247,7 +223,18 @@ const FOHistory: React.FC = () => {
                   fontWeight: 600,
                 }}
               >
-                PETUGAS & MEKANIK
+                PETUGAS
+              </th>
+              <th
+                style={{
+                  padding: "12px 16px",
+                  textAlign: "left",
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  fontWeight: 600,
+                }}
+              >
+                MEKANIK
               </th>
               <th
                 style={{
@@ -269,7 +256,18 @@ const FOHistory: React.FC = () => {
                   fontWeight: 600,
                 }}
               >
-                TOTAL ITEM
+                TOTAL JASA
+              </th>
+              <th
+                style={{
+                  padding: "12px 16px",
+                  textAlign: "left",
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  fontWeight: 600,
+                }}
+              >
+                TOTAL SUKU CADANG
               </th>
               <th
                 style={{
@@ -299,7 +297,7 @@ const FOHistory: React.FC = () => {
             {loading ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   style={{
                     textAlign: "center",
                     padding: "40px",
@@ -309,10 +307,10 @@ const FOHistory: React.FC = () => {
                   Memuat data riwayat transaksi...
                 </td>
               </tr>
-            ) : filteredTransactions.length === 0 ? (
+            ) : transactions.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   style={{
                     textAlign: "center",
                     padding: "60px 20px",
@@ -330,13 +328,12 @@ const FOHistory: React.FC = () => {
                     Pencarian Kosong
                   </div>
                   <div style={{ fontSize: "0.9rem" }}>
-                    Tidak ada transaksi yang ditemukan untuk rentang tanggal
-                    tersebut.
+                    Tidak ada transaksi yang ditemukan.
                   </div>
                 </td>
               </tr>
             ) : (
-              filteredTransactions.map((t) => {
+              transactions.map((t) => {
                 const totalJasaParams = t.transaction_services || [];
                 const totalPartsParams = t.transaction_spare_parts || [];
 
@@ -383,38 +380,21 @@ const FOHistory: React.FC = () => {
                     <td
                       style={{
                         padding: "16px",
+                        color: "#334155",
+                        fontWeight: 500,
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      {t.user?.nama_user || "-"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "16px",
                         color: "#475569",
                         fontSize: "0.9rem",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "2px",
-                        }}
-                      >
-                        <span style={{ fontWeight: 500, color: "#334155" }}>
-                          {t.user?.nama_user || "-"}{" "}
-                          <span
-                            style={{
-                              fontSize: "0.75rem",
-                              color: "#94a3b8",
-                              fontWeight: 400,
-                            }}
-                          >
-                            (FO)
-                          </span>
-                        </span>
-                        <span>
-                          {uniqueMechanics}{" "}
-                          <span
-                            style={{ fontSize: "0.75rem", color: "#94a3b8" }}
-                          >
-                            (Mekanik)
-                          </span>
-                        </span>
-                      </div>
+                      {uniqueMechanics}
                     </td>
                     <td style={{ padding: "16px" }}>
                       <span
@@ -437,8 +417,16 @@ const FOHistory: React.FC = () => {
                         fontSize: "0.9rem",
                       }}
                     >
-                      {totalJasaParams.length} Jasa, {totalPartsParams.length}{" "}
-                      Parts
+                      {totalJasaParams.length}
+                    </td>
+                    <td
+                      style={{
+                        padding: "16px",
+                        color: "#475569",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      {totalPartsParams.length}
                     </td>
                     <td
                       style={{
@@ -478,20 +466,6 @@ const FOHistory: React.FC = () => {
                           }}
                         >
                           Cetak Nota
-                        </button>
-                        <button
-                          style={{
-                            padding: "6px 12px",
-                            border: "1px solid #e2e8f0",
-                            backgroundColor: "#ffffff",
-                            color: "#475569",
-                            borderRadius: "6px",
-                            fontSize: "0.8rem",
-                            fontWeight: 500,
-                            cursor: "pointer",
-                          }}
-                        >
-                          Detail
                         </button>
                       </div>
                     </td>

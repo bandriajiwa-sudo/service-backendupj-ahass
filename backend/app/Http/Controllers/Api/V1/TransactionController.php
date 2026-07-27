@@ -14,9 +14,19 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with(['user'])->orderBy('tanggal', 'desc')->paginate(1000);
+        $query = Transaction::with(['user', 'transactionServices.mechanic', 'transactionSpareParts.sparePart'])
+            ->orderBy('tanggal', 'desc');
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
+
+        $transactions = $query->paginate(1000);
 
         return response()->json([
             'success' => true,
