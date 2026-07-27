@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
+import { Trash2 } from "lucide-react";
 import styles from "./TransactionList.module.css";
 
 interface UserApi {
@@ -204,6 +205,14 @@ const TransactionList: React.FC = () => {
     });
   };
 
+  const removeJasa = (index: number) => {
+    setJasaList(jasaList.filter((_, i) => i !== index));
+  };
+
+  const removePart = (index: number) => {
+    setPartList(partList.filter((_, i) => i !== index));
+  };
+
   const subtotalJasa = jasaList.reduce((acc, curr) => acc + curr.subtotal, 0);
   const subtotalPart = partList.reduce((acc, curr) => acc + curr.subtotal, 0);
   const grandTotal = subtotalJasa + subtotalPart;
@@ -366,33 +375,46 @@ const TransactionList: React.FC = () => {
 
               <div className={styles.btnActionRight}>
                 <button className={styles.btnAddOutline} onClick={addJasa}>
-                  + Tambah Jasa
+                  Simpan
                 </button>
               </div>
 
               {jasaList.length > 0 && (
-                <table className={styles.dataTable}>
-                  <thead>
-                    <tr>
-                      <th>Jasa</th>
-                      <th>Mekanik</th>
-                      <th>Keterangan</th>
-                      <th>Harga</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {jasaList.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.nama_jasa}</td>
-                        <td>{item.nama_mekanik}</td>
-                        <td>{item.keterangan}</td>
-                        <td>{formatIDR(item.biaya_jasa)}</td>
-                        <td>{formatIDR(item.subtotal)}</td>
+                <div className={styles.tableWrapper}>
+                  <table className={styles.dataTable}>
+                    <thead>
+                      <tr>
+                        <th>Jasa</th>
+                        <th>Mekanik</th>
+                        <th>Keterangan</th>
+                        <th>Harga</th>
+                        <th>Subtotal</th>
+                        <th style={{ width: "40px" }}></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {jasaList.map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.nama_jasa}</td>
+                          <td>{item.nama_mekanik}</td>
+                          <td>{item.keterangan}</td>
+                          <td>{formatIDR(item.biaya_jasa)}</td>
+                          <td>{formatIDR(item.subtotal)}</td>
+                          <td style={{ textAlign: "center" }}>
+                            <button
+                              title="Hapus"
+                              type="button"
+                              className={styles.btnIconDelete}
+                              onClick={() => removeJasa(idx)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
@@ -457,33 +479,46 @@ const TransactionList: React.FC = () => {
 
               <div className={styles.btnActionRight}>
                 <button className={styles.btnAddOutline} onClick={addPart}>
-                  + Tambah Barang
+                  Simpan
                 </button>
               </div>
 
               {partList.length > 0 && (
-                <table className={styles.dataTable}>
-                  <thead>
-                    <tr>
-                      <th>Suku Cadang</th>
-                      <th>Stok</th>
-                      <th>Qty</th>
-                      <th>Harga</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {partList.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.nama_suku_cadang}</td>
-                        <td>{item.stok_tersedia}</td>
-                        <td>{item.qty}</td>
-                        <td>{formatIDR(item.harga_satuan)}</td>
-                        <td>{formatIDR(item.subtotal)}</td>
+                <div className={styles.tableWrapper}>
+                  <table className={styles.dataTable}>
+                    <thead>
+                      <tr>
+                        <th>Suku Cadang</th>
+                        <th>Stok</th>
+                        <th>Qty</th>
+                        <th>Harga</th>
+                        <th>Subtotal</th>
+                        <th style={{ width: "40px" }}></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {partList.map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.nama_suku_cadang}</td>
+                          <td>{item.stok_tersedia}</td>
+                          <td>{item.qty}</td>
+                          <td>{formatIDR(item.harga_satuan)}</td>
+                          <td>{formatIDR(item.subtotal)}</td>
+                          <td style={{ textAlign: "center" }}>
+                            <button
+                              title="Hapus"
+                              type="button"
+                              className={styles.btnIconDelete}
+                              onClick={() => removePart(idx)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
@@ -502,23 +537,14 @@ const TransactionList: React.FC = () => {
                   <span>{formatIDR(subtotalPart)}</span>
                 </div>
                 <div className={styles.summaryRow}>
-                  <span>Total Tax (VAT 11%)</span>
+                  <span>Total</span>
                   <span>Rp 0</span>
-                </div>
-                <div className={styles.summaryRow}>
-                  <span>Diskon</span>
-                  <input
-                    type="text"
-                    placeholder="Diskon"
-                    className={styles.inputMini}
-                    disabled
-                  />
                 </div>
 
                 <hr className={styles.summaryDivider} />
 
                 <div className={styles.summaryTotal}>
-                  <span className={styles.totalLabel}>TOTAL TAGIHAN</span>
+                  <span className={styles.totalLabel}>Total Pembayaran</span>
                   <span className={styles.totalValue}>
                     {formatIDR(grandTotal)}
                   </span>
@@ -529,12 +555,6 @@ const TransactionList: React.FC = () => {
                   <div className={styles.radioGroup}>
                     <label>
                       <input type="radio" name="payment" defaultChecked /> Cash
-                    </label>
-                    <label>
-                      <input type="radio" name="payment" /> Card
-                    </label>
-                    <label>
-                      <input type="radio" name="payment" /> Qris
                     </label>
                     <label>
                       <input type="radio" name="payment" /> Transfer
