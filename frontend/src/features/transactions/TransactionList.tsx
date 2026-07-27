@@ -659,25 +659,12 @@ const TransactionList: React.FC = () => {
                 </div>
 
                 <div className={styles.summaryActionGrid}>
-                  <button className={styles.btnDraft} type="button">
-                    SIMPAN DRAFT
-                  </button>
                   <button
                     className={styles.btnCetak}
                     type="button"
                     onClick={handleCheckout}
                   >
                     SIMPAN & CETAK NOTA
-                  </button>
-                  <button
-                    className={styles.btnBatal}
-                    type="button"
-                    onClick={() => {
-                      setJasaList([]);
-                      setPartList([]);
-                    }}
-                  >
-                    BATAL
                   </button>
                 </div>
               </div>
