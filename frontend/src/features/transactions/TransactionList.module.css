@@ -310,7 +310,7 @@
 
 /* Response Overrides */
 @media (max-width: 1024px) {
-  .posGrid {
+  .dashboardGrid {
     grid-template-columns: 1fr;
   }
 }

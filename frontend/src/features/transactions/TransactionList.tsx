@@ -7,9 +7,7 @@ import styles from "./TransactionList.module.css";
 interface UserApi {
   id: number;
   nama_user: string;
-  login: {
-    role: string;
-  };
+  role: string;
 }
 
 interface Mechanic {
@@ -104,8 +102,7 @@ const TransactionList: React.FC = () => {
       ]);
 
       const foUsers = resUsers.data.data.filter(
-        (u: any) =>
-          u.login?.role === "front_office" || u.login?.role === "admin",
+        (u: any) => u.role === "front_office" || u.role === "admin",
       );
       setUsers(foUsers);
 
@@ -302,7 +299,7 @@ const TransactionList: React.FC = () => {
                 <option value="">Pilih Petugas (FO)</option>
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.nama_user} ({u.login?.role})
+                    {u.nama_user} ({u.role})
                   </option>
                 ))}
               </select>
