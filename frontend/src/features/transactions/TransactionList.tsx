@@ -133,6 +133,8 @@ const TransactionList: React.FC = () => {
 
       const mappedParts = resParts.data.data.map((p: any) => ({
         id: p.id,
+        kode_suku_cadang: p.kode_suku_cadang,
+        kategori: p.kategori,
         nama_suku_cadang: p.nama_suku_cadang,
         harga_jual: parseFloat(p.harga_jual),
         stok_sekarang: p.stock?.stok_sekarang || 0,
