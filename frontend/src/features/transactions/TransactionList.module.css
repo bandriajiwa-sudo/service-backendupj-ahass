@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding: 12px 0 24px 0;
 }
 
 .pageHeader {
@@ -134,7 +135,7 @@
 /* Grid Layout Wrapper */
 .dashboardGrid {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  grid-template-columns: 2.3fr 1fr;
   gap: 16px;
   align-items: start;
 }
@@ -175,6 +176,7 @@
 .summaryRow span:last-child {
   color: #1e293b;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .inputMini {
@@ -240,48 +242,46 @@
 }
 
 .summaryActionGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .btnDraft,
 .btnCetak,
 .btnBatal,
 .btnPending {
-  border-radius: 4px;
-  font-size: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 700;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   border: none;
   text-align: center;
+  transition: all 0.2s;
+  width: 100%;
 }
 
 .btnDraft {
-  background: #e2e8f0;
+  background: #f1f5f9;
   color: #475569;
-  grid-column: span 1;
 }
 
 .btnCetak {
   background: #0f172a;
   color: white;
-  grid-column: span 1;
 }
 
 .btnBatal {
   background: white;
   border: 1px solid #ef4444;
   color: #ef4444;
-  grid-column: span 1;
 }
 
 .btnPending {
   background: white;
   border: 1px solid #cbd5e1;
   color: #334155;
-  grid-column: span 2;
 }
 
 /* Ensure data table is extremely clean matching Shadcn */
