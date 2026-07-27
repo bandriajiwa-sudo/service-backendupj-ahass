@@ -154,6 +154,15 @@
   border-radius: 4px;
 }
 
+.cleanListScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cleanListScroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
 .tableGroup {
   width: 100%;
   border-collapse: collapse;
