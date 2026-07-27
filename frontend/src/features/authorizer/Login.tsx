@@ -214,37 +214,39 @@ const Login: React.FC = () => {
 
         {/* Content Layer */}
         <div className={styles.leftPanelContent}>
-          {/* Placeholder for the Logo, loaded from the public folder */}
-          <img
-            src="/logo-blpt.png"
-            alt="Logo Pemda / Instansi"
-            className={styles.brandLogo}
-            onError={(e) => {
-              // Fallback gracefully if logo is not yet placed
-              e.currentTarget.src =
-                "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
-            }}
-          />
+          <div className={styles.glassPanel}>
+            {/* Placeholder for the Logo, loaded from the public folder */}
+            <img
+              src="/logo-blpt.png"
+              alt="Logo Pemda / Instansi"
+              className={styles.brandLogo}
+              onError={(e) => {
+                // Fallback gracefully if logo is not yet placed
+                e.currentTarget.src =
+                  "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
+              }}
+            />
 
-          <div className={styles.welcomeWrapper}>
-            <h2 className={styles.typewriterText}>
-              {typingText}
-              <span className={styles.cursor}>|</span>
-            </h2>
+            <div className={styles.welcomeWrapper}>
+              <h2 className={styles.typewriterText}>
+                {typingText}
+                <span className={styles.cursor}>|</span>
+              </h2>
+            </div>
+
+            <p className={styles.systemLabel}>SISTEM INFORMASI</p>
+            <h1 className={styles.mainTitle}>
+              Penjualan Suku Cadang
+              <br />
+              dan Jasa Servis
+            </h1>
+            <h3 className={styles.subTitle}>UPJ Otomotif & AHASS BLPT DIY</h3>
+
+            <p className={styles.description}>
+              Pengelolaan transaksi dan persediaan yang terintegrasi, akurat,
+              dan mudah dipantau.
+            </p>
           </div>
-
-          <p className={styles.systemLabel}>SISTEM INFORMASI</p>
-          <h1 className={styles.mainTitle}>
-            Penjualan Suku Cadang
-            <br />
-            dan Jasa Servis
-          </h1>
-          <h3 className={styles.subTitle}>UPJ Otomotif & AHASS BLPT DIY</h3>
-
-          <p className={styles.description}>
-            Pengelolaan transaksi dan persediaan yang terintegrasi, akurat, dan
-            mudah dipantau.
-          </p>
         </div>
       </div>
 
