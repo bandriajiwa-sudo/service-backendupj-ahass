@@ -5,6 +5,9 @@ import {
   Package,
   AlertTriangle,
   CheckCircle,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   BarChart,
@@ -30,6 +33,21 @@ const FODashboard: React.FC = () => {
   const [criticalStocks, setCriticalStocks] = useState<any[]>([]);
   const [chartTime, setChartTime] = useState("Mingguan");
   const [chartCategory, setChartCategory] = useState("Semua");
+  const [stockPage, setStockPage] = useState(1);
+  const [stockSearch, setStockSearch] = useState("");
+
+  const filteredStocks = React.useMemo(() => {
+    if (!stockSearch) return criticalStocks;
+    return criticalStocks.filter((p) =>
+      p.nama_suku_cadang.toLowerCase().includes(stockSearch.toLowerCase()),
+    );
+  }, [criticalStocks, stockSearch]);
+
+  const totalStockPages = Math.ceil(filteredStocks.length / 5);
+  const displayedStocks = filteredStocks.slice(
+    (stockPage - 1) * 5,
+    stockPage * 5,
+  );
 
   const generateChartData = () => {
     if (chartTime === "Mingguan") {
@@ -149,7 +167,10 @@ const FODashboard: React.FC = () => {
 
       <div className={styles.contentGrid}>
         {/* Left Side: Recent Transactions */}
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          style={{ display: "flex", flexDirection: "column", height: "520px" }}
+        >
           <div
             style={{
               display: "flex",
@@ -197,8 +218,9 @@ const FODashboard: React.FC = () => {
               </select>
             </div>
           </div>
-
-          <div style={{ width: "100%", height: "320px", marginTop: "20px" }}>
+          <div
+            style={{ flex: 1, width: "100%", marginTop: "20px", minHeight: 0 }}
+          >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid
@@ -264,83 +286,179 @@ const FODashboard: React.FC = () => {
         </div>
 
         {/* Right Side: Stock Warnings */}
-        <div className={`${styles.card} ${styles.cardAlertContainer}`}>
-          <h2 className={styles.cardTitle} style={{ flexShrink: 0 }}>
+        <div
+          className={styles.card}
+          style={{ display: "flex", flexDirection: "column", height: "520px" }}
+        >
+          <h2
+            className={styles.cardTitle}
+            style={{ flexShrink: 0, marginBottom: "16px" }}
+          >
             Notifikasi Suku Cadang Dibawah Batas Minimum
           </h2>
-          <div className={styles.scrollableAlertList}>
-            <div className={styles.stockGrid}>
-              {criticalStocks.map((p) => (
-                <div key={p.id} className={styles.stockAlertCard}>
-                  <div className={styles.stockAlertHeader}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <AlertTriangle size={17} color="#ef4444" />
-                      <h4
-                        style={{
-                          margin: 0,
-                          fontSize: "0.9rem",
-                          color: "#0f172a",
-                        }}
-                      >
-                        {p.nama_suku_cadang}
-                      </h4>
-                    </div>
-                  </div>
-                  <div className={styles.stockAlertBody}>
-                    Stok:{" "}
-                    <strong style={{ color: "#ef4444" }}>
-                      {p.stock?.stok_sekarang}
-                    </strong>{" "}
-                    <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
-                      / min {p.stock?.stok_minimum}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {criticalStocks.length === 0 && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "40px 20px",
-                    textAlign: "center",
-                    backgroundColor: "#f0fdf4",
-                    borderRadius: "12px",
-                    border: "1px dashed #bbf7d0",
-                    marginTop: "12px",
-                  }}
-                >
-                  <CheckCircle
-                    size={48}
-                    color="#16a34a"
-                    style={{ marginBottom: "16px" }}
-                  />
-                  <h4
+
+          <div
+            style={{
+              position: "relative",
+              flexShrink: 0,
+              marginBottom: "16px",
+            }}
+          >
+            <Search
+              size={14}
+              style={{
+                position: "absolute",
+                left: "12px",
+                top: "10px",
+                color: "#64748b",
+              }}
+            />
+            <input
+              value={stockSearch}
+              onChange={(e) => {
+                setStockSearch(e.target.value);
+                setStockPage(1);
+              }}
+              placeholder="Cari suku cadang..."
+              style={{
+                width: "100%",
+                padding: "8px 12px 8px 32px",
+                borderRadius: "6px",
+                border: "1px solid #e2e8f0",
+                fontSize: "0.85rem",
+                outline: "none",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            {displayedStocks.map((p) => (
+              <div key={p.id} className={styles.stockAlertCard}>
+                <div className={styles.stockAlertHeader}>
+                  <div
                     style={{
-                      margin: "0 0 8px 0",
-                      color: "#166534",
-                      fontSize: "1.1rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    Stok Terkendali
-                  </h4>
-                  <p
-                    style={{ margin: 0, color: "#15803d", fontSize: "0.9rem" }}
-                  >
-                    Semua suku cadang berada di atas batas minimum.
-                  </p>
+                    <AlertTriangle size={17} color="#ef4444" />
+                    <h4
+                      style={{
+                        margin: 0,
+                        fontSize: "0.9rem",
+                        color: "#0f172a",
+                      }}
+                    >
+                      {p.nama_suku_cadang}
+                    </h4>
+                  </div>
                 </div>
-              )}
-            </div>
+                <div className={styles.stockAlertBody}>
+                  Stok:{" "}
+                  <strong style={{ color: "#ef4444" }}>
+                    {p.stock?.stok_sekarang}
+                  </strong>{" "}
+                  <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
+                    / min {p.stock?.stok_minimum}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {filteredStocks.length === 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "40px 20px",
+                  textAlign: "center",
+                  backgroundColor: "#f0fdf4",
+                  border: "1px dashed #bbf7d0",
+                  borderRadius: "12px",
+                  marginTop: "auto",
+                  marginBottom: "auto",
+                }}
+              >
+                <CheckCircle
+                  size={48}
+                  color="#16a34a"
+                  style={{ marginBottom: "16px" }}
+                />
+                <h4
+                  style={{
+                    margin: "0 0 8px 0",
+                    color: "#166534",
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  Stok Terkendali
+                </h4>
+                <p style={{ margin: 0, color: "#15803d", fontSize: "0.9rem" }}>
+                  Semua suku cadang berada di atas batas minimum.
+                </p>
+              </div>
+            )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalStockPages > 1 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "16px",
+                gap: "12px",
+                flexShrink: 0,
+              }}
+            >
+              <button
+                onClick={() => setStockPage((p) => Math.max(1, p - 1))}
+                disabled={stockPage === 1}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #e2e8f0",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  cursor: stockPage === 1 ? "not-allowed" : "pointer",
+                  color: stockPage === 1 ? "#cbd5e1" : "#475569",
+                  display: "flex",
+                }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                Hal {stockPage} dari {totalStockPages}
+              </span>
+              <button
+                onClick={() =>
+                  setStockPage((p) => Math.min(totalStockPages, p + 1))
+                }
+                disabled={stockPage === totalStockPages}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #e2e8f0",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  cursor:
+                    stockPage === totalStockPages ? "not-allowed" : "pointer",
+                  color: stockPage === totalStockPages ? "#cbd5e1" : "#475569",
+                  display: "flex",
+                }}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
