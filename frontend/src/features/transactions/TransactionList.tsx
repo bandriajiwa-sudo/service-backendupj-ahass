@@ -18,7 +18,9 @@ interface Mechanic {
 
 interface SparePart {
   id: number;
+  kode_suku_cadang: string;
   nama_suku_cadang: string;
+  kategori: string;
   harga_jual: number;
   stok_sekarang: number;
 }
@@ -34,7 +36,9 @@ interface JasaItem {
 
 interface PartItem {
   id_master_suku_cadang: number;
+  kode_suku_cadang: string;
   nama_suku_cadang: string;
+  kategori: string;
   harga_satuan: number;
   stok_tersedia: number;
   qty: number;
@@ -67,6 +71,8 @@ const TransactionList: React.FC = () => {
   // Part Form
   const [partForm, setPartForm] = useState({
     id_master_suku_cadang: "",
+    kode_suku_cadang: "",
+    kategori: "",
     stok_tersedia: "",
     qty: "1",
     harga_jual: "",
@@ -75,10 +81,10 @@ const TransactionList: React.FC = () => {
   useEffect(() => {
     fetchDependancies();
 
-    // Set default values including initial date
     const today = new Date().toISOString().split("T")[0];
     setTanggal(today);
 
+    // Auto Increment Numeration Triggered by Tanggal State later
     if (user) {
       setSelectedFoUser(user.id.toString());
     }
@@ -87,12 +93,27 @@ const TransactionList: React.FC = () => {
   // When date changes, regenerate the nota
   useEffect(() => {
     if (tanggal) {
-      const d = new Date(tanggal);
-      const pad = (n: number) => n.toString().padStart(2, "0");
-      const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
-      setNomorNota(`NT01-${dStr}`);
+      generateNomorNota(tanggal);
     }
   }, [tanggal]);
+
+  const generateNomorNota = async (tgl: string) => {
+    const d = new Date(tgl);
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+
+    try {
+      const res = await apiClient.get("/transactions");
+      const sameDay = res.data.data.filter(
+        (t: any) =>
+          t.tanggal === tgl || (t.created_at && t.created_at.startsWith(tgl)),
+      );
+      const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
+      setNomorNota(`${nextNum}-${dStr}`);
+    } catch {
+      setNomorNota(`001-${dStr}`);
+    }
+  };
 
   const fetchDependancies = async () => {
     try {
@@ -103,7 +124,7 @@ const TransactionList: React.FC = () => {
       ]);
 
       const foUsers = resUsers.data.data.filter(
-        (u: any) => u.role === "front_office" || u.role === "admin",
+        (u: any) => u.role === "front_office",
       );
       setUsers(foUsers);
 
@@ -126,6 +147,8 @@ const TransactionList: React.FC = () => {
     if (!pId) {
       setPartForm({
         id_master_suku_cadang: "",
+        kode_suku_cadang: "",
+        kategori: "",
         stok_tersedia: "",
         qty: "1",
         harga_jual: "",
@@ -137,6 +160,8 @@ const TransactionList: React.FC = () => {
       setPartForm({
         ...partForm,
         id_master_suku_cadang: pId,
+        kode_suku_cadang: part.kode_suku_cadang,
+        kategori: part.kategori,
         stok_tersedia: part.stok_sekarang.toString(),
         harga_jual: part.harga_jual.toString(),
       });
@@ -190,7 +215,9 @@ const TransactionList: React.FC = () => {
 
     const newItem: PartItem = {
       id_master_suku_cadang: part.id,
+      kode_suku_cadang: part.kode_suku_cadang,
       nama_suku_cadang: part.nama_suku_cadang,
+      kategori: part.kategori,
       qty: qty,
       harga_satuan: part.harga_jual,
       stok_tersedia: part.stok_sekarang,
@@ -199,6 +226,8 @@ const TransactionList: React.FC = () => {
     setPartList([...partList, newItem]);
     setPartForm({
       id_master_suku_cadang: "",
+      kode_suku_cadang: "",
+      kategori: "",
       stok_tersedia: "",
       qty: "1",
       harga_jual: "",
@@ -285,11 +314,7 @@ const TransactionList: React.FC = () => {
           <div className={styles.formGridInfo}>
             <div className={styles.formGroup}>
               <label>Nomor Nota</label>
-              <input
-                type="text"
-                value={nomorNota}
-                onChange={(e) => setNomorNota(e.target.value)}
-              />
+              <input type="text" value={nomorNota} disabled />
             </div>
             <div className={styles.formGroup}>
               <label>Tanggal</label>
@@ -423,22 +448,26 @@ const TransactionList: React.FC = () => {
               <h2 className={styles.cardTitle}>Detail Suku Cadang</h2>
               <div className={styles.formGridDynamic}>
                 <div className={styles.formGroup}>
-                  <label>Suku Cadang *</label>
+                  <label>Kode Suku Cadang *</label>
                   <select
                     value={partForm.id_master_suku_cadang}
                     onChange={handlePartSelect}
                   >
-                    <option value="">Cari kode atau nama barang</option>
+                    <option value="">Pilih kode suku cadang</option>
                     {spareParts.map((p) => (
                       <option
                         key={p.id}
                         value={p.id}
                         disabled={p.stok_sekarang <= 0}
                       >
-                        {p.nama_suku_cadang}
+                        {p.kode_suku_cadang} - {p.nama_suku_cadang}
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Kategori</label>
+                  <input type="text" disabled value={partForm.kategori || ""} />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Stok Tersedia</label>
@@ -463,18 +492,6 @@ const TransactionList: React.FC = () => {
                     }
                   />
                 </div>
-                <div className={styles.formGroup}>
-                  <label>Harga Jual</label>
-                  <input
-                    type="text"
-                    disabled
-                    value={
-                      partForm.harga_jual
-                        ? formatIDR(parseFloat(partForm.harga_jual))
-                        : "Rp0"
-                    }
-                  />
-                </div>
               </div>
 
               <div className={styles.btnActionRight}>
@@ -488,10 +505,10 @@ const TransactionList: React.FC = () => {
                   <table className={styles.dataTable}>
                     <thead>
                       <tr>
-                        <th>Suku Cadang</th>
+                        <th>Kode Suku Cadang</th>
+                        <th>Kategori</th>
                         <th>Stok</th>
                         <th>Qty</th>
-                        <th>Harga</th>
                         <th>Subtotal</th>
                         <th style={{ width: "40px" }}></th>
                       </tr>
@@ -499,10 +516,15 @@ const TransactionList: React.FC = () => {
                     <tbody>
                       {partList.map((item, idx) => (
                         <tr key={idx}>
-                          <td>{item.nama_suku_cadang}</td>
+                          <td>
+                            {item.kode_suku_cadang} <br />
+                            <small className={styles.textMuted}>
+                              {item.nama_suku_cadang}
+                            </small>
+                          </td>
+                          <td>{item.kategori}</td>
                           <td>{item.stok_tersedia}</td>
                           <td>{item.qty}</td>
-                          <td>{formatIDR(item.harga_satuan)}</td>
                           <td>{formatIDR(item.subtotal)}</td>
                           <td style={{ textAlign: "center" }}>
                             <button
