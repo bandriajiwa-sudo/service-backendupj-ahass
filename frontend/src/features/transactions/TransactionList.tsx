@@ -107,9 +107,11 @@ const TransactionList: React.FC = () => {
           t.tanggal === tgl || (t.created_at && t.created_at.startsWith(tgl)),
       );
       const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
-      setNomorNota(`${nextNum}`);
+      const dateStr = tgl.replace(/-/g, "");
+      setNomorNota(`INV-${dateStr}-${nextNum}`);
     } catch {
-      setNomorNota(`001`);
+      const dateStr = tgl.replace(/-/g, "");
+      setNomorNota(`INV-${dateStr}-001`);
     }
   };
 
