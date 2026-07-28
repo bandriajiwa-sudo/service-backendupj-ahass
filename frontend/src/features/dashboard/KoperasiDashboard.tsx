@@ -97,13 +97,9 @@ const KoperasiDashboard: React.FC = () => {
               <TrendingUp size={12} className="mr-1" /> +8%
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">
-            {metrics.orderBaru}
-          </h3>
-          <span className="text-sm font-medium text-gray-500 block mb-1">
-            Order Baru
-          </span>
-          <p className="text-xs text-gray-400">Menunggu diproses</p>
+          <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
+          <span className={styles.metricLabel}>Order Baru</span>
+          <p className={styles.metricSubtext}>Menunggu diproses</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -115,13 +111,9 @@ const KoperasiDashboard: React.FC = () => {
               <TrendingUp size={12} className="mr-1" /> 0%
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">
-            {metrics.sedangDiproses}
-          </h3>
-          <span className="text-sm font-medium text-gray-500 block mb-1">
-            Sedang Diproses
-          </span>
-          <p className="text-xs text-gray-400">Menunggu DO</p>
+          <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
+          <span className={styles.metricLabel}>Sedang Diproses</span>
+          <p className={styles.metricSubtext}>Menunggu DO</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -133,13 +125,9 @@ const KoperasiDashboard: React.FC = () => {
               <TrendingDown size={12} className="mr-1" /> -2%
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">
-            {metrics.orderDitolak}
-          </h3>
-          <span className="text-sm font-medium text-gray-500 block mb-1">
-            Order Ditolak
-          </span>
-          <p className="text-xs text-gray-400">Pengajuan bermasalah</p>
+          <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
+          <span className={styles.metricLabel}>Order Ditolak</span>
+          <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -151,13 +139,9 @@ const KoperasiDashboard: React.FC = () => {
               <TrendingUp size={12} className="mr-1" /> +14%
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-1">
-            {metrics.selesaiBulanIni}
-          </h3>
-          <span className="text-sm font-medium text-gray-500 block mb-1">
-            Selesai Bulan Ini
-          </span>
-          <p className="text-xs text-gray-400">Stok berhasil diverifikasi</p>
+          <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
+          <span className={styles.metricLabel}>Selesai Bulan Ini</span>
+          <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
         </div>
       </div>
 

@@ -10,15 +10,15 @@
   margin-bottom: 24px;
 }
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #1e293b;
-  margin: 0;
+  margin-bottom: 0.25rem;
 }
 .pageSubtitle {
-  font-size: 0.95rem;
-  color: #64748b;
-  margin-top: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #94a3b8;
 }
 
 .btnPrimary {
