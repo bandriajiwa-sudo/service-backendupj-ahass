@@ -19,74 +19,106 @@ import {
 import { apiClient } from "../../lib/api";
 import styles from "./FODashboard.module.css";
 
+interface DashboardStats {
+  transaksiHariIni: number;
+  layananJasa: number;
+  sukuCadangTerjual: number;
+  stokMinimum: number;
+}
+
+interface ChartData {
+  label: string;
+  total: number;
+  [key: string]: any;
+}
+
+interface CriticalStock {
+  id: number | string;
+  namaPart: string;
+  stokSaatIni: number;
+  batasMinimum: number;
+}
+
 const FODashboard: React.FC = () => {
-  const [metrics, setMetrics] = useState({
+  const [stats, setStats] = useState<DashboardStats>({
     transaksiHariIni: 0,
     layananJasa: 0,
     sukuCadangTerjual: 0,
-    stokMinimumCount: 0,
+    stokMinimum: 0,
   });
 
-  const [criticalStocks, setCriticalStocks] = useState<any[]>([]);
-  const [chartTime, setChartTime] = useState("Mingguan");
-  const [chartCategory, setChartCategory] = useState("Semua");
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [criticalStocks, setCriticalStocks] = useState<CriticalStock[]>([]);
 
-  const generateChartData = () => {
-    if (chartTime === "Mingguan") {
-      return [
-        { name: "Senin", jasa: 250000, spareparts: 400000 },
-        { name: "Selasa", jasa: 150000, spareparts: 300000 },
-        { name: "Rabu", jasa: 400000, spareparts: 200000 },
-        { name: "Kamis", jasa: 200000, spareparts: 550000 },
-        { name: "Jumat", jasa: 350000, spareparts: 420000 },
-        { name: "Sabtu", jasa: 500000, spareparts: 800000 },
-      ];
-    }
-    if (chartTime === "Bulanan") {
-      return [
-        { name: "Minggu 1", jasa: 1250000, spareparts: 2400000 },
-        { name: "Minggu 2", jasa: 1150000, spareparts: 2300000 },
-        { name: "Minggu 3", jasa: 1400000, spareparts: 1800000 },
-        { name: "Minggu 4", jasa: 1600000, spareparts: 2550000 },
-      ];
-    }
-    if (chartTime === "Tahunan") {
-      return [
-        { name: "Q1", jasa: 12500000, spareparts: 24000000 },
-        { name: "Q2", jasa: 11500000, spareparts: 23000000 },
-        { name: "Q3", jasa: 16000000, spareparts: 29000000 },
-        { name: "Q4", jasa: 18000000, spareparts: 35500000 },
-      ];
-    }
-    return [
-      { name: "08:00", jasa: 50000, spareparts: 100000 },
-      { name: "10:00", jasa: 150000, spareparts: 80000 },
-      { name: "13:00", jasa: 80000, spareparts: 350000 },
-      { name: "15:00", jasa: 250000, spareparts: 220000 },
-    ];
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
-  const chartData = generateChartData();
+  // Formatted state mapping for dropdowns to API params
+  const [chartTime, setChartTime] = useState("mingguan");
+  const [chartCategory, setChartCategory] = useState("all");
 
   useEffect(() => {
-    fetchData();
+    fetchInitialData();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    fetchChartData();
+  }, [chartTime, chartCategory]);
+
+  const fetchInitialData = async () => {
+    setIsLoading(true);
+    setIsError(false);
     try {
-      const res = await apiClient.get("/dashboard/fo/stats");
-      if (res.data.success) {
-        const d = res.data.data;
-        setMetrics({
-          transaksiHariIni: d.transaksiHariIni,
-          layananJasa: d.layananJasa,
-          sukuCadangTerjual: d.sukuCadangTerjual,
-          stokMinimumCount: d.stokMinimumCount,
+      const [statsRes, stockRes] = await Promise.all([
+        apiClient.get("/dashboard/stats"),
+        apiClient.get("/dashboard/critical-stock"),
+      ]);
+
+      if (statsRes.data?.data) {
+        setStats({
+          transaksiHariIni: statsRes.data.data.transaksiHariIni || 0,
+          layananJasa: statsRes.data.data.layananJasa || 0,
+          sukuCadangTerjual: statsRes.data.data.sukuCadangTerjual || 0,
+          stokMinimum: statsRes.data.data.stokMinimum || 0,
         });
-        setCriticalStocks(d.criticalStocks);
+      }
+
+      if (Array.isArray(stockRes.data?.data)) {
+        setCriticalStocks(
+          stockRes.data.data.map((item: any) => ({
+            id: item.id,
+            namaPart: item.namaPart || item.nama_suku_cadang,
+            stokSaatIni:
+              item.stokSaatIni ||
+              item.stok_sekarang ||
+              item.stock?.stok_sekarang,
+            batasMinimum:
+              item.batasMinimum ||
+              item.stok_minimum ||
+              item.stock?.stok_minimum,
+          })),
+        );
       }
     } catch (err) {
-      console.error(err);
+      console.error("Gagal mendapatkan data dashboard awal:", err);
+      setIsError(true);
+    } finally {
+      // Set isLoading false once initial mount stats are done
+      // The chart will finish concurrently or separately
+      setIsLoading(false);
+    }
+  };
+
+  const fetchChartData = async () => {
+    try {
+      const res = await apiClient.get(
+        `/dashboard/chart?category=${chartCategory}&period=${chartTime}`,
+      );
+      if (res.data?.data && Array.isArray(res.data.data)) {
+        setChartData(res.data.data);
+      }
+    } catch (err) {
+      console.error("Gagal mendapatkan data chart:", err);
     }
   };
 
@@ -101,6 +133,17 @@ const FODashboard: React.FC = () => {
         </h2>
       </div>
 
+      {isError && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md">
+          <div className="flex items-center">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            <p className="text-sm text-red-700 ml-3">
+              Gagal menghubungi server. Menampilkan data fallback.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className={styles.metricsGrid}>
         <div className={styles.metricCard}>
           <div className={styles.metricHeader}>
@@ -109,7 +152,9 @@ const FODashboard: React.FC = () => {
             </div>
             <span className={styles.metricLabel}>Transaksi Hari Ini</span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.transaksiHariIni}</h3>
+          <h3 className={styles.metricValue}>
+            {isLoading ? "..." : stats.transaksiHariIni}
+          </h3>
           <p className={styles.metricSubtext}>Dihitung dari nota baru</p>
         </div>
 
@@ -120,7 +165,9 @@ const FODashboard: React.FC = () => {
             </div>
             <span className={styles.metricLabel}>Layanan Jasa</span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.layananJasa}</h3>
+          <h3 className={styles.metricValue}>
+            {isLoading ? "..." : stats.layananJasa}
+          </h3>
           <p className={styles.metricSubtext}>Dilayani mekanik hari ini</p>
         </div>
 
@@ -131,7 +178,9 @@ const FODashboard: React.FC = () => {
             </div>
             <span className={styles.metricLabel}>Suku Cadang Terjual</span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.sukuCadangTerjual}</h3>
+          <h3 className={styles.metricValue}>
+            {isLoading ? "..." : stats.sukuCadangTerjual}
+          </h3>
           <p className={styles.metricSubtext}>Item terjual hari ini</p>
         </div>
 
@@ -142,7 +191,9 @@ const FODashboard: React.FC = () => {
             </div>
             <span className={styles.metricLabel}>Stok Minimum</span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.stokMinimumCount}</h3>
+          <h3 className={styles.metricValue}>
+            {isLoading ? "..." : stats.stokMinimum}
+          </h3>
           <p className={styles.metricSubtext}>Segera buat order stok</p>
         </div>
       </div>
@@ -178,9 +229,9 @@ const FODashboard: React.FC = () => {
                   outline: "none",
                 }}
               >
-                <option value="Semua">Semua Kategori</option>
-                <option value="Jasa Service">Jasa Service</option>
-                <option value="Suku Cadang">Suku Cadang</option>
+                <option value="all">Semua Kategori</option>
+                <option value="jasa">Jasa Service</option>
+                <option value="suku_cadang">Suku Cadang</option>
               </select>
               <select
                 value={chartTime}
@@ -193,10 +244,10 @@ const FODashboard: React.FC = () => {
                   outline: "none",
                 }}
               >
-                <option value="Harian">Harian</option>
-                <option value="Mingguan">Mingguan</option>
-                <option value="Bulanan">Bulanan</option>
-                <option value="Tahunan">Tahunan</option>
+                <option value="harian">Harian</option>
+                <option value="mingguan">Mingguan</option>
+                <option value="bulanan">Bulanan</option>
+                <option value="tahunan">Tahunan</option>
               </select>
             </div>
           </div>
@@ -211,7 +262,7 @@ const FODashboard: React.FC = () => {
                   stroke="#f1f5f9"
                 />
                 <XAxis
-                  dataKey="name"
+                  dataKey="label"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: "#64748b", fontSize: 12 }}
@@ -242,8 +293,7 @@ const FODashboard: React.FC = () => {
                     color: "#1e293b",
                   }}
                 />
-                {chartCategory === "Semua" ||
-                chartCategory === "Jasa Service" ? (
+                {chartCategory === "all" || chartCategory === "jasa" ? (
                   <Bar
                     dataKey="jasa"
                     name="Jasa Service"
@@ -252,8 +302,7 @@ const FODashboard: React.FC = () => {
                     barSize={28}
                   />
                 ) : null}
-                {chartCategory === "Semua" ||
-                chartCategory === "Suku Cadang" ? (
+                {chartCategory === "all" || chartCategory === "suku_cadang" ? (
                   <Bar
                     dataKey="spareparts"
                     name="Suku Cadang"
@@ -290,69 +339,73 @@ const FODashboard: React.FC = () => {
             className={styles.cleanListScroll}
             style={{ flex: 1, overflowY: "auto", paddingRight: "8px" }}
           >
-            {criticalStocks.map((p) => (
-              <div
-                key={p.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "12px 0",
-                  borderBottom: "1px solid #f1f5f9",
-                }}
-              >
+            {isLoading ? (
+              <div className="flex justify-center items-center h-full text-gray-400">
+                Memuat data...
+              </div>
+            ) : (
+              criticalStocks.map((p) => (
                 <div
+                  key={p.id}
                   style={{
                     display: "flex",
+                    justifyContent: "space-between",
                     alignItems: "center",
-                    gap: "8px",
-                    overflow: "hidden",
-                    flex: 1,
+                    padding: "12px 0",
+                    borderBottom: "1px solid #f1f5f9",
                   }}
                 >
-                  <div style={{ flexShrink: 0 }}>
-                    {/* Icon removed based on user feedback */}
-                  </div>
-                  <span
+                  <div
                     style={{
-                      fontSize: "0.875rem",
-                      color: "#1f2937",
-                      fontWeight: 500,
-                      whiteSpace: "nowrap",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      flex: 1,
                     }}
                   >
-                    {p.nama_suku_cadang}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    flexShrink: 0,
-                    textAlign: "right",
-                    whiteSpace: "nowrap",
-                    fontSize: "0.75rem",
-                    color: "#64748b",
-                  }}
-                >
-                  Stok:{" "}
-                  <span
+                    <div style={{ flexShrink: 0 }}></div>
+                    <span
+                      style={{
+                        fontSize: "0.875rem",
+                        color: "#1f2937",
+                        fontWeight: 500,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {p.namaPart}
+                    </span>
+                  </div>
+                  <div
                     style={{
-                      backgroundColor: "#fee2e2",
-                      color: "#ef4444",
-                      padding: "2px 6px",
-                      borderRadius: "4px",
-                      fontWeight: 600,
+                      flexShrink: 0,
+                      textAlign: "right",
+                      whiteSpace: "nowrap",
+                      fontSize: "0.75rem",
+                      color: "#64748b",
                     }}
                   >
-                    {p.stock?.stok_sekarang}
-                  </span>{" "}
-                  / min {p.stock?.stok_minimum}
+                    Stok:{" "}
+                    <span
+                      style={{
+                        backgroundColor: "#fee2e2",
+                        color: "#ef4444",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {p.stokSaatIni}
+                    </span>{" "}
+                    / min {p.batasMinimum}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
 
-            {criticalStocks.length === 0 && (
+            {!isLoading && criticalStocks.length === 0 && (
               <div
                 style={{
                   display: "flex",
