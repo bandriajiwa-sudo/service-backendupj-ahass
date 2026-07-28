@@ -109,7 +109,18 @@ const TransactionList: React.FC = () => {
         (t: any) => t.no_nota && t.no_nota.startsWith(prefix),
       );
 
-      const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
+      let maxNum = 0;
+      sameDay.forEach((t: any) => {
+        const parts = t.no_nota.split("-");
+        if (parts.length === 3) {
+          const num = parseInt(parts[2], 10);
+          if (!isNaN(num) && num > maxNum) {
+            maxNum = num;
+          }
+        }
+      });
+
+      const nextNum = (maxNum + 1).toString().padStart(3, "0");
       setNomorNota(`${prefix}${nextNum}`);
     } catch {
       const dateStr = tgl.replace(/-/g, "");
