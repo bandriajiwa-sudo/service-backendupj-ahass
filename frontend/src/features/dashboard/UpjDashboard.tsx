@@ -188,7 +188,6 @@ const UPJDashboard: React.FC = () => {
             onChange={(e) => setChartPeriod(e.target.value)}
           >
             <option value="harian">Harian (7 Hari Terakhir)</option>
-            <option value="mingguan">Mingguan (4 Minggu Terakhir)</option>
             <option value="bulanan">Bulanan (12 Bulan)</option>
             <option value="tahunan">Tahunan</option>
           </select>

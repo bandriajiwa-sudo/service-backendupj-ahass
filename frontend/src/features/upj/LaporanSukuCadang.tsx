@@ -70,17 +70,17 @@ const LaporanSukuCadang: React.FC = () => {
 
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 print:shadow-none print:border-none">
         {/* Toolbar section hides on print */}
-        <div className="p-5 flex flex-wrap gap-4 items-start justify-between border-b border-gray-200 print:hidden">
+        <div className="p-5 flex flex-wrap gap-4 items-end justify-between border-b border-gray-200 print:hidden">
           <div className="flex flex-wrap gap-4 items-start flex-1 min-w-[200px]">
-            <div
-              className={styles.searchGroup}
-              style={{ flexGrow: 1, maxWidth: "400px" }}
-            >
-              <Search className={styles.searchIcon} size={18} />
+            <div className="relative w-full max-w-sm">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
               <input
                 type="text"
                 placeholder="Cari nota atau suku cadang..."
-                className="pl-9 pr-4 py-2 border border-gray-300 rounded-md bg-white w-full text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md bg-white w-full text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors h-[38px]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
