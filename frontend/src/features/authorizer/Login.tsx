@@ -184,12 +184,12 @@ const Login: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/40 z-[1]"></div>
 
         {/* Content Layer */}
-        <div className="relative flex flex-col justify-center h-full px-8 md:px-12 lg:px-16 z-10">
+        <div className="relative flex flex-col justify-center items-center md:items-start text-center md:text-left h-full px-8 md:px-12 lg:px-16 z-10">
           {/* Placeholder for the Logo, loaded from the public folder */}
           <img
             src="/logo-blpt.png"
             alt="Logo Pemda / Instansi"
-            className="w-24 md:w-32 h-auto mb-8 md:mb-10 object-contain drop-shadow-md"
+            className="w-24 md:w-32 h-auto mb-8 md:mb-10 object-contain drop-shadow-md mx-auto md:mx-0"
             onError={(e) => {
               // Fallback gracefully if logo is not yet placed
               e.currentTarget.src =
