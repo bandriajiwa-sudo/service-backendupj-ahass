@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -20,7 +20,22 @@ interface BaseLayoutProps {
 
 const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
   const { user, logout } = useAuth();
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileStatus = window.innerWidth <= 768;
+      setIsMobile(mobileStatus);
+      if (mobileStatus) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getMenuByRole = () => {
     const role = user?.role;
@@ -89,6 +104,14 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
 
   return (
     <div className={styles.layoutWrapper}>
+      {/* Mobile Backdrop Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div 
+          className={styles.mobileOverlay} 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={`${styles.sidebar} ${isSidebarOpen ? "" : styles.sidebarClosed}`}
@@ -125,7 +148,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
               }
             >
               {item.icon && <item.icon size={20} />}
-              {isSidebarOpen && <span>{item.label}</span>}
+              {/* Force show label on mobile regardless since off-canvas handles it, or naturally rely on open state */}
+              {(isSidebarOpen || isMobile) && <span>{item.label}</span>}
             </NavLink>
           ))}
         </nav>

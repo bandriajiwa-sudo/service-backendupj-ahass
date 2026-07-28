@@ -438,3 +438,69 @@
     transform: translateY(0);
   }
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .pageWrapper {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    flex: none;
+    height: auto;
+    min-height: 40vh;
+  }
+
+  .leftPanelContent {
+    padding: 30px 20px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glassPanel {
+    padding: 25px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .brandLogo {
+    width: 60px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mainTitle {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  .subTitle {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .description {
+    display: none;
+  }
+
+  .rightPanel {
+    flex: none;
+    min-height: 60vh;
+    padding: 20px;
+  }
+
+  .loginCard {
+    padding: 25px;
+    transform: none;
+    animation: none;
+    opacity: 1;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .loginCard:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+}
