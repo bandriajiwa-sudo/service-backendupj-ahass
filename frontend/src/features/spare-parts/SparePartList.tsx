@@ -253,7 +253,7 @@ const SparePartList: React.FC = () => {
         </p>
       </div>
       {/* Unified Table Card */}
-      <div className={styles.tableCard}>
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
         <div className="p-5 flex flex-wrap gap-4 items-start justify-between border-b border-gray-200">
           <div className="flex flex-wrap gap-4 items-end">
             <div

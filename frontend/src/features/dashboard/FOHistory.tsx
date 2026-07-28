@@ -66,7 +66,7 @@ const FOHistory: React.FC = () => {
       </div>
 
       {/* Unified Table Card */}
-      <div className={styles.tableCard}>
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
         <div className="p-5 flex flex-wrap gap-4 items-end border-b border-gray-200">
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label
