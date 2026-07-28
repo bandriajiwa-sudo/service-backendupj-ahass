@@ -188,6 +188,8 @@ class DashboardController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
     /**
      * Get statistics for Front Office Dashboard.
      */
@@ -274,12 +276,12 @@ class DashboardController extends Controller
             // A simplified mock response structure corresponding to the React component's expected data logic.
             // Since this is a new endpoint, we will calculate recent 7 days or mock appropriately if real complex aggregation is too heavy for now.
             // For production accuracy, we group queries by day for the last 6 days + today.
-            
+
             if ($period === 'mingguan' || $period === 'harian') {
                 for ($i = 6; $i >= 0; $i--) {
                     $date = now()->subDays($i);
                     $dateString = $date->format('Y-m-d');
-                    
+
                     // Sum jasa today
                     $jasaSum = Transaction::whereDate('tanggal', $dateString)
                         ->with('transactionServices')
@@ -287,7 +289,7 @@ class DashboardController extends Controller
                         ->sum(function ($tx) {
                             return $tx->transactionServices->sum('biaya_jasa');
                         });
-                        
+
                     // Sum spare part sales today
                     $sparepartSum = Transaction::whereDate('tanggal', $dateString)
                         ->with('transactionSpareParts')
