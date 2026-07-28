@@ -63,6 +63,7 @@ class TransactionController extends Controller
             'user_id' => 'sometimes|exists:users,id',
             'tanggal' => 'required|date',
             'no_nota' => 'required|string|unique:transactions,no_nota',
+            'catatan' => 'nullable|string|max:500',
             'services' => 'sometimes|array',
             'services.*.mechanic_id' => 'required_with:services|exists:mechanics,id',
             'services.*.nama_jasa' => 'required_with:services|string',
@@ -86,6 +87,7 @@ class TransactionController extends Controller
                 'user_id' => $validated['user_id'] ?? $request->user()->user->id, // Use provided user_id or fallback to current
                 'tanggal' => $validated['tanggal'],
                 'no_nota' => $validated['no_nota'],
+                'catatan' => $validated['catatan'] ?? null,
             ]);
 
             // Map and Create Services

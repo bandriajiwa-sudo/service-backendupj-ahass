@@ -304,14 +304,57 @@ class DashboardController extends Controller
                         'spareparts' => $sparepartSum,
                     ];
                 }
-            } else {
-                // Return dummy for Bulanan/Tahunan for brevity, or implement true aggregation
-                $labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
-                foreach ($labels as $lbl) {
+            } elseif ($period === 'bulanan') {
+                for ($i = 3; $i >= 0; $i--) {
+                    $startOfWeek = now()->subWeeks($i)->startOfWeek();
+                    $endOfWeek = now()->subWeeks($i)->endOfWeek();
+
+                    $jasaSum = Transaction::whereBetween('tanggal', [$startOfWeek, $endOfWeek])
+                        ->with('transactionServices')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionServices->sum('biaya_jasa');
+                        });
+
+                    $sparepartSum = Transaction::whereBetween('tanggal', [$startOfWeek, $endOfWeek])
+                        ->with('transactionSpareParts')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionSpareParts->sum('total_harga');
+                        });
+
                     $chartData[] = [
-                        'label' => $lbl,
-                        'jasa' => rand(1000000, 3000000),
-                        'spareparts' => rand(2000000, 4000000)
+                        'label' => 'Mg ' . (4 - $i),
+                        'jasa' => $jasaSum,
+                        'spareparts' => $sparepartSum,
+                    ];
+                }
+            } elseif ($period === 'tahunan') {
+                for ($i = 11; $i >= 0; $i--) {
+                    $date = now()->subMonths($i);
+                    $monthString = $date->format('m');
+                    $yearString = $date->format('Y');
+
+                    $jasaSum = Transaction::whereMonth('tanggal', $monthString)
+                        ->whereYear('tanggal', $yearString)
+                        ->with('transactionServices')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionServices->sum('biaya_jasa');
+                        });
+
+                    $sparepartSum = Transaction::whereMonth('tanggal', $monthString)
+                        ->whereYear('tanggal', $yearString)
+                        ->with('transactionSpareParts')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionSpareParts->sum('total_harga');
+                        });
+
+                    $chartData[] = [
+                        'label' => $date->translatedFormat('M'),
+                        'jasa' => $jasaSum,
+                        'spareparts' => $sparepartSum,
                     ];
                 }
             }

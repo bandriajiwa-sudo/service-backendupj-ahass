@@ -177,11 +177,8 @@ const FOHistory: React.FC = () => {
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                 METODE BAYAR
               </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                TOTAL JASA
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                TOTAL SUKU CADANG
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                CATATAN
               </th>
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
                 TOTAL BIAYA
@@ -194,13 +191,13 @@ const FOHistory: React.FC = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={9} className="text-center p-6 text-gray-500">
+                <td colSpan={8} className="text-center p-6 text-gray-500">
                   Memuat data riwayat transaksi...
                 </td>
               </tr>
             ) : transactions.length === 0 ? (
               <tr>
-                <td colSpan={9} className="text-center p-10 text-gray-500">
+                <td colSpan={8} className="text-center p-10 text-gray-500">
                   <div className="text-lg font-semibold text-gray-600 mb-2">
                     Pencarian Kosong
                   </div>
@@ -255,11 +252,10 @@ const FOHistory: React.FC = () => {
                         Cash
                       </span>
                     </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                      {totalJasaParams.length}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                      {totalPartsParams.length}
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                      <span className="text-gray-500 italic">
+                        {t.catatan || "-"}
+                      </span>
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-right font-semibold">
                       {formatRupiah(totalCalculated)}
@@ -273,7 +269,12 @@ const FOHistory: React.FC = () => {
                               "_blank",
                             )
                           }
-                          className="px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded text-sm hover:bg-gray-50 transition-colors shadow-sm"
+                          className="px-3 py-1 rounded text-sm font-medium transition-colors shadow-sm"
+                          style={{
+                            backgroundColor: "#38bdf8",
+                            color: "#ffffff",
+                            border: "none",
+                          }}
                         >
                           Cetak Nota
                         </button>

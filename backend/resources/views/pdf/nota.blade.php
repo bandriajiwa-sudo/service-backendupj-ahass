@@ -93,7 +93,6 @@
     <div class="text-center">
         <div class="header-title">BLPT DIY</div>
         <div class="meta-text">UPJ Otomotif & AHASS</div>
-        <div class="meta-text">Front Office Service Unit</div>
     </div>
     <div class="divider-double"></div>
 
