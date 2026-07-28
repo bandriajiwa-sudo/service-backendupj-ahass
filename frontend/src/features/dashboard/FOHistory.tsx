@@ -175,13 +175,13 @@ const FOHistory: React.FC = () => {
                 MEKANIK
               </th>
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                METODE BAYAR
+                PAYMENT
               </th>
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                CATATAN
+                JENIS JASA
               </th>
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                TOTAL BIAYA
+                TOTAL
               </th>
               <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                 AKSI
@@ -227,6 +227,12 @@ const FOHistory: React.FC = () => {
                 const uniqueMechanics =
                   Array.from(new Set(mechanicsList)).join(", ") || "-";
 
+                const jenisJasaList = totalJasaParams
+                  .map((s: any) => s.nama_jasa)
+                  .filter(Boolean);
+                const uniqueJenisJasa =
+                  Array.from(new Set(jenisJasaList)).join(", ") || "-";
+
                 const txDate = new Date(t.tanggal);
                 const formattedDate = `${txDate.getDate().toString().padStart(2, "0")}/${(txDate.getMonth() + 1).toString().padStart(2, "0")}/${txDate.getFullYear()} ${txDate.getHours().toString().padStart(2, "0")}:${txDate.getMinutes().toString().padStart(2, "0")}`;
 
@@ -253,8 +259,8 @@ const FOHistory: React.FC = () => {
                       </span>
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-left">
-                      <span className="text-gray-500 italic">
-                        {t.catatan || "-"}
+                      <span className="text-gray-700 font-medium whitespace-pre-wrap">
+                        {uniqueJenisJasa}
                       </span>
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-right font-semibold">
