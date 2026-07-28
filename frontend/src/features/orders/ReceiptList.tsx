@@ -254,25 +254,15 @@ const ReceiptList: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>
-            Penerimaan Suku Cadang
-          </h1>
+          <h1 className={styles.pageTitle}>Penerimaan Suku Cadang</h1>
           <p className={styles.pageSubtitle}>
             Catat kedatangan logistik gudang & verifikasi final stok
           </p>
         </div>
-        {user?.role === "koperasi" && (
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-4 py-2 transition-colors"
-            onClick={() => setIsFormOpen(true)}
-          >
-            Konfirmasi Penerimaan
-          </button>
-        )}
       </div>
 
       <div className={styles.tableCard}>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 flex flex-wrap gap-4 items-center justify-between border-b border-gray-200">
           <div className={styles.searchGroup}>
             <Search className={styles.searchIcon} size={18} />
             <input
@@ -283,7 +273,14 @@ const ReceiptList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "12px",
+              alignItems: "center",
+            }}
+          >
             <select
               className={styles.toolbarSelect}
               value={filterStatus}
@@ -301,10 +298,18 @@ const ReceiptList: React.FC = () => {
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />
+            {user?.role === "koperasi" && (
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-4 py-2 transition-colors whitespace-nowrap"
+                onClick={() => setIsFormOpen(true)}
+              >
+                Konfirmasi Penerimaan
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+        <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>

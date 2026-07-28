@@ -252,206 +252,220 @@ const SparePartList: React.FC = () => {
             : "Informasi ketersediaan barang untuk mendukung operasional"}
         </p>
       </div>
+      {/* Unified Table Card */}
+      <div className={styles.tableCard}>
+        <div className="p-5 flex flex-wrap gap-4 items-start justify-between border-b border-gray-200">
+          <div className="flex flex-wrap gap-4 items-end">
+            <div
+              className={styles.filterGroup}
+              style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+            >
+              <label
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  fontWeight: 500,
+                }}
+              >
+                Cari
+              </label>
+              <input
+                type="text"
+                placeholder="Kode atau nama suku cadang"
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "6px",
+                  outline: "none",
+                  color: "#334155",
+                }}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div
+              className={styles.filterGroup}
+              style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+            >
+              <label
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  fontWeight: 500,
+                }}
+              >
+                Kategori
+              </label>
+              <select
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "6px",
+                  outline: "none",
+                  color: "#334155",
+                  backgroundColor: "white",
+                }}
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+              >
+                <option value="">Semua kategori</option>
+                {uniqueCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div
+              className={styles.filterGroup}
+              style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+            >
+              <label
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#64748b",
+                  fontWeight: 500,
+                }}
+              >
+                Status Stok
+              </label>
+              <select
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "6px",
+                  outline: "none",
+                  color: "#334155",
+                  backgroundColor: "white",
+                }}
+                value={filterStockStatus}
+                onChange={(e) => setFilterStockStatus(e.target.value)}
+              >
+                <option value="">Semua status</option>
+                <option value="aman">Aman</option>
+                <option value="minimum">Minimum</option>
+              </select>
+            </div>
+          </div>
 
-      <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 flex flex-wrap gap-4 items-end justify-between">
-        <div className="flex flex-wrap gap-4 items-end">
-          <div
-            className={styles.filterGroup}
-            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
-          >
-            <label
-              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
-            >
-              Cari
-            </label>
-            <input
-              type="text"
-              placeholder="Kode atau nama suku cadang"
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "6px",
-                outline: "none",
-                color: "#334155",
-              }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div
-            className={styles.filterGroup}
-            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
-          >
-            <label
-              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
-            >
-              Kategori
-            </label>
-            <select
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "6px",
-                outline: "none",
-                color: "#334155",
-                backgroundColor: "white",
-              }}
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              <option value="">Semua kategori</option>
-              {uniqueCategories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div
-            className={styles.filterGroup}
-            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
-          >
-            <label
-              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
-            >
-              Status Stok
-            </label>
-            <select
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "6px",
-                outline: "none",
-                color: "#334155",
-                backgroundColor: "white",
-              }}
-              value={filterStockStatus}
-              onChange={(e) => setFilterStockStatus(e.target.value)}
-            >
-              <option value="">Semua status</option>
-              <option value="aman">Aman</option>
-              <option value="minimum">Minimum</option>
-            </select>
-          </div>
+          {isAdmin && (
+            <button className={styles.addBtn} onClick={handleToggleForm}>
+              + Tambah Suku Cadang
+            </button>
+          )}
         </div>
 
-        {isAdmin && (
-          <button className={styles.addBtn} onClick={handleToggleForm}>
-            + Tambah Suku Cadang
-          </button>
-        )}
-      </div>
-
-      <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                Kode
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                Nama Suku Cadang
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                Kategori
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                Harga Jual
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                Stok
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
-                Minimum
-              </th>
-              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                Status
-              </th>
-              {isAdmin && (
-                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                  Aksi
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                  Kode
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={8} className="text-center p-6 text-gray-500">
-                  Memuat...
-                </td>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                  Nama Suku Cadang
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                  Kategori
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                  Harga Jual
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                  Stok
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                  Minimum
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
+                  Status
+                </th>
+                {isAdmin && (
+                  <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
+                    Aksi
+                  </th>
+                )}
               </tr>
-            ) : parts.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="text-center p-6 text-gray-500">
-                  Tidak ada data master suku cadang yang cocok dengan filter.
-                </td>
-              </tr>
-            ) : (
-              filteredParts.map((p) => {
-                const isCritical =
-                  (p.stok_sekarang || 0) <= (p.stok_minimum || 0);
-                return (
-                  <tr
-                    key={p.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
-                      {p.kode_suku_cadang}
-                    </td>
-                    <td
-                      className="text-sm text-gray-800 px-4 py-3 text-left"
-                      style={{ fontWeight: 500, color: "#0f2c4a" }}
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="text-center p-6 text-gray-500">
+                    Memuat...
+                  </td>
+                </tr>
+              ) : parts.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="text-center p-6 text-gray-500">
+                    Tidak ada data master suku cadang yang cocok dengan filter.
+                  </td>
+                </tr>
+              ) : (
+                filteredParts.map((p) => {
+                  const isCritical =
+                    (p.stok_sekarang || 0) <= (p.stok_minimum || 0);
+                  return (
+                    <tr
+                      key={p.id}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                     >
-                      {p.nama_suku_cadang}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
-                      {p.kategori}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                      {formatCurrency(p.harga_jual)}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                      {p.stok_sekarang}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                      {p.stok_minimum}
-                    </td>
-                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium inline-block text-center ${
-                          isCritical
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {isCritical ? "Minimum" : "Aman"}
-                      </span>
-                    </td>
-                    {isAdmin && (
-                      <td className="text-sm text-gray-800 px-4 py-3 text-center">
-                        <div className={styles.actionLinks}>
-                          <span
-                            className={styles.actionLink}
-                            onClick={() => handleEdit(p)}
-                          >
-                            Edit
-                          </span>
-                          <Trash2
-                            size={18}
-                            className={styles.actionIconDanger}
-                            onClick={() => handleDelete(p.id)}
-                            style={{ cursor: "pointer", color: "#f43f5e" }}
-                          />
-                        </div>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                        {p.kode_suku_cadang}
                       </td>
-                    )}
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      <td
+                        className="text-sm text-gray-800 px-4 py-3 text-left"
+                        style={{ fontWeight: 500, color: "#0f2c4a" }}
+                      >
+                        {p.nama_suku_cadang}
+                      </td>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                        {p.kategori}
+                      </td>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                        {formatCurrency(p.harga_jual)}
+                      </td>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                        {p.stok_sekarang}
+                      </td>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                        {p.stok_minimum}
+                      </td>
+                      <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium inline-block text-center ${
+                            isCritical
+                              ? "bg-red-100 text-red-700"
+                              : "bg-green-100 text-green-700"
+                          }`}
+                        >
+                          {isCritical ? "Minimum" : "Aman"}
+                        </span>
+                      </td>
+                      {isAdmin && (
+                        <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                          <div className={styles.actionLinks}>
+                            <span
+                              className={styles.actionLink}
+                              onClick={() => handleEdit(p)}
+                            >
+                              Edit
+                            </span>
+                            <Trash2
+                              size={18}
+                              className={styles.actionIconDanger}
+                              onClick={() => handleDelete(p.id)}
+                              style={{ cursor: "pointer", color: "#f43f5e" }}
+                            />
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {isFormOpen && (

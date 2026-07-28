@@ -188,8 +188,20 @@ const MechanicList: React.FC = () => {
         </p>
       </div>
 
-      <div className={styles.toolbarCard}>
-        <div className={styles.toolbar}>
+      <div className={styles.tableCard}>
+        <div
+          className={styles.toolbar}
+          style={{
+            padding: "20px 24px",
+            borderBottom: "1px solid #e2e8f0",
+            margin: 0,
+            borderTop: "none",
+            borderLeft: "none",
+            borderRight: "none",
+            borderRadius: 0,
+            backgroundColor: "transparent",
+          }}
+        >
           <div className={styles.filters}>
             <div className={styles.filterGroup}>
               <label className={styles.filterLabel}>Cari Mekanik</label>
@@ -219,9 +231,7 @@ const MechanicList: React.FC = () => {
             + Tambah Mekanik
           </button>
         </div>
-      </div>
 
-      <div className={styles.tableCard}>
         <div style={{ overflowX: "auto" }}>
           <table className={styles.table}>
             <thead>

@@ -321,18 +321,10 @@ const OrderList: React.FC = () => {
             Pantau dan kelola pengadaan suku cadang
           </p>
         </div>
-        {user?.role === "front_office" && (
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
-            onClick={() => setIsFormOpen(true)}
-          >
-            + Buat Order Baru
-          </button>
-        )}
       </div>
 
       <div className={styles.tableCard}>
-        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div className="p-4 flex flex-wrap gap-4 items-center justify-between border-b border-gray-200">
           <div className={styles.searchGroup}>
             <Search className={styles.searchIcon} size={18} />
             <input
@@ -343,7 +335,14 @@ const OrderList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "12px",
+              alignItems: "center",
+            }}
+          >
             <select
               className={styles.toolbarSelect}
               value={filterStatus}
@@ -362,10 +361,18 @@ const OrderList: React.FC = () => {
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />
+            {user?.role === "front_office" && (
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors whitespace-nowrap"
+                onClick={() => setIsFormOpen(true)}
+              >
+                + Buat Order Baru
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+        <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
