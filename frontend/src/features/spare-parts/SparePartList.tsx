@@ -215,17 +215,6 @@ const SparePartList: React.FC = () => {
     }
   };
 
-  const getStockStatus = (current: number, min: number) => {
-    const isAman = current >= min;
-    return (
-      <span
-        className={`${styles.statusBadge} ${isAman ? styles.statusAman : styles.statusMinimum}`}
-      >
-        {isAman ? "Aman" : "Minimum"}
-      </span>
-    );
-  };
-
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -354,24 +343,32 @@ const SparePartList: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
-        <table className="w-full border-collapse min-w-[1000px]">
-          <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Kode</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                Kode
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                 Nama Suku Cadang
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                 Kategori
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
                 Harga Jual
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Stok</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Minimum</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Status</th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                Stok
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                Minimum
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
+                Status
+              </th>
               {isAdmin && (
-                <th className="whitespace-nowrap px-4 py-3 text-center">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                   Aksi
                 </th>
               )}
@@ -380,59 +377,78 @@ const SparePartList: React.FC = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td
-                  colSpan={8}
-                  style={{ textAlign: "center", padding: "24px" }}
-                >
+                <td colSpan={8} className="text-center p-6 text-gray-500">
                   Memuat...
                 </td>
               </tr>
             ) : parts.length === 0 ? (
               <tr>
-                <td
-                  colSpan={8}
-                  style={{ textAlign: "center", padding: "24px" }}
-                >
+                <td colSpan={8} className="text-center p-6 text-gray-500">
                   Tidak ada data master suku cadang yang cocok dengan filter.
                 </td>
               </tr>
             ) : (
-              filteredParts.map((p) => (
-                <tr
-                  key={p.id}
-                  className="border-b border-gray-100 hover:bg-gray-50"
-                >
-                  <td>{p.kode_suku_cadang}</td>
-                  <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
-                    {p.nama_suku_cadang}
-                  </td>
-                  <td>{p.kategori}</td>
-                  <td>{formatCurrency(p.harga_jual)}</td>
-                  <td>{p.stok_sekarang}</td>
-                  <td>{p.stok_minimum}</td>
-                  <td>
-                    {getStockStatus(p.stok_sekarang || 0, p.stok_minimum || 0)}
-                  </td>
-                  {isAdmin && (
-                    <td>
-                      <div className={styles.actionLinks}>
-                        <span
-                          className={styles.actionLink}
-                          onClick={() => handleEdit(p)}
-                        >
-                          Edit
-                        </span>
-                        <Trash2
-                          size={18}
-                          className={styles.actionIconDanger}
-                          onClick={() => handleDelete(p.id)}
-                          style={{ cursor: "pointer", color: "#f43f5e" }}
-                        />
-                      </div>
+              filteredParts.map((p) => {
+                const isCritical =
+                  (p.stok_sekarang || 0) <= (p.stok_minimum || 0);
+                return (
+                  <tr
+                    key={p.id}
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                      {p.kode_suku_cadang}
                     </td>
-                  )}
-                </tr>
-              ))
+                    <td
+                      className="text-sm text-gray-800 px-4 py-3 text-left"
+                      style={{ fontWeight: 500, color: "#0f2c4a" }}
+                    >
+                      {p.nama_suku_cadang}
+                    </td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                      {p.kategori}
+                    </td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                      {formatCurrency(p.harga_jual)}
+                    </td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                      {p.stok_sekarang}
+                    </td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
+                      {p.stok_minimum}
+                    </td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium inline-block text-center ${
+                          isCritical
+                            ? "bg-red-100 text-red-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {isCritical ? "Minimum" : "Aman"}
+                      </span>
+                    </td>
+                    {isAdmin && (
+                      <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                        <div className={styles.actionLinks}>
+                          <span
+                            className={styles.actionLink}
+                            onClick={() => handleEdit(p)}
+                          >
+                            Edit
+                          </span>
+                          <Trash2
+                            size={18}
+                            className={styles.actionIconDanger}
+                            onClick={() => handleDelete(p.id)}
+                            style={{ cursor: "pointer", color: "#f43f5e" }}
+                          />
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
