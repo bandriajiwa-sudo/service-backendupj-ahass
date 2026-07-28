@@ -1,183 +1,258 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Activity, DollarSign, PenTool, Database } from "lucide-react";
+import {
+  Wallet,
+  Calendar,
+  Activity,
+  Package,
+  Box,
+  Archive,
+} from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { apiClient } from "../../lib/api";
-import styles from "./UpjDashboard.module.css";
+import styles from "./KoperasiDashboard.module.css";
 
-const UpjDashboard: React.FC = () => {
-  const [metrics, setMetrics] = useState({
-    totalTxs: 0,
-    nilaiJasa: 0,
-    nilaiParts: 0,
-    stokMin: 0,
-  });
-
-  const [topMechanics, setTopMechanics] = useState<any[]>([]);
-
-  // Simulation values for chart since we don't have 6-month historical seeded data.
-  // In production, this would map directly to a grouped 'transactions by month' API array.
-  const chartData = [
-    { label: "Jan", val: 30 },
-    { label: "Feb", val: 50 },
-    { label: "Mar", val: 40 },
-    { label: "Apr", val: 70 },
-    { label: "Mei", val: 65 },
-    { label: "Jun", val: 90 }, // Current simulated peak
-  ];
+const UPJDashboard: React.FC = () => {
+  const [stats, setStats] = useState<any>(null);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartPeriod, setChartPeriod] = useState<string>("harian");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
+    fetchStats();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    fetchChart(chartPeriod);
+  }, [chartPeriod]);
+
+  const fetchStats = async () => {
     try {
-      const txRes = await apiClient.get("/transactions");
-      const txs = txRes.data.data;
-
-      let nilaiJasa = 0;
-      let nilaiParts = 0;
-
-      txs.forEach((t: any) => {
-        if (t.services) {
-          t.services.forEach((s: any) => (nilaiJasa += Number(s.biaya_jasa)));
-        }
-        if (t.spare_parts) {
-          t.spare_parts.forEach(
-            (p: any) => (nilaiParts += Number(p.total_harga)),
-          );
-        }
-      });
-
-      const spRes = await apiClient.get("/spare-parts");
-      const critical = spRes.data.data.filter(
-        (p: any) => p.stock && p.stock.stok_sekarang <= p.stock.stok_minimum,
-      ).length;
-
-      setMetrics({
-        totalTxs: txs.length,
-        nilaiJasa,
-        nilaiParts,
-        stokMin: critical,
-      });
-
-      // Fetch mechanics and sort by performance pseudo-metric (Using id as a stub since service history per mechanic requires complex aggregates)
-      const mechRes = await apiClient.get("/mechanics");
-      setTopMechanics(mechRes.data.data.slice(0, 4));
+      const res = await apiClient.get("/upj/dashboard-stats");
+      setStats(res.data.data);
     } catch (err) {
-      console.error(err);
+      console.error("Gagal memuat stats UPJ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formatJuta = (val: number) => {
-    return `Rp ${(val / 1000000).toFixed(1)} jt`;
+  const fetchChart = async (period: string) => {
+    try {
+      const res = await apiClient.get(`/upj/dashboard-chart?period=${period}`);
+      setChartData(res.data.data);
+    } catch (err) {
+      console.error("Gagal memuat chart UPJ", err);
+    }
   };
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(val || 0);
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-gray-500">Memuat Dashboard...</div>
+    );
+  }
 
   return (
     <div className={styles.container}>
-      <div className={styles.pageHeader}>
-        <div>
-          <h2
-            className={styles.pageSubtitle}
-            style={{ fontSize: "1.1rem", marginTop: 0 }}
-          >
-            Ringkasan kinerja operasional UPJ Otomotif & AHASS
-          </h2>
-        </div>
-        <Link to="/kepala-upj/reports" className={styles.btnOutline}>
-          Buka Modul Ekspor Laporan
-        </Link>
-      </div>
-
-      <div className={styles.metricsGrid}>
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconBlue}`}>
+      {/* 6 Cards Grid for Financial Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {/* Jasa Section */}
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600">
               <Activity size={20} />
             </div>
-            <span className={styles.metricLabel}>Total Transaksi</span>
-          </div>
-          <h3 className={styles.metricValue}>{metrics.totalTxs}</h3>
-          <p className={styles.metricSubtext}>Periode aktif</p>
-        </div>
-
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
-              <DollarSign size={20} />
-            </div>
-            <span className={styles.metricLabel}>Nilai Transaksi Jasa</span>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Harian
+            </span>
           </div>
           <h3 className={styles.metricValue}>
-            {metrics.nilaiJasa > 0 ? formatJuta(metrics.nilaiJasa) : "Rp 0"}
+            {formatCurrency(stats?.jasa?.harian)}
           </h3>
-          <p className={styles.metricSubtext}>Omset Jasa Servis</p>
+          <span className={styles.metricLabel}>Pendapatan Jasa Servis</span>
+          <p className={styles.metricSubtext}>Total pendapatan hari ini</p>
         </div>
 
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconIndigo}`}>
-              <PenTool size={20} />
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-100 text-indigo-600">
+              <Calendar size={20} />
             </div>
-            <span className={styles.metricLabel}>Penjualan Suku Cadang</span>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Bulanan
+            </span>
           </div>
           <h3 className={styles.metricValue}>
-            {metrics.nilaiParts > 0 ? formatJuta(metrics.nilaiParts) : "Rp 0"}
+            {formatCurrency(stats?.jasa?.bulanan)}
           </h3>
-          <p className={styles.metricSubtext}>Omset Spare Part</p>
+          <span className={styles.metricLabel}>Pendapatan Jasa Servis</span>
+          <p className={styles.metricSubtext}>Total pendapatan bulan ini</p>
         </div>
 
-        <div className={styles.metricCard}>
-          <div className={styles.metricHeader}>
-            <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
-              <Database size={20} />
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 text-purple-600">
+              <Wallet size={20} />
             </div>
-            <span className={styles.metricLabel}>Kendali Stok</span>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Tahunan
+            </span>
           </div>
-          <h3 className={styles.metricValue}>{metrics.stokMin} Minimum</h3>
-          <p className={styles.metricSubtext}>Perlu di restok</p>
+          <h3 className={styles.metricValue}>
+            {formatCurrency(stats?.jasa?.tahunan)}
+          </h3>
+          <span className={styles.metricLabel}>Pendapatan Jasa Servis</span>
+          <p className={styles.metricSubtext}>Total pendapatan tahun ini</p>
+        </div>
+
+        {/* Suku Cadang Section */}
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-orange-100 text-orange-600">
+              <Package size={20} />
+            </div>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Harian
+            </span>
+          </div>
+          <h3 className={styles.metricValue}>
+            {formatCurrency(stats?.sukuCadang?.harian)}
+          </h3>
+          <span className={styles.metricLabel}>Penjualan Suku Cadang</span>
+          <p className={styles.metricSubtext}>Total penjualan hari ini</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-100 text-amber-600">
+              <Box size={20} />
+            </div>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Bulanan
+            </span>
+          </div>
+          <h3 className={styles.metricValue}>
+            {formatCurrency(stats?.sukuCadang?.bulanan)}
+          </h3>
+          <span className={styles.metricLabel}>Penjualan Suku Cadang</span>
+          <p className={styles.metricSubtext}>Total penjualan bulan ini</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600">
+              <Archive size={20} />
+            </div>
+            <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded">
+              Tahunan
+            </span>
+          </div>
+          <h3 className={styles.metricValue}>
+            {formatCurrency(stats?.sukuCadang?.tahunan)}
+          </h3>
+          <span className={styles.metricLabel}>Penjualan Suku Cadang</span>
+          <p className={styles.metricSubtext}>Total penjualan tahun ini</p>
         </div>
       </div>
 
-      <div className={styles.contentGrid}>
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Tren Transaksi 6 Bulan</h2>
-          <div className={styles.chartContainer}>
-            {chartData.map((d, i) => (
-              <div key={i} className={styles.barCol}>
-                <div
-                  className={styles.bar}
-                  style={{ height: `${d.val}%` }}
-                ></div>
-                <div className={styles.barLabel}>{d.label}</div>
-              </div>
-            ))}
+      {/* Main Chart Section */}
+      <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className={styles.cardTitle}>
+              Aktivitas Finansial UPJ Otomotif
+            </h2>
+            <p className={styles.metricSubtext}>
+              Perbandingan pemasukan Jasa vs Suku Cadang
+            </p>
           </div>
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            value={chartPeriod}
+            onChange={(e) => setChartPeriod(e.target.value)}
+          >
+            <option value="harian">Harian (7 Hari Terakhir)</option>
+            <option value="mingguan">Mingguan (4 Minggu Terakhir)</option>
+            <option value="bulanan">Bulanan (12 Bulan)</option>
+            <option value="tahunan">Tahunan</option>
+          </select>
         </div>
-
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Produktivitas Mekanik</h2>
-          <div className={styles.mechanicList}>
-            {topMechanics.map((m, idx) => (
-              <div key={m.id} className={styles.mechanicItem}>
-                <div className={styles.rankBadge}>{idx + 1}</div>
-                <div className={styles.mechanicInfo}>
-                  <h4>{m.nama_mekanik}</h4>
-                  <p>
-                    {Math.floor(Math.random() * 20) + 10} layanan terselesaikan
-                  </p>
-                </div>
-              </div>
-            ))}
-            {topMechanics.length === 0 && (
-              <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-                Data mekanik belum tersedia.
-              </p>
-            )}
-          </div>
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#E2E8F0"
+              />
+              <XAxis
+                dataKey="label"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#64748b", fontSize: 12 }}
+                dy={10}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#64748b", fontSize: 12 }}
+                tickFormatter={(value) =>
+                  value >= 1000000
+                    ? `Rp ${value / 1000000}M`
+                    : value >= 1000
+                      ? `Rp ${value / 1000}k`
+                      : value
+                }
+              />
+              <RechartsTooltip
+                cursor={{ fill: "#f1f5f9" }}
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                }}
+                formatter={(value: any) => formatCurrency(Number(value))}
+              />
+              <Legend wrapperStyle={{ paddingTop: "20px" }} />
+              <Bar
+                dataKey="jasa"
+                name="Jasa Servis"
+                fill="#3b82f6"
+                radius={[4, 4, 0, 0]}
+                barSize={30}
+              />
+              <Bar
+                dataKey="spareparts"
+                name="Suku Cadang"
+                fill="#f97316"
+                radius={[4, 4, 0, 0]}
+                barSize={30}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
   );
 };
 
-export default UpjDashboard;
+export default UPJDashboard;

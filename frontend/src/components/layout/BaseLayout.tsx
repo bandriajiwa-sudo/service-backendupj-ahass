@@ -73,24 +73,14 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       });
     } else if (role === "kepala_upj") {
       menu.push({
-        path: "laporan-jasa-servis",
+        path: "laporan-jasa",
         icon: FileText,
-        label: "Laporan Jasa Servis",
+        label: "Laporan Jasa Service",
       });
       menu.push({
-        path: "laporan-penjualan",
+        path: "laporan-suku-cadang",
         icon: FileText,
-        label: "Laporan Penjualan",
-      });
-      menu.push({
-        path: "laporan-persediaan",
-        icon: Package,
-        label: "Laporan Persediaan",
-      });
-      menu.push({
-        path: "produktivitas-mekanik",
-        icon: FileText,
-        label: "Produktivitas Mekanik",
+        label: "Laporan Penjualan Suku Cadang",
       });
     }
 

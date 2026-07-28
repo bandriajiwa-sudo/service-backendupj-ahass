@@ -229,6 +229,62 @@ class DashboardController extends Controller
     }
 
     /**
+     * Get financial statistics for Kepala UPJ Dashboard.
+     */
+    public function upjStats(Request $request)
+    {
+        try {
+            $today = today();
+            $month = today()->startOfMonth();
+            $year = today()->startOfYear();
+
+            // Helper to sum jasa and spare parts for a date scope
+            $getSums = function ($queryScope) {
+                return [
+                    'jasa' => \App\Models\Transaction::where($queryScope)
+                        ->with('transactionServices')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionServices->sum('biaya_jasa');
+                        }),
+                    'sukuCadang' => \App\Models\Transaction::where($queryScope)
+                        ->with('transactionSpareParts')
+                        ->get()
+                        ->sum(function ($tx) {
+                            return $tx->transactionSpareParts->sum('total_harga');
+                        })
+                ];
+            };
+
+            $harian = $getSums([['tanggal', '>=', $today->startOfDay()], ['tanggal', '<=', $today->endOfDay()]]);
+            $bulanan = $getSums([['tanggal', '>=', $month], ['tanggal', '<=', today()->endOfMonth()]]);
+            $tahunan = $getSums([['tanggal', '>=', $year], ['tanggal', '<=', today()->endOfYear()]]);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'jasa' => [
+                        'harian' => $harian['jasa'],
+                        'bulanan' => $bulanan['jasa'],
+                        'tahunan' => $tahunan['jasa'],
+                    ],
+                    'sukuCadang' => [
+                        'harian' => $harian['sukuCadang'],
+                        'bulanan' => $bulanan['sukuCadang'],
+                        'tahunan' => $tahunan['sukuCadang'],
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil statistik UPJ',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Get critical stocks list.
      */
     public function criticalStock(Request $request)

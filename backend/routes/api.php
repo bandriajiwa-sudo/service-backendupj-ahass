@@ -118,11 +118,16 @@ $apiRoutes = function () {
             Route::get('/spare-part-receipts/{receipt}', [SparePartReceiptController::class, 'show']);
         });
 
-        // Kepala UPJ Specific Reports
-        Route::middleware('role:kepala_upj')->prefix('reports')->group(function () {
-            Route::get('/services', [ReportController::class, 'servicesReport']);
-            Route::get('/spare-parts-sales', [ReportController::class, 'sparePartSales']);
-            Route::get('/stocks', [ReportController::class, 'stockStatus']);
+        // Kepala UPJ Specific Reports & Dashboard
+        Route::middleware('role:kepala_upj')->group(function () {
+            Route::get('/upj/dashboard-stats', [DashboardController::class, 'upjStats']);
+            Route::get('/upj/dashboard-chart', [DashboardController::class, 'chart']);
+
+            Route::prefix('reports')->group(function () {
+                Route::get('/services', [ReportController::class, 'servicesReport']);
+                Route::get('/spare-parts-sales', [ReportController::class, 'sparePartSales']);
+                Route::get('/stocks', [ReportController::class, 'stockStatus']);
+            });
         });
     });
 };

@@ -23,7 +23,8 @@ import KoperasiOrders from "../features/koperasi/KoperasiOrders";
 import KoperasiPenerimaan from "../features/koperasi/KoperasiPenerimaan";
 import KoperasiRiwayat from "../features/koperasi/KoperasiRiwayat";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
-import UpjLaporanHub from "../features/upj/UpjLaporanHub";
+import LaporanJasa from "../features/upj/LaporanJasa";
+import LaporanSukuCadang from "../features/upj/LaporanSukuCadang";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -126,10 +127,8 @@ export const router = createBrowserRouter([
         element: <BaseLayout title="Dashboard Laporan UPJ" />,
         children: [
           { path: "dashboard", element: <UpjDashboard /> },
-          { path: "laporan-jasa-servis", element: <UpjLaporanHub /> },
-          { path: "laporan-penjualan", element: <UpjLaporanHub /> },
-          { path: "laporan-persediaan", element: <UpjLaporanHub /> },
-          { path: "produktivitas-mekanik", element: <UpjDashboard /> }, // Embedded in dashboard for now in terms of actual implementation.
+          { path: "laporan-jasa", element: <LaporanJasa /> },
+          { path: "laporan-suku-cadang", element: <LaporanSukuCadang /> },
         ],
       },
     ],
