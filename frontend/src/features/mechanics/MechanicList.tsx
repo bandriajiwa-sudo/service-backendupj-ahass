@@ -188,35 +188,37 @@ const MechanicList: React.FC = () => {
         </p>
       </div>
 
-      <div className={styles.toolbar}>
-        <div className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Cari Mekanik</label>
-            <input
-              type="text"
-              placeholder="Nama atau kode mekanik"
-              className={styles.searchInput}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+      <div className={styles.toolbarCard}>
+        <div className={styles.toolbar}>
+          <div className={styles.filters}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Cari Mekanik</label>
+              <input
+                type="text"
+                placeholder="Nama atau kode mekanik"
+                className={styles.searchInput}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Status</label>
+              <select
+                className={styles.selectInput}
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="">Semua status</option>
+                <option value="active">Aktif</option>
+                <option value="inactive">Tidak Aktif</option>
+              </select>
+            </div>
           </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Status</label>
-            <select
-              className={styles.selectInput}
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="">Semua status</option>
-              <option value="active">Aktif</option>
-              <option value="inactive">Tidak Aktif</option>
-            </select>
-          </div>
-        </div>
 
-        <button className={styles.addBtn} onClick={handleToggleForm}>
-          + Tambah Mekanik
-        </button>
+          <button className={styles.addBtn} onClick={handleToggleForm}>
+            + Tambah Mekanik
+          </button>
+        </div>
       </div>
 
       <div className={styles.tableCard}>

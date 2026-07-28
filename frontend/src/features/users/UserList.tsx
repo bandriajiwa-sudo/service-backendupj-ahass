@@ -215,37 +215,39 @@ const UserList: React.FC = () => {
         </p>
       </div>
 
-      <div className={styles.toolbar}>
-        <div className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Cari Pengguna</label>
-            <input
-              type="text"
-              placeholder="Nama atau username"
-              className={styles.searchInput}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+      <div className={styles.toolbarCard}>
+        <div className={styles.toolbar}>
+          <div className={styles.filters}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Cari Pengguna</label>
+              <input
+                type="text"
+                placeholder="Nama atau username"
+                className={styles.searchInput}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Peran</label>
+              <select
+                className={styles.selectInput}
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
+              >
+                <option value="">Semua peran</option>
+                <option value="admin">Admin</option>
+                <option value="front_office">Front Office</option>
+                <option value="koperasi">Koperasi</option>
+                <option value="kepala_upj">Kepala UPJ</option>
+              </select>
+            </div>
           </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Peran</label>
-            <select
-              className={styles.selectInput}
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-            >
-              <option value="">Semua peran</option>
-              <option value="admin">Admin</option>
-              <option value="front_office">Front Office</option>
-              <option value="koperasi">Koperasi</option>
-              <option value="kepala_upj">Kepala UPJ</option>
-            </select>
-          </div>
-        </div>
 
-        <button className={styles.addBtn} onClick={handleToggleForm}>
-          + Tambah Pengguna
-        </button>
+          <button className={styles.addBtn} onClick={handleToggleForm}>
+            + Tambah Pengguna
+          </button>
+        </div>
       </div>
 
       <div className={styles.tableCard}>
