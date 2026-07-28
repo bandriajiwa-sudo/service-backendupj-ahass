@@ -192,24 +192,28 @@ const ReceiptList: React.FC = () => {
     switch (s) {
       case "menunggu":
         return (
-          <span className={`${styles.badge} ${styles.badgeMenunggu}`}>
+          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Tahap Verifikasi
           </span>
         );
       case "disetujui":
         return (
-          <span className={`${styles.badge} ${styles.badgeDisetujui}`}>
+          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Stok Masuk Lunas
           </span>
         );
       case "ditolak":
         return (
-          <span className={`${styles.badge} ${styles.badgeDitolak}`}>
+          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Batal Verifikasi
           </span>
         );
       default:
-        return <span className={styles.badge}>{s}</span>;
+        return (
+          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
+            {s}
+          </span>
+        );
     }
   };
 
@@ -301,26 +305,26 @@ const ReceiptList: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
-          <table className="w-full border-collapse min-w-[1000px]">
-            <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Tanggal Terima (Koperasi)
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Suku Cadang
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                   Qty Diterima / Diorder
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                   Status (Koperasi)
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Catatan Verifikasi
                 </th>
                 {(user?.role === "front_office" || user?.role === "admin") && (
-                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                  <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                     Aksi Verifikasi
                   </th>
                 )}
@@ -335,11 +339,7 @@ const ReceiptList: React.FC = () => {
                         ? 6
                         : 5
                     }
-                    style={{
-                      textAlign: "center",
-                      padding: "30px",
-                      color: "#64748b",
-                    }}
+                    className="text-center p-6 text-gray-500"
                   >
                     Belum ada riwayat penerimaan barang masuk.
                   </td>
@@ -348,31 +348,32 @@ const ReceiptList: React.FC = () => {
                 displayedReceipts.map((r) => (
                   <tr
                     key={r.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 py-3 text-left">
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {formatDate(r.created_at)}
                     </td>
-                    <td className="px-4 py-3 text-left">
-                      <div style={{ fontWeight: 600 }}>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
+                      <div className="font-semibold text-gray-800">
                         {r.spare_part_order?.spare_part?.nama_suku_cadang}
                       </div>
-                      <small style={{ color: "#64748b" }}>
+                      <small className="text-gray-500">
                         Order by: FO - {r.spare_part_order?.user?.nama_user}
                       </small>
                     </td>
-                    <td className="px-4 py-3 text-center">
-                      <span style={{ fontWeight: 700, color: "#047857" }}>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                      <span className="font-semibold text-emerald-600 block">
                         {r.jumlah_diterima} Pcs Masuk
                       </span>
-                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                      <div className="text-xs text-gray-500">
                         (Tagihan Asli: {r.spare_part_order?.jumlah} Pcs)
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-left">
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
                       {statusBadge(r.status_verifikasi)}
                     </td>
                     <td
+                      className="text-sm text-gray-800 px-4 py-3 text-left"
                       style={{
                         maxWidth: "200px",
                         whiteSpace: "nowrap",
@@ -401,9 +402,7 @@ const ReceiptList: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <div
-                            style={{ fontSize: "0.85rem", color: "#64748b" }}
-                          >
+                          <div className="text-sm text-gray-500">
                             {formatDate(r.tanggal_verifikasi!)}
                           </div>
                         )}

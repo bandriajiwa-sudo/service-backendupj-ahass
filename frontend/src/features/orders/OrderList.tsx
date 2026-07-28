@@ -224,7 +224,7 @@ const OrderList: React.FC = () => {
   const statusBadge = (o: any) => {
     if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
       return (
-        <span className={`${styles.badge} ${styles.badgeSelesai}`}>
+        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
           Selesai
         </span>
       );
@@ -233,24 +233,28 @@ const OrderList: React.FC = () => {
     switch (o.status) {
       case "menunggu":
         return (
-          <span className={`${styles.badge} ${styles.badgeMenunggu}`}>
+          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Menunggu
           </span>
         );
       case "disetujui":
         return (
-          <span className={`${styles.badge} ${styles.badgeDisetujui}`}>
+          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Disetujui
           </span>
         );
       case "ditolak":
         return (
-          <span className={`${styles.badge} ${styles.badgeDitolak}`}>
+          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Ditolak
           </span>
         );
       default:
-        return <span className={styles.badge}>{o.status}</span>;
+        return (
+          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
+            {o.status}
+          </span>
+        );
     }
   };
 
@@ -345,32 +349,34 @@ const OrderList: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
-          <table className="w-full border-collapse min-w-[1000px]">
-            <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Waktu Pengajuan
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Diajukan Oleh
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Suku Cadang
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-center">Qty</th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
+                  Qty
+                </th>
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                   Status
                 </th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">
+                <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Catatan
                 </th>
                 {user?.role === "front_office" && (
-                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                  <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                     Aksi
                   </th>
                 )}
                 {user?.role === "koperasi" && (
-                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                  <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                     Aksi
                   </th>
                 )}
@@ -387,11 +393,7 @@ const OrderList: React.FC = () => {
                           ? 7
                           : 6
                     }
-                    style={{
-                      textAlign: "center",
-                      padding: "30px",
-                      color: "#64748b",
-                    }}
+                    className="text-center p-6 text-gray-500"
                   >
                     Belum ada data pengajuan order.
                   </td>
@@ -400,29 +402,25 @@ const OrderList: React.FC = () => {
                 displayedOrders.map((o) => (
                   <tr
                     key={o.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 py-3 text-left">
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {formatDate(o.created_at)}
                     </td>
-                    <td
-                      className="px-4 py-3 text-left"
-                      style={{ fontWeight: 500 }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left font-medium">
                       {o.user?.nama_user || "-"}
                     </td>
-                    <td className="px-4 py-3 text-left">
-                      <div>{o.spare_part?.nama_suku_cadang}</div>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left font-semibold">
+                      {o.spare_part?.nama_suku_cadang}
                     </td>
-                    <td
-                      className="px-4 py-3 text-center"
-                      style={{ fontWeight: 600 }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
                       {o.jumlah}
                     </td>
-                    <td className="px-4 py-3 text-left">{statusBadge(o)}</td>
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                      {statusBadge(o)}
+                    </td>
                     <td
-                      className="px-4 py-3 text-left"
+                      className="text-sm text-gray-800 px-4 py-3 text-left"
                       style={{
                         minWidth: "220px",
                         maxWidth: "300px",
@@ -503,7 +501,7 @@ const OrderList: React.FC = () => {
                       )}
                     </td>
                     {user?.role === "front_office" && (
-                      <td>
+                      <td className="px-4 py-3 text-center">
                         {o.status === "menunggu" ? (
                           <div className={styles.actionGroup}>
                             <button
@@ -522,24 +520,13 @@ const OrderList: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <span
-                            style={{ fontSize: "0.85rem", color: "#94a3b8" }}
-                          >
-                            —
-                          </span>
+                          <span className="text-sm text-gray-400">—</span>
                         )}
                       </td>
                     )}
                     {user?.role === "koperasi" && (
-                      <td>
-                        <div
-                          className={styles.actionGroup}
-                          style={{
-                            flexDirection: "column",
-                            gap: "8px",
-                            alignItems: "flex-start",
-                          }}
-                        >
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex flex-col gap-2 items-start">
                           <button
                             className={styles.btnApprove}
                             style={{ background: "#3b82f6" }}
@@ -548,8 +535,6 @@ const OrderList: React.FC = () => {
                           >
                             <Pencil size={14} /> Edit
                           </button>
-
-                          {o.status !== "menunggu"}
                         </div>
                       </td>
                     )}

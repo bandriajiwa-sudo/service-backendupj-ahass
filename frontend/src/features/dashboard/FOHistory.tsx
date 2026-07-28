@@ -159,65 +159,52 @@ const FOHistory: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
-        <table className="w-full border-collapse min-w-[1000px]">
-          <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                 NO. NOTA
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">TANGGAL</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">PETUGAS</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">MEKANIK</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                TANGGAL
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                PETUGAS
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
+                MEKANIK
+              </th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
                 METODE BAYAR
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
                 TOTAL JASA
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
                 TOTAL SUKU CADANG
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-right">
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-right">
                 TOTAL BIAYA
               </th>
-              <th className="whitespace-nowrap px-4 py-3 text-center">AKSI</th>
+              <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
+                AKSI
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td
-                  colSpan={9}
-                  style={{
-                    textAlign: "center",
-                    padding: "40px",
-                    color: "#64748b",
-                  }}
-                >
+                <td colSpan={9} className="text-center p-6 text-gray-500">
                   Memuat data riwayat transaksi...
                 </td>
               </tr>
             ) : transactions.length === 0 ? (
               <tr>
-                <td
-                  colSpan={9}
-                  style={{
-                    textAlign: "center",
-                    padding: "60px 20px",
-                    color: "#64748b",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "1.2rem",
-                      fontWeight: 600,
-                      color: "#475569",
-                      marginBottom: "8px",
-                    }}
-                  >
+                <td colSpan={9} className="text-center p-10 text-gray-500">
+                  <div className="text-lg font-semibold text-gray-600 mb-2">
                     Pencarian Kosong
                   </div>
-                  <div style={{ fontSize: "0.9rem" }}>
+                  <div className="text-sm">
                     Tidak ada transaksi yang ditemukan.
                   </div>
                 </td>
@@ -249,97 +236,36 @@ const FOHistory: React.FC = () => {
                 return (
                   <tr
                     key={t.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontWeight: 600,
-                        color: "#1e293b",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left font-semibold">
                       {t.no_nota || "-"}
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        color: "#475569",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {formattedDate}
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        color: "#334155",
-                        fontWeight: 500,
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left font-medium">
                       {t.user?.nama_user || "-"}
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        color: "#475569",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {uniqueMechanics}
                     </td>
-                    <td style={{ padding: "16px" }}>
-                      <span
-                        style={{
-                          padding: "4px 10px",
-                          backgroundColor: "#e0e7ff",
-                          color: "#4f46e5",
-                          borderRadius: "100px",
-                          fontSize: "0.75rem",
-                          fontWeight: 600,
-                        }}
-                      >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                      <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs font-semibold">
                         Cash
                       </span>
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        color: "#475569",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
                       {totalJasaParams.length}
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        color: "#475569",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right">
                       {totalPartsParams.length}
                     </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontWeight: 600,
-                        color: "#1e293b",
-                        textAlign: "right",
-                        fontSize: "0.95rem",
-                      }}
-                    >
+                    <td className="text-sm text-gray-800 px-4 py-3 text-right font-semibold">
                       {formatRupiah(totalCalculated)}
                     </td>
-                    <td style={{ padding: "16px", textAlign: "center" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          gap: "8px",
-                        }}
-                      >
+                    <td className="px-4 py-3 text-center">
+                      <div className="flex justify-center gap-2">
                         <button
                           onClick={() =>
                             window.open(
@@ -347,16 +273,7 @@ const FOHistory: React.FC = () => {
                               "_blank",
                             )
                           }
-                          style={{
-                            padding: "6px 12px",
-                            border: "1px solid #e2e8f0",
-                            backgroundColor: "#ffffff",
-                            color: "#475569",
-                            borderRadius: "6px",
-                            fontSize: "0.8rem",
-                            fontWeight: 500,
-                            cursor: "pointer",
-                          }}
+                          className="px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded text-sm hover:bg-gray-50 transition-colors shadow-sm"
                         >
                           Cetak Nota
                         </button>
