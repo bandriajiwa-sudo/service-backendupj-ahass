@@ -1,7 +1,7 @@
 /* KoperasiDashboard.module.css */
 /* Reusing core generic styles from FODashboard to maintain consistency */
 .container {
-  padding: 32px;
+  padding: 8px 32px 32px 32px;
   max-width: 1200px;
   margin: 0 auto;
 }
