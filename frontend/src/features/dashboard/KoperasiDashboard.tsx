@@ -4,12 +4,9 @@ import {
   Loader,
   CheckCircle,
   XCircle,
-  Eye,
-  Search,
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
 import {
   BarChart,
@@ -29,13 +26,6 @@ const KoperasiDashboard: React.FC = () => {
     orderDitolak: 0,
     selesaiBulanIni: 0,
   });
-
-  const [allOrders, setAllOrders] = useState<any[]>([]);
-
-  // Filters State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("semua");
-  const [filterDate, setFilterDate] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -80,76 +70,8 @@ const KoperasiDashboard: React.FC = () => {
         orderDitolak,
         selesaiBulanIni,
       });
-
-      setAllOrders(orders);
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  const displayedOrders = allOrders.filter((o: any) => {
-    // 1. Search (ID or Part Name)
-    const idStr = `ORD-${String(o.id).padStart(5, "0")}`.toLowerCase();
-    const namaSuku = (o.spare_part?.nama_suku_cadang || "").toLowerCase();
-    const s = searchTerm.toLowerCase();
-    if (s && !idStr.includes(s) && !namaSuku.includes(s)) return false;
-
-    // 2. Status
-    if (filterStatus !== "semua") {
-      let derived = "";
-      if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
-        derived = "selesai";
-      } else if (o.status === "menunggu") {
-        derived = "baru";
-      } else if (o.status === "disetujui") {
-        derived = "diproses";
-      } else if (o.status === "ditolak") {
-        derived = "ditolak";
-      }
-      if (filterStatus !== derived) return false;
-    }
-
-    // 3. Date
-    if (filterDate) {
-      const dbDate = new Date(o.created_at).toISOString().split("T")[0];
-      if (dbDate !== filterDate) return false;
-    }
-
-    return true;
-  });
-
-  const statusBadge = (o: any) => {
-    // Check if fully verified by FO
-    if (o.spare_part_receipt?.status_verifikasi === "disetujui") {
-      return (
-        <span className={`${styles.badge} ${styles.badgeSelesai}`}>
-          Selesai
-        </span>
-      );
-    }
-
-    switch (o.status) {
-      case "menunggu":
-        return (
-          <span className={`${styles.badge} ${styles.badgeBaru}`}>Baru</span>
-        );
-      case "disetujui":
-        return (
-          <span className={`${styles.badge} ${styles.badgeDiproses}`}>
-            Diproses
-          </span>
-        );
-      case "ditolak":
-        return (
-          <span
-            className={`${styles.badge} ${styles.badgeSelesai}`}
-            style={{ background: "#fee2e2", color: "#dc2626" }}
-          >
-            Ditolak
-          </span>
-        );
-      default:
-        return <span className={styles.badge}>{o.status}</span>;
     }
   };
 

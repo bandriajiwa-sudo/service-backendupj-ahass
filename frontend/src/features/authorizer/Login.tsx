@@ -84,7 +84,7 @@ const ParticleNetwork: React.FC = () => {
           // Increase connection distance radius
           if (distance < 160) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(15, 44, 74, ${0.8 - distance / 160})`;
+            ctx.strokeStyle = `rgba(15, 44, 74, ${0.15 - (distance / 160) * 0.15})`;
             ctx.lineWidth = 1; // Thicker lines
             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
@@ -120,37 +120,8 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Typewriter effect state
-  const [typingText, setTypingText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const welcomeMessage = "Welcome to BLPT DIY...";
-
   const navigate = useNavigate();
   const { checkAuth } = useAuth();
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isDeleting) {
-      if (typingText.length > 0) {
-        timeout = setTimeout(() => {
-          setTypingText(welcomeMessage.substring(0, typingText.length - 1));
-        }, 50);
-      } else {
-        timeout = setTimeout(() => setIsDeleting(false), 500); // pause before retyping
-      }
-    } else {
-      if (typingText.length < welcomeMessage.length) {
-        timeout = setTimeout(() => {
-          setTypingText(welcomeMessage.substring(0, typingText.length + 1));
-        }, 120);
-      } else {
-        timeout = setTimeout(() => setIsDeleting(true), 3000); // pause before deleting
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [typingText, isDeleting, welcomeMessage]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,43 +181,33 @@ const Login: React.FC = () => {
         ></video>
 
         {/* Gradient Overlay */}
-        <div className={styles.videoOverlay}></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/40 z-[1]"></div>
 
         {/* Content Layer */}
-        <div className={styles.leftPanelContent}>
-          <div className={styles.glassPanel}>
-            {/* Placeholder for the Logo, loaded from the public folder */}
-            <img
-              src="/logo-blpt.png"
-              alt="Logo Pemda / Instansi"
-              className={styles.brandLogo}
-              onError={(e) => {
-                // Fallback gracefully if logo is not yet placed
-                e.currentTarget.src =
-                  "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
-              }}
-            />
+        <div className="relative z-[2] px-10 md:px-16 flex flex-col justify-center h-full max-w-2xl">
+          {/* Placeholder for the Logo, loaded from the public folder */}
+          <img
+            src="/logo-blpt.png"
+            alt="Logo Pemda / Instansi"
+            className="w-24 md:w-28 h-auto mb-10 object-contain drop-shadow-md"
+            onError={(e) => {
+              // Fallback gracefully if logo is not yet placed
+              e.currentTarget.src =
+                "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
+            }}
+          />
 
-            <div className={styles.welcomeWrapper}>
-              <h2 className={styles.typewriterText}>
-                {typingText}
-                <span className={styles.cursor}>|</span>
-              </h2>
-            </div>
+          <h1 className="text-white font-bold text-2xl md:text-3xl leading-tight">
+            SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVIS
+          </h1>
+          <h3 className="text-blue-400 font-semibold text-lg mt-2">
+            UPJ Otomotif & AHASS BLPT DIY
+          </h3>
 
-            <p className={styles.systemLabel}>SISTEM INFORMASI</p>
-            <h1 className={styles.mainTitle}>
-              Penjualan Suku Cadang
-              <br />
-              dan Jasa Servis
-            </h1>
-            <h3 className={styles.subTitle}>UPJ Otomotif & AHASS BLPT DIY</h3>
-
-            <p className={styles.description}>
-              Pengelolaan transaksi dan persediaan yang terintegrasi, akurat,
-              dan mudah dipantau.
-            </p>
-          </div>
+          <p className="text-slate-300 text-sm mt-3 leading-relaxed max-w-lg">
+            Pengelolaan transaksi dan persediaan yang terintegrasi, akurat, dan
+            mudah dipantau.
+          </p>
         </div>
       </div>
 
@@ -254,10 +215,14 @@ const Login: React.FC = () => {
       <div className={styles.rightPanel}>
         <ParticleNetwork />
 
-        <div className={styles.loginCard}>
-          <div className={styles.cardHeader}>
-            <h2>Masuk ke Sistem</h2>
-            <p>Gunakan akun yang telah diberikan oleh administrator.</p>
+        <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full relative z-10 my-8">
+          <div className="text-center">
+            <h2 className="text-gray-900 font-bold text-2xl mb-1">
+              Masuk ke Sistem
+            </h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Gunakan akun yang telah diberikan oleh administrator.
+            </p>
           </div>
 
           <form onSubmit={handleLogin}>
@@ -269,7 +234,7 @@ const Login: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Masukkan nama pengguna"
-                  className={styles.inputField}
+                  className="w-full bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 rounded-xl py-2.5 px-3.5 transition-all text-sm outline-none text-gray-800"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -284,7 +249,7 @@ const Login: React.FC = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Masukkan kata sandi"
-                  className={styles.inputField}
+                  className="w-full bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 rounded-xl py-2.5 px-3.5 transition-all text-sm outline-none text-gray-800"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -330,14 +295,16 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting || !username || !password}
-              className={styles.submitBtn}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl w-full shadow-lg shadow-blue-500/25 transition-all"
             >
               {isSubmitting ? "Memproses..." : "Masuk"}
             </button>
           </form>
 
-          <div className={styles.cardFooter}>
-            <p>Sistem internal BLPT DIY • Akses terbatas</p>
+          <div className="mt-6 text-center">
+            <p className="text-xs text-gray-400">
+              Sistem internal BLPT DIY &bull; Akses terbatas
+            </p>
           </div>
         </div>
       </div>
