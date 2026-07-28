@@ -102,13 +102,15 @@ const TransactionList: React.FC = () => {
   const generateNomorNota = async (tgl: string) => {
     try {
       const res = await apiClient.get("/transactions");
-      const sameDay = res.data.data.filter(
-        (t: any) =>
-          t.tanggal === tgl || (t.created_at && t.created_at.startsWith(tgl)),
-      );
-      const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
       const dateStr = tgl.replace(/-/g, "");
-      setNomorNota(`INV-${dateStr}-${nextNum}`);
+      const prefix = `INV-${dateStr}-`;
+
+      const sameDay = res.data.data.filter(
+        (t: any) => t.no_nota && t.no_nota.startsWith(prefix),
+      );
+
+      const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
+      setNomorNota(`${prefix}${nextNum}`);
     } catch {
       const dateStr = tgl.replace(/-/g, "");
       setNomorNota(`INV-${dateStr}-001`);
