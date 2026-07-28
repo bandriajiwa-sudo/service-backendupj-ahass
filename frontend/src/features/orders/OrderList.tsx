@@ -7,7 +7,9 @@ import styles from "./OrderList.module.css";
 
 interface SparePart {
   id: number;
+  kode_suku_cadang: string;
   nama_suku_cadang: string;
+  kategori: string;
   stok_sekarang: number;
   stok_minimum: number;
 }
@@ -45,6 +47,24 @@ const OrderList: React.FC = () => {
     catatan: "",
   });
 
+  // Modal filter states
+  const [modalSearchTerm, setModalSearchTerm] = useState("");
+  const [modalFilterCategory, setModalFilterCategory] = useState("");
+
+  const modalCategories = Array.from(
+    new Set(spareParts.map((p) => p.kategori)),
+  ).filter(Boolean);
+  const filteredModalParts = spareParts.filter((p) => {
+    const matchesSearch =
+      p.nama_suku_cadang
+        .toLowerCase()
+        .includes(modalSearchTerm.toLowerCase()) ||
+      p.kode_suku_cadang.toLowerCase().includes(modalSearchTerm.toLowerCase());
+    const matchesCategory =
+      modalFilterCategory === "" || p.kategori === modalFilterCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   // Decision State (For Koperasi)
   const [isKoperasiModalOpen, setIsKoperasiModalOpen] = useState(false);
   const [koperasiData, setKoperasiData] = useState({
@@ -78,7 +98,9 @@ const OrderList: React.FC = () => {
       const resParts = await apiClient.get("/spare-parts");
       const mappedParts = resParts.data.data.map((p: any) => ({
         id: p.id,
+        kode_suku_cadang: p.kode_suku_cadang,
         nama_suku_cadang: p.nama_suku_cadang,
+        kategori: p.kategori,
         stok_sekarang: p.stock?.stok_sekarang || 0,
         stok_minimum: p.stock?.stok_minimum || 0,
       }));
@@ -134,6 +156,8 @@ const OrderList: React.FC = () => {
 
   const handleEditOrder = (o: Order) => {
     setEditOrderId(o.id);
+    setModalSearchTerm("");
+    setModalFilterCategory("");
     setFormData({
       spare_part_id: String(o.spare_part?.id || ""),
       jumlah: String(o.jumlah),
@@ -554,8 +578,46 @@ const OrderList: React.FC = () => {
               {editOrderId ? "Edit Order" : "Buat Pengajuan Order"}
             </h2>
             <form onSubmit={handleCreateOrder}>
+              <div
+                className={styles.formGroup}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  marginBottom: "16px",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <label className={styles.formLabel}>Cari Suku Cadang</label>
+                  <input
+                    type="text"
+                    placeholder="Kode / nama part..."
+                    className={styles.formInput}
+                    value={modalSearchTerm}
+                    onChange={(e) => setModalSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label className={styles.formLabel}>Filter Kategori</label>
+                  <select
+                    className={styles.formInput}
+                    value={modalFilterCategory}
+                    onChange={(e) => setModalFilterCategory(e.target.value)}
+                  >
+                    <option value="">Semua Kategori</option>
+                    {modalCategories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Suku Cadang *</label>
+                <label className={styles.formLabel}>
+                  Suku Cadang Ditemukan *
+                </label>
                 <select
                   className={styles.formInput}
                   value={formData.spare_part_id}
@@ -563,11 +625,11 @@ const OrderList: React.FC = () => {
                     setFormData({ ...formData, spare_part_id: e.target.value })
                   }
                 >
-                  <option value="">Pilih barang habis...</option>
-                  {spareParts.map((p) => (
+                  <option value="">Pilih barang dari sistem...</option>
+                  {filteredModalParts.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.nama_suku_cadang}{" "}
-                      {p.stok_sekarang <= p.stok_minimum ? "(⚠️)" : ""}
+                      [{p.kode_suku_cadang}] {p.nama_suku_cadang} - {p.kategori}{" "}
+                      {p.stok_sekarang <= p.stok_minimum ? "(⚠️ Kritis)" : ""}
                     </option>
                   ))}
                 </select>
