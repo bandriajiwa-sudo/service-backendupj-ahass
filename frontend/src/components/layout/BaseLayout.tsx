@@ -57,7 +57,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       menu.push({
         path: "orders",
         icon: FileText,
-        label: "[Logistik] Order ke Koperasi",
+        label: "Order Suku Cadang",
       });
       menu.push({
         path: "receipts",

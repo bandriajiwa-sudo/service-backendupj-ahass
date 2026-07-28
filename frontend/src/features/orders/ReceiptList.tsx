@@ -300,17 +300,29 @@ const ReceiptList: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto w-full">
-          <table className={styles.table}>
+        <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+          <table className="w-full border-collapse min-w-[1000px]">
             <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
-            <tr>
-                <th className="whitespace-nowrap px-4 py-3 text-left">Tanggal Terima (Koperasi)</th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">Suku Cadang</th>
-                <th className="whitespace-nowrap px-4 py-3 text-center">Qty Diterima / Diorder</th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">Status (Koperasi)</th>
-                <th className="whitespace-nowrap px-4 py-3 text-left">Catatan Verifikasi</th>
+              <tr>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Tanggal Terima (Koperasi)
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Suku Cadang
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-center">
+                  Qty Diterima / Diorder
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Status (Koperasi)
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Catatan Verifikasi
+                </th>
                 {(user?.role === "front_office" || user?.role === "admin") && (
-                  <th className="whitespace-nowrap px-4 py-3 text-center">Aksi Verifikasi</th>
+                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                    Aksi Verifikasi
+                  </th>
                 )}
               </tr>
             </thead>
@@ -334,8 +346,13 @@ const ReceiptList: React.FC = () => {
                 </tr>
               ) : (
                 displayedReceipts.map((r) => (
-                  <tr key={r.id}>
-                    <td className="px-4 py-3 text-left">{formatDate(r.created_at)}</td>
+                  <tr
+                    key={r.id}
+                    className="border-b border-gray-100 hover:bg-gray-50"
+                  >
+                    <td className="px-4 py-3 text-left">
+                      {formatDate(r.created_at)}
+                    </td>
                     <td className="px-4 py-3 text-left">
                       <div style={{ fontWeight: 600 }}>
                         {r.spare_part_order?.spare_part?.nama_suku_cadang}
@@ -352,7 +369,9 @@ const ReceiptList: React.FC = () => {
                         (Tagihan Asli: {r.spare_part_order?.jumlah} Pcs)
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-left">{statusBadge(r.status_verifikasi)}</td>
+                    <td className="px-4 py-3 text-left">
+                      {statusBadge(r.status_verifikasi)}
+                    </td>
                     <td
                       style={{
                         maxWidth: "200px",

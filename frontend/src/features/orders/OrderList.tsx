@@ -302,7 +302,7 @@ const OrderList: React.FC = () => {
         </div>
         {user?.role === "front_office" && (
           <button
-            className={styles.btnPrimary}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
             onClick={() => setIsFormOpen(true)}
           >
             + Buat Order Baru
@@ -593,8 +593,11 @@ const OrderList: React.FC = () => {
                 >
                   Batal
                 </button>
-                <button type="submit" className={styles.btnPrimary}>
-                  Submit Order
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors w-full sm:w-auto"
+                >
+                  Simpan Order
                 </button>
               </div>
             </form>
@@ -648,7 +651,10 @@ const OrderList: React.FC = () => {
                 >
                   Batal
                 </button>
-                <button type="submit" className={styles.btnPrimary}>
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors w-full sm:w-auto"
+                >
                   Simpan
                 </button>
               </div>

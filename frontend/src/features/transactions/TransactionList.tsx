@@ -100,10 +100,6 @@ const TransactionList: React.FC = () => {
   }, [tanggal]);
 
   const generateNomorNota = async (tgl: string) => {
-    const d = new Date(tgl);
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
-
     try {
       const res = await apiClient.get("/transactions");
       const sameDay = res.data.data.filter(
@@ -111,9 +107,9 @@ const TransactionList: React.FC = () => {
           t.tanggal === tgl || (t.created_at && t.created_at.startsWith(tgl)),
       );
       const nextNum = (sameDay.length + 1).toString().padStart(3, "0");
-      setNomorNota(`${nextNum}-${dStr}`);
+      setNomorNota(`${nextNum}`);
     } catch {
-      setNomorNota(`001-${dStr}`);
+      setNomorNota(`001`);
     }
   };
 
@@ -782,7 +778,7 @@ const TransactionList: React.FC = () => {
                       onClick={() => setPaymentMethod("Cash")}
                       style={{
                         flex: 1,
-                        padding: "8px",
+                        padding: "6px 12px",
                         textAlign: "center",
                         borderRadius: "6px",
                         fontWeight: 500,
@@ -801,7 +797,7 @@ const TransactionList: React.FC = () => {
                       onClick={() => setPaymentMethod("Transfer")}
                       style={{
                         flex: 1,
-                        padding: "8px",
+                        padding: "6px 12px",
                         textAlign: "center",
                         borderRadius: "6px",
                         fontWeight: 500,
@@ -825,14 +821,14 @@ const TransactionList: React.FC = () => {
                     onClick={handleCheckout}
                     style={{
                       width: "100%",
-                      padding: "12px 0",
+                      padding: "8px 16px",
                       backgroundColor: "#2563eb",
                       color: "white",
-                      fontWeight: "bold",
+                      fontWeight: 500,
                       border: "none",
-                      borderRadius: "8px",
+                      borderRadius: "6px",
                       cursor: "pointer",
-                      fontSize: "1rem",
+                      fontSize: "0.875rem",
                     }}
                   >
                     SIMPAN & CETAK NOTA

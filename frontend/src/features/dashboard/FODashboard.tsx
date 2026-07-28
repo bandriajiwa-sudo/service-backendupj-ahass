@@ -311,7 +311,7 @@ const FODashboard: React.FC = () => {
                   }}
                 >
                   <div style={{ flexShrink: 0 }}>
-                    <AlertTriangle size={16} color="#ef4444" />
+                    {/* Icon removed based on user feedback */}
                   </div>
                   <span
                     style={{

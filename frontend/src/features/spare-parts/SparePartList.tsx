@@ -264,22 +264,22 @@ const SparePartList: React.FC = () => {
         </p>
       </div>
 
-      <div className={styles.toolbar}>
-        <div className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Cari</label>
+      <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 flex flex-wrap gap-4 items-end justify-between">
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Cari</label>
             <input
               type="text"
               placeholder="Kode atau nama suku cadang"
-              className={styles.searchInput}
+              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155" }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Kategori</label>
+          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Kategori</label>
             <select
-              className={styles.selectInput}
+              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155", backgroundColor: "white" }}
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
@@ -291,10 +291,10 @@ const SparePartList: React.FC = () => {
               ))}
             </select>
           </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Status Stok</label>
+          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Status Stok</label>
             <select
-              className={styles.selectInput}
+              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155", backgroundColor: "white" }}
               value={filterStockStatus}
               onChange={(e) => setFilterStockStatus(e.target.value)}
             >
@@ -312,21 +312,20 @@ const SparePartList: React.FC = () => {
         )}
       </div>
 
-      <div className={styles.tableCard}>
-        <div style={{ overflowX: "auto" }}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Kode</th>
-                <th>Nama Suku Cadang</th>
-                <th>Kategori</th>
-                <th>Harga Jual</th>
-                <th>Stok</th>
-                <th>Minimum</th>
-                <th>Status</th>
-                {isAdmin && <th>Aksi</th>}
-              </tr>
-            </thead>
+      <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+        <table className="w-full border-collapse min-w-[1000px]">
+          <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+            <tr>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Kode</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Nama Suku Cadang</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Kategori</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Harga Jual</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Stok</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Minimum</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">Status</th>
+              {isAdmin && <th className="whitespace-nowrap px-4 py-3 text-center">Aksi</th>}
+            </tr>
+          </thead>
             <tbody>
               {isLoading ? (
                 <tr>
@@ -348,7 +347,7 @@ const SparePartList: React.FC = () => {
                 </tr>
               ) : (
                 filteredParts.map((p) => (
-                  <tr key={p.id}>
+                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td>{p.kode_suku_cadang}</td>
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
                       {p.nama_suku_cadang}

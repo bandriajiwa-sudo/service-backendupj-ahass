@@ -66,19 +66,7 @@ const FOHistory: React.FC = () => {
       </div>
 
       {/* Filter Section */}
-      <div
-        style={{
-          backgroundColor: "#ffffff",
-          padding: "16px",
-          borderRadius: "8px",
-          border: "1px solid #e2e8f0",
-          marginBottom: "20px",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "16px",
-          alignItems: "flex-end",
-        }}
-      >
+      <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 flex flex-wrap gap-4 items-end">
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label
             style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
@@ -170,127 +158,29 @@ const FOHistory: React.FC = () => {
         </div>
       </div>
 
-      <div
-        style={{
-          overflowX: "auto",
-          backgroundColor: "#ffffff",
-          borderRadius: "8px",
-          border: "1px solid #e2e8f0",
-        }}
-      >
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            minWidth: "1000px",
-          }}
-        >
-          <thead
-            style={{
-              backgroundColor: "#f9fafb",
-              borderBottom: "1px solid #e2e8f0",
-            }}
-          >
+      <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+        <table className="w-full border-collapse min-w-[1000px]">
+          <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
             <tr>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
+              <th className="whitespace-nowrap px-4 py-3 text-left">
                 NO. NOTA
               </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
-                TANGGAL
-              </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
-                PETUGAS
-              </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
-                MEKANIK
-              </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
+              <th className="whitespace-nowrap px-4 py-3 text-left">TANGGAL</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">PETUGAS</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">MEKANIK</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">
                 METODE BAYAR
               </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
+              <th className="whitespace-nowrap px-4 py-3 text-left">
                 TOTAL JASA
               </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "left",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
+              <th className="whitespace-nowrap px-4 py-3 text-left">
                 TOTAL SUKU CADANG
               </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "right",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
+              <th className="whitespace-nowrap px-4 py-3 text-right">
                 TOTAL BIAYA
               </th>
-              <th
-                style={{
-                  padding: "12px 16px",
-                  textAlign: "center",
-                  fontSize: "0.85rem",
-                  color: "#64748b",
-                  fontWeight: 600,
-                }}
-              >
-                AKSI
-              </th>
+              <th className="whitespace-nowrap px-4 py-3 text-center">AKSI</th>
             </tr>
           </thead>
           <tbody>
@@ -357,7 +247,10 @@ const FOHistory: React.FC = () => {
                 const formattedDate = `${txDate.getDate().toString().padStart(2, "0")}/${(txDate.getMonth() + 1).toString().padStart(2, "0")}/${txDate.getFullYear()} ${txDate.getHours().toString().padStart(2, "0")}:${txDate.getMinutes().toString().padStart(2, "0")}`;
 
                 return (
-                  <tr key={t.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                  <tr
+                    key={t.id}
+                    className="border-b border-gray-100 hover:bg-gray-50"
+                  >
                     <td
                       style={{
                         padding: "16px",
