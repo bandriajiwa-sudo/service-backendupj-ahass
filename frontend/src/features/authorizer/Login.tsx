@@ -184,12 +184,12 @@ const Login: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/40 z-[1]"></div>
 
         {/* Content Layer */}
-        <div className="relative z-[2] px-10 md:px-16 flex flex-col justify-center h-full max-w-2xl">
+        <div className="relative flex flex-col justify-center h-full px-8 md:px-12 lg:px-16 z-10">
           {/* Placeholder for the Logo, loaded from the public folder */}
           <img
             src="/logo-blpt.png"
             alt="Logo Pemda / Instansi"
-            className="w-24 md:w-28 h-auto mb-10 object-contain drop-shadow-md"
+            className="w-24 md:w-32 h-auto mb-8 md:mb-10 object-contain drop-shadow-md"
             onError={(e) => {
               // Fallback gracefully if logo is not yet placed
               e.currentTarget.src =
@@ -197,14 +197,14 @@ const Login: React.FC = () => {
             }}
           />
 
-          <h1 className="text-white font-bold text-2xl md:text-3xl leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight md:leading-snug max-w-2xl drop-shadow-lg">
             SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVIS
           </h1>
-          <h3 className="text-blue-400 font-semibold text-lg mt-2">
+          <h3 className="text-xl md:text-2xl font-bold text-blue-400 mt-4 tracking-wide drop-shadow-md">
             UPJ Otomotif & AHASS BLPT DIY
           </h3>
 
-          <p className="text-slate-300 text-sm mt-3 leading-relaxed max-w-lg">
+          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl">
             Pengelolaan transaksi dan persediaan yang terintegrasi, akurat, dan
             mudah dipantau.
           </p>
