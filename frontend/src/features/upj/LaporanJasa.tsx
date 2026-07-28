@@ -67,49 +67,49 @@ const LaporanJasa: React.FC = () => {
 
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 print:shadow-none print:border-none">
         {/* Toolbar section hides on print */}
-        <div className="p-4 flex flex-wrap gap-4 items-center justify-between border-b border-gray-200 print:hidden">
-          <div className="flex gap-4 items-center flex-1">
-            <div className={styles.searchGroup}>
+        <div className="p-5 flex flex-wrap gap-4 items-start justify-between border-b border-gray-200 print:hidden">
+          <div className="flex flex-wrap gap-4 items-start flex-1 min-w-[200px]">
+            <div
+              className={styles.searchGroup}
+              style={{ flexGrow: 1, maxWidth: "400px" }}
+            >
               <Search className={styles.searchIcon} size={18} />
               <input
                 type="text"
                 placeholder="Cari mekanik atau jasa..."
-                className="pl-8 pr-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm w-64"
+                className="pl-9 pr-4 py-2 border border-gray-300 rounded-md bg-white w-full text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "12px",
-              alignItems: "center",
-            }}
-          >
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-500">Mulai</span>
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Mulai
+              </span>
               <input
                 type="date"
-                className="px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm w-40"
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors h-[38px] w-40"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-500">Sampai</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Sampai
+              </span>
               <input
                 type="date"
-                className="px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm w-40"
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors h-[38px] w-40"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
 
             <button
-              className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg px-4 py-2 flex items-center transition-colors shadow-sm ml-2"
+              className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-md px-4 h-[38px] flex items-center justify-center transition-colors shadow-sm min-w-[120px]"
               onClick={handlePrint}
             >
               <Printer size={16} className="mr-2" />

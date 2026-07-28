@@ -80,7 +80,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       menu.push({
         path: "laporan-suku-cadang",
         icon: FileText,
-        label: "Laporan Penjualan Suku Cadang",
+        label: "Laporan Suku Cadang",
       });
     }
 
