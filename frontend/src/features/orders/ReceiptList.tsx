@@ -268,10 +268,7 @@ const ReceiptList: React.FC = () => {
       </div>
 
       <div className={styles.tableCard}>
-        <div
-          className={styles.toolbar}
-          style={{ margin: "16px 20px 4px 20px" }}
-        >
+        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className={styles.searchGroup}>
             <Search className={styles.searchIcon} size={18} />
             <input
@@ -303,17 +300,17 @@ const ReceiptList: React.FC = () => {
           </div>
         </div>
 
-        <div className={styles.tableWrapper}>
+        <div className="overflow-x-auto w-full">
           <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Tanggal Terima (Koperasi)</th>
-                <th>Suku Cadang</th>
-                <th>Qty Diterima / Diorder</th>
-                <th>Status (Koperasi)</th>
-                <th>Catatan Verifikasi</th>
+            <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
+            <tr>
+                <th className="whitespace-nowrap px-4 py-3 text-left">Tanggal Terima (Koperasi)</th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">Suku Cadang</th>
+                <th className="whitespace-nowrap px-4 py-3 text-center">Qty Diterima / Diorder</th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">Status (Koperasi)</th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">Catatan Verifikasi</th>
                 {(user?.role === "front_office" || user?.role === "admin") && (
-                  <th>Aksi Verifikasi</th>
+                  <th className="whitespace-nowrap px-4 py-3 text-center">Aksi Verifikasi</th>
                 )}
               </tr>
             </thead>
@@ -338,8 +335,8 @@ const ReceiptList: React.FC = () => {
               ) : (
                 displayedReceipts.map((r) => (
                   <tr key={r.id}>
-                    <td>{formatDate(r.created_at)}</td>
-                    <td>
+                    <td className="px-4 py-3 text-left">{formatDate(r.created_at)}</td>
+                    <td className="px-4 py-3 text-left">
                       <div style={{ fontWeight: 600 }}>
                         {r.spare_part_order?.spare_part?.nama_suku_cadang}
                       </div>
@@ -347,7 +344,7 @@ const ReceiptList: React.FC = () => {
                         Order by: FO - {r.spare_part_order?.user?.nama_user}
                       </small>
                     </td>
-                    <td>
+                    <td className="px-4 py-3 text-center">
                       <span style={{ fontWeight: 700, color: "#047857" }}>
                         {r.jumlah_diterima} Pcs Masuk
                       </span>
@@ -355,7 +352,7 @@ const ReceiptList: React.FC = () => {
                         (Tagihan Asli: {r.spare_part_order?.jumlah} Pcs)
                       </div>
                     </td>
-                    <td>{statusBadge(r.status_verifikasi)}</td>
+                    <td className="px-4 py-3 text-left">{statusBadge(r.status_verifikasi)}</td>
                     <td
                       style={{
                         maxWidth: "200px",
@@ -368,7 +365,7 @@ const ReceiptList: React.FC = () => {
                     </td>
                     {(user?.role === "front_office" ||
                       user?.role === "admin") && (
-                      <td>
+                      <td className="px-4 py-3 text-center">
                         {r.status_verifikasi === "menunggu" ? (
                           <div className={styles.actionGroup}>
                             <button

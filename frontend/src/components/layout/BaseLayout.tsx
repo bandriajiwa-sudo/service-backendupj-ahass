@@ -8,6 +8,8 @@ import {
   FileText,
   Menu,
   Users,
+  Inbox,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./BaseLayout.module.css";
@@ -59,8 +61,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       });
       menu.push({
         path: "receipts",
-        icon: Package,
-        label: "[Logistik] Penerimaan",
+        icon: Inbox,
+        label: "Penerimaan Stok",
       });
     } else if (role === "koperasi") {
       menu.push({ path: "orders", icon: FileText, label: "Order Suku Cadang" });
@@ -139,7 +141,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <button onClick={logout} className={styles.logoutBtn}>
+          <button onClick={logout} className={styles.logoutBtn} title="Keluar">
+            <LogOut size={20} color="#ffffff" />
             {isSidebarOpen && <span>Keluar</span>}
           </button>
         </div>
