@@ -204,9 +204,9 @@ const Login: React.FC = () => {
             UPJ Otomotif & AHASS BLPT DIY
           </h3>
 
-          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl">
-            Pengelolaan transaksi dan persediaan yang terintegrasi, akurat, dan
-            mudah dipantau.
+          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl"> 
+            Pengelolaan Transaksi dan Persediaan Suku Cadang yang Terintegrasi, Akurat, dan
+            Mudah Dipantau.
           </p>
         </div>
       </div>
@@ -303,7 +303,7 @@ const Login: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-400">
-              Sistem internal BLPT DIY &bull; Akses terbatas
+              Sistem internal UPJ AHASS BLPT DIY &bull; Akses terbatas
             </p>
           </div>
         </div>

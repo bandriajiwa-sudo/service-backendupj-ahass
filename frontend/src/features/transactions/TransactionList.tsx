@@ -365,7 +365,6 @@ const TransactionList: React.FC = () => {
         <div className={styles.card}>
           <div className={styles.cardHeaderFlex}>
             <h2 className={styles.cardTitle}>Informasi Transaksi</h2>
-            <span className={styles.badgeDraft}>Draft</span>
           </div>
           <div className={styles.formGridInfo}>
             <div className={styles.formGroup}>

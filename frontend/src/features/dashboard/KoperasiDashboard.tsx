@@ -78,12 +78,6 @@ const KoperasiDashboard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h2
-          className={styles.pageSubtitle}
-          style={{ fontSize: "1.3rem", marginTop: 0 }}
-        >
-          Dashboard Koperasi
-        </h2>
       </div>
 
       {/* 4 Cards Grid */}
@@ -99,7 +93,7 @@ const KoperasiDashboard: React.FC = () => {
           </div>
           <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
           <span className={styles.metricLabel}>Order Baru</span>
-          <p className={styles.metricSubtext}>Menunggu diproses</p>
+          <p className={styles.metricSubtext}>Orderan Masuk</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -113,7 +107,7 @@ const KoperasiDashboard: React.FC = () => {
           </div>
           <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
           <span className={styles.metricLabel}>Sedang Diproses</span>
-          <p className={styles.metricSubtext}>Menunggu DO</p>
+          <p className={styles.metricSubtext}>Orderan Di Proses</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -127,7 +121,7 @@ const KoperasiDashboard: React.FC = () => {
           </div>
           <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
           <span className={styles.metricLabel}>Order Ditolak</span>
-          <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
+          <p className={styles.metricSubtext}>Pengajuan Bermasalah</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -141,14 +135,14 @@ const KoperasiDashboard: React.FC = () => {
           </div>
           <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
           <span className={styles.metricLabel}>Selesai Bulan Ini</span>
-          <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
+          <p className={styles.metricSubtext}>Stok Berhasil Dikirim</p>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg border border-gray-200 w-full mb-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-gray-800">
-            Chart Aktivitas Order
+            Aktivitas Order Suku Cadang
           </h3>
           <select className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none text-gray-600 bg-gray-50">
             <option value="Harian">Harian</option>

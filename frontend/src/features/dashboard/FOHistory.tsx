@@ -58,10 +58,10 @@ const FOHistory: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Daftar Transaksi</h1>
-          <p className={styles.subtitle}>
-            Riwayat transaksi jasa dan penjualan suku cadang
-          </p>
+          <h1 className={styles.pageTitle}>Daftar Transaksi</h1>
+          <p className={styles.pageSubtitle}>
+          Riwayat transaksi jasa dan penjualan suku cadang
+        </p>
         </div>
       </div>
 

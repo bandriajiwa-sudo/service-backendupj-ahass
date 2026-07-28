@@ -125,12 +125,6 @@ const FODashboard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h2
-          className={styles.pageSubtitle}
-          style={{ fontSize: "1.2rem", marginTop: 0, fontWeight: 700 }}
-        >
-          Dashboard FrontOffice
-        </h2>
       </div>
 
       {isError && (
@@ -215,7 +209,7 @@ const FODashboard: React.FC = () => {
             }}
           >
             <h2 className={styles.cardTitle} style={{ margin: 0 }}>
-              Chart Transaksi
+              Aktivitas Transaksi Bengkel
             </h2>
             <div style={{ display: "flex", gap: "8px" }}>
               <select
