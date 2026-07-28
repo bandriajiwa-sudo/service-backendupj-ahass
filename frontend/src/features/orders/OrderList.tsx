@@ -358,7 +358,7 @@ const OrderList: React.FC = () => {
             <input
               type="date"
               className={styles.toolbarInput}
-              style={{ width: "150px" }}
+              style={{ width: "100px" }}
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />

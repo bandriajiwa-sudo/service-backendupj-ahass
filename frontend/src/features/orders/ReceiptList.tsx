@@ -255,7 +255,7 @@ const ReceiptList: React.FC = () => {
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>
-            Konfirmasi Penerimaan Suku Cadang
+            Penerimaan Suku Cadang
           </h1>
           <p className={styles.pageSubtitle}>
             Catat kedatangan logistik gudang & verifikasi final stok
@@ -297,7 +297,7 @@ const ReceiptList: React.FC = () => {
             <input
               type="date"
               className={styles.toolbarInput}
-              style={{ width: "150px" }}
+              style={{ width: "100px" }}
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />
@@ -309,23 +309,23 @@ const ReceiptList: React.FC = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                  Tanggal Terima (Koperasi)
+                  Tanggal Terima
                 </th>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
                   Suku Cadang
                 </th>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                  Qty Diterima / Diorder
+                  Qty
                 </th>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                  Status (Koperasi)
+                  Status
                 </th>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">
-                  Catatan Verifikasi
+                  Catatan
                 </th>
                 {(user?.role === "front_office" || user?.role === "admin") && (
                   <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-center">
-                    Aksi Verifikasi
+                    Aksi
                   </th>
                 )}
               </tr>
@@ -358,7 +358,7 @@ const ReceiptList: React.FC = () => {
                         {r.spare_part_order?.spare_part?.nama_suku_cadang}
                       </div>
                       <small className="text-gray-500">
-                        Order by: FO - {r.spare_part_order?.user?.nama_user}
+                        Order by: {r.spare_part_order?.user?.nama_user}
                       </small>
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-center">
@@ -392,7 +392,7 @@ const ReceiptList: React.FC = () => {
                               className={styles.btnApprove}
                               onClick={() => handleVerification(r.id, true)}
                             >
-                              Verifikasi & Simpan
+                              Verifikasi
                             </button>
                             <button
                               className={styles.btnReject}
