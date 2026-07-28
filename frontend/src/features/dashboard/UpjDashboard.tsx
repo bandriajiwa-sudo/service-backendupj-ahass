@@ -73,7 +73,7 @@ const UPJDashboard: React.FC = () => {
       {/* 6 Cards Grid for Financial Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Jasa Section */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600">
               <Activity size={20} />
@@ -89,7 +89,7 @@ const UPJDashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Total pendapatan hari ini</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-100 text-indigo-600">
               <Calendar size={20} />
@@ -105,7 +105,7 @@ const UPJDashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Total pendapatan bulan ini</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 text-purple-600">
               <Wallet size={20} />
@@ -122,7 +122,7 @@ const UPJDashboard: React.FC = () => {
         </div>
 
         {/* Suku Cadang Section */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-400 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-orange-100 text-orange-600">
               <Package size={20} />
@@ -138,7 +138,7 @@ const UPJDashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Total penjualan hari ini</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-500 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-100 text-amber-600">
               <Box size={20} />
@@ -154,7 +154,7 @@ const UPJDashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Total penjualan bulan ini</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default">
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600">
               <Archive size={20} />
@@ -172,7 +172,7 @@ const UPJDashboard: React.FC = () => {
       </div>
 
       {/* Main Chart Section */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+      <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6 animate-fade-in-up animation-delay-300 transition-all duration-300 hover:shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className={styles.cardTitle}>

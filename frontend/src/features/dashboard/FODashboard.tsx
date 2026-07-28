@@ -124,12 +124,11 @@ const FODashboard: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.pageHeader}>
-      </div>
+      <div className={styles.pageHeader}></div>
 
       {isError && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md">
-          <div className="flex items-center">
+        <div className="bg-white p-5 rounded-lg border border-gray-200 animate-fade-in-up animation-delay-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default mb-6">
+          <div className="flex justify-between items-start mb-3">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-700 ml-3">
               Gagal menghubungi server. Menampilkan data fallback.
@@ -139,7 +138,7 @@ const FODashboard: React.FC = () => {
       )}
 
       <div className={styles.metricsGrid}>
-        <div className={styles.metricCard}>
+        <div className={`${styles.metricCard} animate-fade-in-up animation-delay-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}>
           <div className={styles.metricHeader}>
             <div className={`${styles.iconWrapper} ${styles.iconBlue}`}>
               <ShoppingCart size={20} />
@@ -152,7 +151,7 @@ const FODashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Dihitung dari nota baru</p>
         </div>
 
-        <div className={styles.metricCard}>
+        <div className={`${styles.metricCard} animate-fade-in-up animation-delay-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}>
           <div className={styles.metricHeader}>
             <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
               <Wrench size={20} />
@@ -165,7 +164,7 @@ const FODashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Dilayani mekanik hari ini</p>
         </div>
 
-        <div className={styles.metricCard}>
+        <div className={`${styles.metricCard} animate-fade-in-up animation-delay-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}>
           <div className={styles.metricHeader}>
             <div className={`${styles.iconWrapper} ${styles.iconIndigo}`}>
               <Package size={20} />
@@ -178,7 +177,7 @@ const FODashboard: React.FC = () => {
           <p className={styles.metricSubtext}>Item terjual hari ini</p>
         </div>
 
-        <div className={styles.metricCard}>
+        <div className={`${styles.metricCard} animate-fade-in-up animation-delay-400 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}>
           <div className={styles.metricHeader}>
             <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
               <AlertTriangle size={20} />

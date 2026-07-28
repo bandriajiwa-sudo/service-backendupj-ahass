@@ -75,7 +75,9 @@ const AdminDashboard: React.FC = () => {
     <div className={styles.dashboardContainer}>
       <div className={styles.metricsGrid}>
         {/* Card 1 */}
-        <div className={styles.metricCard}>
+        <div
+          className={`${styles.metricCard} animate-fade-in-up animation-delay-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}
+        >
           <div className={styles.metricTop}>
             <div
               className={styles.metricIconWrap}
@@ -106,7 +108,9 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Card 2 */}
-        <div className={styles.metricCard}>
+        <div
+          className={`${styles.metricCard} animate-fade-in-up animation-delay-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}
+        >
           <div className={styles.metricTop}>
             <div
               className={styles.metricIconWrap}
@@ -134,7 +138,9 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Card 3 */}
-        <div className={styles.metricCard}>
+        <div
+          className={`${styles.metricCard} animate-fade-in-up animation-delay-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}
+        >
           <div className={styles.metricTop}>
             <div
               className={styles.metricIconWrap}
@@ -166,8 +172,8 @@ const AdminDashboard: React.FC = () => {
 
       <div className={styles.chartsGridFullWidth}>
         {/* Interactive Chart Panel */}
-        <div className={styles.chartPanel}>
-          <div className={styles.panelHeader}>
+        <div className="bg-white p-6 rounded-lg border border-gray-200 flex flex-col justify-between animate-fade-in-up animation-delay-400 transition-all duration-300 hover:shadow-lg cursor-default">
+          <div className="flex justify-between items-start mb-4">
             <h2 className={styles.panelTitle}>Aktivitas Login Harian</h2>
           </div>
           <div className={styles.panelContent} style={{ height: "400px" }}>
