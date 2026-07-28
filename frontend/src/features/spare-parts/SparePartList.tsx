@@ -231,8 +231,8 @@ const SparePartList: React.FC = () => {
       ? p.kategori.toLowerCase() === filterCategory.toLowerCase()
       : true;
 
-    const pStockStatus =
-      (p.stok_sekarang || 0) >= (p.stok_minimum || 0) ? "aman" : "minimum";
+    const isCritical = (p.stok_sekarang || 0) <= (p.stok_minimum || 0);
+    const pStockStatus = isCritical ? "minimum" : "aman";
     const matchesStock = filterStockStatus
       ? pStockStatus === filterStockStatus
       : true;
