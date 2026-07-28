@@ -11,6 +11,15 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import styles from "./KoperasiDashboard.module.css";
 
 const KoperasiDashboard: React.FC = () => {
@@ -151,297 +160,145 @@ const KoperasiDashboard: React.FC = () => {
           className={styles.pageSubtitle}
           style={{ fontSize: "1.3rem", marginTop: 0 }}
         >
-          Dashboard Pemantauan Order dan Penerimaan Suku Cadang
+          Dashboard Koperasi
         </h2>
       </div>
 
-      {/* 70/30 Grid Partition */}
-      <div className={styles.topSection}>
-        {/* Left Column: Stat Cards */}
-        <div className={styles.metricsGrid}>
-          <div className={styles.metricCard}>
-            <div className={styles.metricTopRow}>
-              <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
-                <FileText size={20} />
-              </div>
-              <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
-                <TrendingUp size={12} /> +8%
-              </div>
+      {/* 4 Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600">
+              <FileText size={20} />
             </div>
-            <div className={styles.metricContent}>
-              <h3 className={styles.metricValue}>{metrics.orderBaru}</h3>
-              <span className={styles.metricLabel}>Order Baru</span>
-              <p className={styles.metricSubtext}>Menunggu diproses</p>
+            <div className="flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
+              <TrendingUp size={12} className="mr-1" /> +8%
             </div>
           </div>
-
-          <div className={styles.metricCard}>
-            <div className={styles.metricTopRow}>
-              <div className={`${styles.iconWrapper} ${styles.iconLightBlue}`}>
-                <Loader size={20} />
-              </div>
-              <div className={`${styles.trendBadge} ${styles.trendNeutral}`}>
-                <TrendingUp size={12} /> 0%
-              </div>
-            </div>
-            <div className={styles.metricContent}>
-              <h3 className={styles.metricValue}>{metrics.sedangDiproses}</h3>
-              <span className={styles.metricLabel}>Sedang Diproses</span>
-              <p className={styles.metricSubtext}>Menunggu DO</p>
-            </div>
-          </div>
-
-          <div className={styles.metricCard}>
-            <div className={styles.metricTopRow}>
-              <div className={`${styles.iconWrapper} ${styles.iconRed}`}>
-                <XCircle size={20} />
-              </div>
-              <div className={`${styles.trendBadge} ${styles.trendNegative}`}>
-                <TrendingDown size={12} /> -2%
-              </div>
-            </div>
-            <div className={styles.metricContent}>
-              <h3 className={styles.metricValue}>{metrics.orderDitolak}</h3>
-              <span className={styles.metricLabel}>Order Ditolak</span>
-              <p className={styles.metricSubtext}>Pengajuan bermasalah</p>
-            </div>
-          </div>
-
-          <div className={styles.metricCard}>
-            <div className={styles.metricTopRow}>
-              <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
-                <CheckCircle size={20} />
-              </div>
-              <div className={`${styles.trendBadge} ${styles.trendPositive}`}>
-                <TrendingUp size={12} /> +14%
-              </div>
-            </div>
-            <div className={styles.metricContent}>
-              <h3 className={styles.metricValue}>{metrics.selesaiBulanIni}</h3>
-              <span className={styles.metricLabel}>Selesai Bulan Ini</span>
-              <p className={styles.metricSubtext}>Stok berhasil diverifikasi</p>
-            </div>
-          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-1">
+            {metrics.orderBaru}
+          </h3>
+          <span className="text-sm font-medium text-gray-500 block mb-1">
+            Order Baru
+          </span>
+          <p className="text-xs text-gray-400">Menunggu diproses</p>
         </div>
 
-        {/* Right Column: Activity Summary / Mini Chart Tren */}
-        <div className={styles.chartCard}>
-          <h3
-            className={styles.chartTitle}
-            style={{ marginBottom: "12px", fontSize: "1rem" }}
-          >
-            Ringkasan Aktivitas
-          </h3>
-
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-          >
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "4px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                }}
-              >
-                <span>Order Selesai Lunas</span>
-                <span style={{ color: "#047857" }}>
-                  {metrics.selesaiBulanIni}
-                </span>
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  background: "#f1f5f9",
-                  borderRadius: "4px",
-                  height: "6px",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: `${Math.min((metrics.selesaiBulanIni / Math.max(allOrders.length, 1)) * 100, 100)}%`,
-                    background: "#10b981",
-                    height: "100%",
-                    borderRadius: "4px",
-                    transition: "width 0.5s ease",
-                  }}
-                ></div>
-              </div>
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-orange-100 text-orange-600">
+              <Loader size={20} />
             </div>
-
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "4px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                }}
-              >
-                <span>Sedang Diproses (DO)</span>
-                <span style={{ color: "#0ea5e9" }}>
-                  {metrics.sedangDiproses}
-                </span>
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  background: "#f1f5f9",
-                  borderRadius: "4px",
-                  height: "6px",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: `${Math.min((metrics.sedangDiproses / Math.max(allOrders.length, 1)) * 100, 100)}%`,
-                    background: "#0ea5e9",
-                    height: "100%",
-                    borderRadius: "4px",
-                    transition: "width 0.5s ease",
-                  }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "4px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                }}
-              >
-                <span>Order Baru / Ditolak</span>
-                <span style={{ color: "#e11d48" }}>
-                  {metrics.orderBaru + metrics.orderDitolak}
-                </span>
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  background: "#f1f5f9",
-                  borderRadius: "4px",
-                  height: "6px",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: `${Math.min(((metrics.orderBaru + metrics.orderDitolak) / Math.max(allOrders.length, 1)) * 100, 100)}%`,
-                    background: "#e11d48",
-                    height: "100%",
-                    borderRadius: "4px",
-                    transition: "width 0.5s ease",
-                  }}
-                ></div>
-              </div>
+            <div className="flex items-center text-xs font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded">
+              <TrendingUp size={12} className="mr-1" /> 0%
             </div>
           </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-1">
+            {metrics.sedangDiproses}
+          </h3>
+          <span className="text-sm font-medium text-gray-500 block mb-1">
+            Sedang Diproses
+          </span>
+          <p className="text-xs text-gray-400">Menunggu DO</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600">
+              <XCircle size={20} />
+            </div>
+            <div className="flex items-center text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">
+              <TrendingDown size={12} className="mr-1" /> -2%
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-1">
+            {metrics.orderDitolak}
+          </h3>
+          <span className="text-sm font-medium text-gray-500 block mb-1">
+            Order Ditolak
+          </span>
+          <p className="text-xs text-gray-400">Pengajuan bermasalah</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600">
+              <CheckCircle size={20} />
+            </div>
+            <div className="flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
+              <TrendingUp size={12} className="mr-1" /> +14%
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-1">
+            {metrics.selesaiBulanIni}
+          </h3>
+          <span className="text-sm font-medium text-gray-500 block mb-1">
+            Selesai Bulan Ini
+          </span>
+          <p className="text-xs text-gray-400">Stok berhasil diverifikasi</p>
         </div>
       </div>
 
-      <div className={styles.tableCard}>
-        <div style={{ padding: "20px 24px 0" }}>
-          <h2 className={styles.cardTitle}>Order Terbaru</h2>
-
-          {/* Table Filters Integration */}
-          <div className={styles.tableToolbar}>
-            <div className={styles.searchGroup}>
-              <Search className={styles.searchIcon} size={18} />
-              <input
-                type="text"
-                placeholder="Cari No. FO atau Suku Cadang..."
-                className={styles.searchInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div style={{ display: "flex", gap: "12px" }}>
-              <select
-                className={styles.toolbarSelect}
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="semua">Semua Status</option>
-                <option value="baru">Baru</option>
-                <option value="diproses">Sedang Diproses</option>
-                <option value="ditolak">Ditolak</option>
-                <option value="selesai">Selesai</option>
-              </select>
-              <input
-                type="date"
-                className={styles.toolbarInput}
-                style={{ width: "150px", minWidth: "150px" }}
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
-            </div>
-          </div>
+      <div className="bg-white p-6 rounded-lg border border-gray-200 w-full mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-gray-800">
+            Chart Aktivitas Order
+          </h3>
+          <select className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none text-gray-600 bg-gray-50">
+            <option value="Harian">Harian</option>
+            <option value="Mingguan">Mingguan</option>
+            <option value="Bulanan">Bulanan</option>
+          </select>
         </div>
-
-        <div className={styles.tableWrapper}>
-          <table className={styles.tableGroup}>
-            <thead>
-              <tr>
-                <th>No. Pengajuan (FO)</th>
-                <th>Tanggal</th>
-                <th>Suku Cadang</th>
-                <th className={styles.colQty}>Total Qty</th>
-                <th>Status</th>
-                <th className={styles.colAction}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedOrders.map((o) => (
-                <tr key={o.id}>
-                  <td className={styles.fontMono}>
-                    ORD-{String(o.id).padStart(5, "0")}
-                  </td>
-                  <td>
-                    {new Date(o.created_at).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </td>
-                  <td>{o.spare_part?.nama_suku_cadang}</td>
-                  <td className={`${styles.fontMono} ${styles.colQty}`}>
-                    {o.jumlah}
-                  </td>
-                  <td>{statusBadge(o)}</td>
-                  <td className={styles.colAction}>
-                    <Link
-                      to="/koperasi/orders"
-                      className={styles.btnActionSolid}
-                    >
-                      <Eye size={16} /> Detail
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-              {displayedOrders.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      textAlign: "center",
-                      color: "#64748b",
-                      padding: "32px 0",
-                    }}
-                  >
-                    Tidak ada order yang sesuai dengan filter.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer>
+            <BarChart
+              data={[
+                {
+                  name: "Selesai",
+                  total: metrics.selesaiBulanIni,
+                  fill: "#10b981",
+                },
+                {
+                  name: "Diproses",
+                  total: metrics.sedangDiproses,
+                  fill: "#f97316",
+                },
+                {
+                  name: "Ditolak",
+                  total: metrics.orderDitolak,
+                  fill: "#ef4444",
+                },
+                { name: "Baru", total: metrics.orderBaru, fill: "#3b82f6" },
+              ]}
+              layout="vertical"
+              margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                horizontal={false}
+                stroke="#e5e7eb"
+              />
+              <XAxis type="number" stroke="#9ca3af" />
+              <YAxis
+                type="category"
+                dataKey="name"
+                width={100}
+                stroke="#4b5563"
+                fontWeight={500}
+                fontSize={13}
+              />
+              <Tooltip
+                cursor={{ fill: "#f3f4f6" }}
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                }}
+              />
+              <Bar dataKey="total" radius={[0, 4, 4, 0]} barSize={28} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

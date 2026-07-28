@@ -266,20 +266,47 @@ const SparePartList: React.FC = () => {
 
       <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 flex flex-wrap gap-4 items-end justify-between">
         <div className="flex flex-wrap gap-4 items-end">
-          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Cari</label>
+          <div
+            className={styles.filterGroup}
+            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+          >
+            <label
+              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
+            >
+              Cari
+            </label>
             <input
               type="text"
               placeholder="Kode atau nama suku cadang"
-              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155" }}
+              style={{
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                outline: "none",
+                color: "#334155",
+              }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Kategori</label>
+          <div
+            className={styles.filterGroup}
+            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+          >
+            <label
+              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
+            >
+              Kategori
+            </label>
             <select
-              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155", backgroundColor: "white" }}
+              style={{
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                outline: "none",
+                color: "#334155",
+                backgroundColor: "white",
+              }}
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
@@ -291,10 +318,24 @@ const SparePartList: React.FC = () => {
               ))}
             </select>
           </div>
-          <div className={styles.filterGroup} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}>Status Stok</label>
+          <div
+            className={styles.filterGroup}
+            style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+          >
+            <label
+              style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 500 }}
+            >
+              Status Stok
+            </label>
             <select
-              style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", outline: "none", color: "#334155", backgroundColor: "white" }}
+              style={{
+                padding: "8px 12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "6px",
+                outline: "none",
+                color: "#334155",
+                backgroundColor: "white",
+              }}
               value={filterStockStatus}
               onChange={(e) => setFilterStockStatus(e.target.value)}
             >
@@ -317,75 +358,84 @@ const SparePartList: React.FC = () => {
           <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
             <tr>
               <th className="whitespace-nowrap px-4 py-3 text-left">Kode</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Nama Suku Cadang</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Kategori</th>
-              <th className="whitespace-nowrap px-4 py-3 text-left">Harga Jual</th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">
+                Nama Suku Cadang
+              </th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">
+                Kategori
+              </th>
+              <th className="whitespace-nowrap px-4 py-3 text-left">
+                Harga Jual
+              </th>
               <th className="whitespace-nowrap px-4 py-3 text-left">Stok</th>
               <th className="whitespace-nowrap px-4 py-3 text-left">Minimum</th>
               <th className="whitespace-nowrap px-4 py-3 text-left">Status</th>
-              {isAdmin && <th className="whitespace-nowrap px-4 py-3 text-center">Aksi</th>}
+              {isAdmin && (
+                <th className="whitespace-nowrap px-4 py-3 text-center">
+                  Aksi
+                </th>
+              )}
             </tr>
           </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    style={{ textAlign: "center", padding: "24px" }}
-                  >
-                    Memuat...
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={8}
+                  style={{ textAlign: "center", padding: "24px" }}
+                >
+                  Memuat...
+                </td>
+              </tr>
+            ) : parts.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={8}
+                  style={{ textAlign: "center", padding: "24px" }}
+                >
+                  Tidak ada data master suku cadang yang cocok dengan filter.
+                </td>
+              </tr>
+            ) : (
+              filteredParts.map((p) => (
+                <tr
+                  key={p.id}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
+                  <td>{p.kode_suku_cadang}</td>
+                  <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
+                    {p.nama_suku_cadang}
                   </td>
-                </tr>
-              ) : parts.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    style={{ textAlign: "center", padding: "24px" }}
-                  >
-                    Tidak ada data master suku cadang yang cocok dengan filter.
+                  <td>{p.kategori}</td>
+                  <td>{formatCurrency(p.harga_jual)}</td>
+                  <td>{p.stok_sekarang}</td>
+                  <td>{p.stok_minimum}</td>
+                  <td>
+                    {getStockStatus(p.stok_sekarang || 0, p.stok_minimum || 0)}
                   </td>
-                </tr>
-              ) : (
-                filteredParts.map((p) => (
-                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td>{p.kode_suku_cadang}</td>
-                    <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
-                      {p.nama_suku_cadang}
-                    </td>
-                    <td>{p.kategori}</td>
-                    <td>{formatCurrency(p.harga_jual)}</td>
-                    <td>{p.stok_sekarang}</td>
-                    <td>{p.stok_minimum}</td>
+                  {isAdmin && (
                     <td>
-                      {getStockStatus(
-                        p.stok_sekarang || 0,
-                        p.stok_minimum || 0,
-                      )}
+                      <div className={styles.actionLinks}>
+                        <span
+                          className={styles.actionLink}
+                          onClick={() => handleEdit(p)}
+                        >
+                          Edit
+                        </span>
+                        <Trash2
+                          size={18}
+                          className={styles.actionIconDanger}
+                          onClick={() => handleDelete(p.id)}
+                          style={{ cursor: "pointer", color: "#f43f5e" }}
+                        />
+                      </div>
                     </td>
-                    {isAdmin && (
-                      <td>
-                        <div className={styles.actionLinks}>
-                          <span
-                            className={styles.actionLink}
-                            onClick={() => handleEdit(p)}
-                          >
-                            Edit
-                          </span>
-                          <Trash2
-                            size={18}
-                            className={styles.actionIconDanger}
-                            onClick={() => handleDelete(p.id)}
-                            style={{ cursor: "pointer", color: "#f43f5e" }}
-                          />
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
 
       {isFormOpen && (

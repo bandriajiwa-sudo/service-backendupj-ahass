@@ -259,10 +259,10 @@ const ReceiptList: React.FC = () => {
         </div>
         {user?.role === "koperasi" && (
           <button
-            className={styles.btnPrimary}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-4 py-2 transition-colors"
             onClick={() => setIsFormOpen(true)}
           >
-            + Tambah Penerimaan dari Vendor
+            Konfirmasi Penerimaan
           </button>
         )}
       </div>
@@ -531,8 +531,11 @@ const ReceiptList: React.FC = () => {
                 >
                   Batal
                 </button>
-                <button type="submit" className={styles.btnPrimary}>
-                  Simpan Penerimaan
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-4 py-2 transition-colors"
+                >
+                  Simpan
                 </button>
               </div>
             </form>

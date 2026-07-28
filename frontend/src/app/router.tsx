@@ -108,7 +108,7 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={["koperasi"]} />,
     children: [
       {
-        element: <BaseLayout title="Logistik Koperasi" />,
+        element: <BaseLayout title="Koperasi" />,
         children: [
           { path: "dashboard", element: <KoperasiDashboard /> },
           { path: "orders", element: <KoperasiOrders /> },

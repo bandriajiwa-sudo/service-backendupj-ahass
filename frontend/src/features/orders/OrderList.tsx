@@ -311,10 +311,7 @@ const OrderList: React.FC = () => {
       </div>
 
       <div className={styles.tableCard}>
-        <div
-          className={styles.toolbar}
-          style={{ margin: "16px 20px 4px 20px" }}
-        >
+        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
           <div className={styles.searchGroup}>
             <Search className={styles.searchIcon} size={18} />
             <input
@@ -347,18 +344,36 @@ const OrderList: React.FC = () => {
           </div>
         </div>
 
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
+        <div className="overflow-x-auto w-full bg-white rounded-lg border border-gray-200">
+          <table className="w-full border-collapse min-w-[1000px]">
+            <thead className="bg-gray-50 border-y border-gray-200 text-gray-700 text-sm font-semibold">
               <tr>
-                <th>Waktu Pengajuan</th>
-                <th>Diajukan Oleh</th>
-                <th>Suku Cadang</th>
-                <th>Qty</th>
-                <th>Status</th>
-                <th>Catatan</th>
-                {user?.role === "front_office" && <th>Aksi</th>}
-                {user?.role === "koperasi" && <th>Aksi</th>}
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Waktu Pengajuan
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Diajukan Oleh
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Suku Cadang
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-center">Qty</th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Status
+                </th>
+                <th className="whitespace-nowrap px-4 py-3 text-left">
+                  Catatan
+                </th>
+                {user?.role === "front_office" && (
+                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                    Aksi
+                  </th>
+                )}
+                {user?.role === "koperasi" && (
+                  <th className="whitespace-nowrap px-4 py-3 text-center">
+                    Aksi
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -383,17 +398,31 @@ const OrderList: React.FC = () => {
                 </tr>
               ) : (
                 displayedOrders.map((o) => (
-                  <tr key={o.id}>
-                    <td>{formatDate(o.created_at)}</td>
-                    <td style={{ fontWeight: 500 }}>
+                  <tr
+                    key={o.id}
+                    className="border-b border-gray-100 hover:bg-gray-50"
+                  >
+                    <td className="px-4 py-3 text-left">
+                      {formatDate(o.created_at)}
+                    </td>
+                    <td
+                      className="px-4 py-3 text-left"
+                      style={{ fontWeight: 500 }}
+                    >
                       {o.user?.nama_user || "-"}
                     </td>
-                    <td>
+                    <td className="px-4 py-3 text-left">
                       <div>{o.spare_part?.nama_suku_cadang}</div>
                     </td>
-                    <td style={{ fontWeight: 600 }}>{o.jumlah}</td>
-                    <td>{statusBadge(o)}</td>
                     <td
+                      className="px-4 py-3 text-center"
+                      style={{ fontWeight: 600 }}
+                    >
+                      {o.jumlah}
+                    </td>
+                    <td className="px-4 py-3 text-left">{statusBadge(o)}</td>
+                    <td
+                      className="px-4 py-3 text-left"
                       style={{
                         minWidth: "220px",
                         maxWidth: "300px",
