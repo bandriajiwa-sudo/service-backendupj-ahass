@@ -51,7 +51,7 @@ const LaporanSukuCadang: React.FC = () => {
       item.spare_part?.nama_suku_cadang
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      item.transaction?.transaction_id
+      item.transaction?.no_nota
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
     return matchSearch;
@@ -173,7 +173,7 @@ const LaporanSukuCadang: React.FC = () => {
                       )}
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-left font-medium">
-                      {item.transaction?.transaction_id || "-"}
+                      {item.transaction?.no_nota || "-"}
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {item.spare_part?.nama_suku_cadang || "-"}

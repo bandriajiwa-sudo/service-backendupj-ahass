@@ -169,7 +169,7 @@ const LaporanJasa: React.FC = () => {
                       )}
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-left font-medium">
-                      {item.transaction?.transaction_id || "-"}
+                      {item.transaction?.no_nota || "-"}
                     </td>
                     <td className="text-sm text-gray-800 px-4 py-3 text-left">
                       {item.mechanic?.nama_mekanik || "-"}
