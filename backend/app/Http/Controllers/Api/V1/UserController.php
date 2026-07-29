@@ -63,10 +63,10 @@ class UserController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error("User Store Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage() . " | " . $e->getFile() . ":" . $e->getLine(),
-                'error' => $e->getMessage()
+                'message' => 'Terjadi kesalahan internal saat membuat pengguna.',
             ], 500);
         }
     }
@@ -118,10 +118,10 @@ class UserController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error("User Update Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage() . " | " . $e->getFile() . ":" . $e->getLine(),
-                'error' => $e->getMessage()
+                'message' => 'Terjadi kesalahan internal saat memperbarui data pengguna.',
             ], 500);
         }
     }

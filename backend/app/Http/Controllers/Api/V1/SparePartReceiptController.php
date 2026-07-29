@@ -98,26 +98,38 @@ class SparePartReceiptController extends Controller
 
         DB::beginTransaction();
         try {
-            $receipt->status_verifikasi = $request->status;
-            $receipt->catatan = $request->catatan;
-            $receipt->tanggal_verifikasi = now();
-            $receipt->save();
+            // Cegah double-submission dengan row-level lock pada penerimaan ini (Idempotency)
+            $lockedReceipt = SparePartReceipt::where('id', $receipt->id)->lockForUpdate()->first();
+
+            // Pengecekan krusial kedua: pastikan lock pertama belum mengubah statusnya.
+            if ($lockedReceipt->status_verifikasi->value !== ReceiptStatus::Menunggu->value) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tumbukan Sesi: Status penerimaan ini telah diselesaikan oleh operator lain dalam rentang per milidetik yang sama.',
+                ], 409); // Conflict
+            }
+
+            $lockedReceipt->status_verifikasi = $request->status;
+            $lockedReceipt->catatan = $request->catatan;
+            $lockedReceipt->tanggal_verifikasi = now();
+            $lockedReceipt->save();
 
             // Kenaikan inventori dipicu hanya saat diverifikasi Disetujui (Diterima dengan baik)
             if ($request->status === ReceiptStatus::Disetujui->value) {
                 // Lock stock for atomic increment
-                $stock = SparePartStock::where('spare_part_id', $receipt->sparePartOrder->spare_part_id)
+                $stock = SparePartStock::where('spare_part_id', $lockedReceipt->sparePartOrder->spare_part_id)
                     ->lockForUpdate()
                     ->first();
                 if ($stock) {
-                    $stock->stok_sekarang += $receipt->jumlah_diterima;
+                    $stock->stok_sekarang += $lockedReceipt->jumlah_diterima;
                     $stock->terakhir_diperbarui = now();
                     $stock->save();
 
                     // Cascade update the definitive selling price to the master SparePart catalog
-                    $sparePart = $receipt->sparePartOrder->sparePart;
-                    if ($sparePart && $receipt->harga_jual) {
-                        $sparePart->harga_jual = $receipt->harga_jual;
+                    $sparePart = $lockedReceipt->sparePartOrder->sparePart;
+                    if ($sparePart && $lockedReceipt->harga_jual) {
+                        $sparePart->harga_jual = $lockedReceipt->harga_jual;
                         $sparePart->save();
                     }
                 }
@@ -128,15 +140,14 @@ class SparePartReceiptController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Proses verifikasi barang sukses diselesaikan.',
-                'data' => $receipt->load('sparePartOrder.sparePart'),
+                'data' => $lockedReceipt->load('sparePartOrder.sparePart'),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
+            \Illuminate\Support\Facades\Log::error("Verification Encountered Logic Flaw: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem saat memproses verifikasi stok.',
-                'error' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan internal peladen saat mencoba memproses kesahihan verifikasi barang.',
             ], 500);
         }
     }

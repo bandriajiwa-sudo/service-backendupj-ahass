@@ -14,33 +14,6 @@ use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 $apiRoutes = function () {
-    Route::get('/debug-db', function () {
-        $admin = \App\Models\Login::where('username', 'admin_dev')->first();
-        return response()->json([
-            'db_host' => env('DB_HOST'),
-            'admin_exists' => $admin !== null,
-            'password_hash' => $admin ? $admin->password : null,
-            'hash_checks_out' => $admin ? \Illuminate\Support\Facades\Hash::check('password_dev_123', $admin->password) : false,
-            'auth_attempt' => \Illuminate\Support\Facades\Auth::attempt(['username' => 'admin_dev', 'password' => 'password_dev_123']),
-        ]);
-    });
-
-    // TEMPORARY: Run migrations on production DB
-    Route::get('/run-migrate', function () {
-        try {
-            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            return response()->json([
-                'success' => true,
-                'output' => \Illuminate\Support\Facades\Artisan::output(),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    });
-
     Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
 
     Route::middleware('auth')->group(function () {

@@ -27,7 +27,25 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                // Biarkan validasi, autentikasi, dan error HTTP (404/403) tertangani bawaan Laravel
+                if (
+                    $e instanceof \Illuminate\Validation\ValidationException ||
+                    $e instanceof \Illuminate\Auth\AuthenticationException ||
+                    $e instanceof \Symfony\Component\HttpKernel\Exception\HttpException
+                ) {
+                    return null;
+                }
+
+                \Illuminate\Support\Facades\Log::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan sistem pada peladen saat memproses operasional data.',
+                ], 500);
+            }
+        });
     })->create();
 
 if (isset($_ENV['VERCEL']) || env('VERCEL')) {
