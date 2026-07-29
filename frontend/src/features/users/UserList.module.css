@@ -331,3 +331,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile Responsiveness for Filters */
+@media (max-width: 768px) {
+  .toolbarCard {
+    padding: 16px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .searchInput,
+  .filterSelect {
+    width: 100%;
+  }
+}

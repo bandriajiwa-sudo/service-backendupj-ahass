@@ -398,3 +398,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .formGridInfo {
+    grid-template-columns: 1fr;
+  }
+  .cardHeaderFlex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .btnActionRight {
+    justify-content: flex-start;
+  }
+}
