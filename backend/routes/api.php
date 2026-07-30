@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 $apiRoutes = function () {
     Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::get('/authorizer/me', [AuthorizerController::class, 'me']);
         Route::post('/authorizer/logout', [AuthorizerController::class, 'logout']);
 
