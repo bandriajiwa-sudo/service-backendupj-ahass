@@ -35,7 +35,7 @@ const SparePartList: React.FC = () => {
 
   // Dynamic Categories from API
   const { data: categoriesData } = useSWR(
-    "/api/v1/categories",
+    "/categories",
     async (url: string) => {
       const res = await apiClient.get(url);
       return res.data.data as any[];

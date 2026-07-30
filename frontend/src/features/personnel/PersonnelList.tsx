@@ -20,15 +20,12 @@ interface Personnel {
 }
 
 export const PersonnelList = () => {
-  const { data, error, mutate } = useSWR(
-    "/api/v1/personnels",
-    async (url: string) => {
-      const res = await apiClient.get(url);
-      return res.data.data as Personnel[];
-    },
-  );
+  const { data, error, mutate } = useSWR("/personnels", async (url: string) => {
+    const res = await apiClient.get(url);
+    return res.data.data as Personnel[];
+  });
 
-  const { data: usersData } = useSWR("/api/v1/users", async (url: string) => {
+  const { data: usersData } = useSWR("/users", async (url: string) => {
     const res = await apiClient.get(url);
     return res.data.data as User[];
   });

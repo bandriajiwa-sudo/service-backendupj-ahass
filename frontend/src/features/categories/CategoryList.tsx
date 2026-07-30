@@ -10,13 +10,10 @@ interface Category {
 }
 
 export const CategoryList = () => {
-  const { data, error, mutate } = useSWR(
-    "/api/v1/categories",
-    async (url: string) => {
-      const res = await apiClient.get(url);
-      return res.data.data as Category[];
-    },
-  );
+  const { data, error, mutate } = useSWR("/categories", async (url: string) => {
+    const res = await apiClient.get(url);
+    return res.data.data as Category[];
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingData, setEditingData] = useState<Category | null>(null);
