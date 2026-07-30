@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\V1\AuthorizerController;
 use App\Http\Controllers\Api\V1\LoginAccountController;
 use App\Http\Controllers\Api\V1\MechanicController;
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\PersonnelController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SparePartController;
 use App\Http\Controllers\Api\V1\SparePartOrderController;
@@ -28,6 +30,8 @@ $apiRoutes = function () {
 
             Route::apiResource('/users', UserController::class)->except(['index']);
             Route::apiResource('/login-accounts', LoginAccountController::class);
+            Route::apiResource('/categories', CategoryController::class);
+            Route::apiResource('/personnels', PersonnelController::class);
 
             Route::post('/mechanics', [MechanicController::class, 'store']);
             Route::put('/mechanics/{mechanic}', [MechanicController::class, 'update']);
@@ -51,6 +55,7 @@ $apiRoutes = function () {
         Route::middleware('role:admin,front_office,koperasi,kepala_upj')->group(function () {
             Route::get('/spare-parts', [SparePartController::class, 'index']);
             Route::get('/spare-parts/{spare_part}', [SparePartController::class, 'show']);
+            Route::get('/categories', [CategoryController::class, 'index']);
 
             Route::get('/stocks', [StockController::class, 'index']);
             Route::get('/stocks/{stock}', [StockController::class, 'show']);

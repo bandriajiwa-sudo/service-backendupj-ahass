@@ -45,7 +45,13 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
     menu.push({ path: "dashboard", icon: LayoutDashboard, label: "Dashboard" });
 
     if (role === "admin") {
-      menu.push({ path: "users", icon: Users, label: "Data Pengguna" });
+      menu.push({
+        path: "categories",
+        icon: Package,
+        label: "Master Kategori",
+      });
+      menu.push({ path: "personnels", icon: Users, label: "Data Personel" });
+      menu.push({ path: "users", icon: Users, label: "Data Pengguna (Login)" });
       menu.push({ path: "mechanics", icon: Wrench, label: "Data Mekanik" });
       menu.push({
         path: "spare-parts",

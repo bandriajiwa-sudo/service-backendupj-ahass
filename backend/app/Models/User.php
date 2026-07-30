@@ -34,4 +34,9 @@ class User extends Model
     {
         return $this->hasMany(SparePartOrder::class);
     }
+
+    public function personnel(): HasOne
+    {
+        return $this->hasOne(Personnel::class);
+    }
 }

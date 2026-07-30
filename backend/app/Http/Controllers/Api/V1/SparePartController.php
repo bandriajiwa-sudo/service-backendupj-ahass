@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\SparePart;
+use App\Services\ActivePriceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,12 +12,18 @@ class SparePartController extends Controller
 {
     public function index()
     {
-        $spareParts = SparePart::with('stock')->paginate(1000);
+        $spareParts = SparePart::with(['stock', 'category'])->paginate(1000);
+
+        // Attach harga aktif dari penerimaan terakhir
+        $items = collect($spareParts->items())->map(function ($sp) {
+            $sp->harga_aktif = ActivePriceService::getActivePrice($sp->id);
+            return $sp;
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil diambil',
-            'data' => $spareParts->items(),
+            'data' => $items,
             'meta' => [
                 'current_page' => $spareParts->currentPage(),
                 'per_page' => $spareParts->perPage(),
@@ -30,8 +37,8 @@ class SparePartController extends Controller
         $validated = $request->validate([
             'kode_suku_cadang' => 'required|string|max:100|unique:spare_parts,kode_suku_cadang',
             'nama_suku_cadang' => 'required|string|max:200',
-            'kategori' => 'required|string|max:100',
-            'kategori' => 'required|string|max:100',
+            'category_id' => 'required|exists:categories,id',
+            'satuan' => 'required|string|max:50',
             'stok_awal' => 'sometimes|integer|min:0',
             'stok_minimum' => 'sometimes|integer|min:0',
         ]);
@@ -41,9 +48,8 @@ class SparePartController extends Controller
             $sparePart = SparePart::create([
                 'kode_suku_cadang' => $validated['kode_suku_cadang'],
                 'nama_suku_cadang' => $validated['nama_suku_cadang'],
-                'kategori' => $validated['kategori'],
-                'kategori' => $validated['kategori'],
-                'harga_jual' => $validated['harga_jual'] ?? 0,
+                'category_id' => $validated['category_id'],
+                'satuan' => $validated['satuan'],
             ]);
 
             $sparePart->stock()->create([
@@ -57,25 +63,25 @@ class SparePartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Master suku cadang berhasil dibuat',
-                'data' => $sparePart->load('stock'),
+                'data' => $sparePart->load(['stock', 'category']),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat suku cadang',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
     public function show(SparePart $sparePart)
     {
+        $sparePart->harga_aktif = ActivePriceService::getActivePrice($sparePart->id);
+
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil diambil',
-            'data' => $sparePart->load('stock'),
+            'data' => $sparePart->load(['stock', 'category']),
         ]);
     }
 
@@ -84,17 +90,16 @@ class SparePartController extends Controller
         $validated = $request->validate([
             'kode_suku_cadang' => 'sometimes|string|max:100|unique:spare_parts,kode_suku_cadang,' . $sparePart->id,
             'nama_suku_cadang' => 'sometimes|string|max:200',
-            'kategori' => 'sometimes|string|max:100',
-            'kategori' => 'sometimes|string|max:100',
+            'category_id' => 'sometimes|exists:categories,id',
+            'satuan' => 'sometimes|string|max:50',
             'stok_minimum' => 'sometimes|integer|min:0',
             'stok_sekarang' => 'sometimes|integer|min:0',
         ]);
 
         DB::beginTransaction();
         try {
-            $sparePart->update($request->only('kode_suku_cadang', 'nama_suku_cadang', 'kategori'));
+            $sparePart->update($request->only('kode_suku_cadang', 'nama_suku_cadang', 'category_id', 'satuan'));
 
-            // Memperbarui stok jika ada request stok_sekarang atau stok_minimum
             $stockUpdates = [];
             if ($request->has('stok_minimum')) {
                 $stockUpdates['stok_minimum'] = $validated['stok_minimum'];
@@ -112,15 +117,13 @@ class SparePartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Suku cadang berhasil diperbarui',
-                'data' => $sparePart->fresh('stock'),
+                'data' => $sparePart->fresh(['stock', 'category']),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui suku cadang',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }

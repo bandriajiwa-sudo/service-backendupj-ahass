@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { apiClient } from "../../lib/api";
+import useSWR from "swr";
+import { apiClient, api } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
@@ -9,9 +10,15 @@ interface SparePart {
   id: number;
   kode_suku_cadang: string;
   nama_suku_cadang: string;
-  kategori: string;
+  category?: {
+    id: number;
+    nama_kategori: string;
+  };
+  category_id?: number;
+  kategori?: string;
   satuan?: string;
-  harga_jual: number;
+  harga_jual?: number;
+  harga_aktif?: string;
   stok_sekarang?: number;
   stok_minimum?: number;
   status?: string;
@@ -26,24 +33,25 @@ const SparePartList: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editPartId, setEditPartId] = useState<number | null>(null);
 
-  // Dynamic Categories Memo
-  const uniqueCategories = React.useMemo(() => {
-    const cats = parts.map((p) => p.kategori).filter(Boolean);
-    return Array.from(new Set(cats)).sort();
-  }, [parts]);
+  // Dynamic Categories from API
+  const { data: categoriesData } = useSWR(
+    "/api/v1/categories",
+    async (url: string) => {
+      const res = await apiClient.get(url);
+      return res.data.data as any[];
+    },
+  );
 
   // Filter State
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [filterStockStatus, setFilterStockStatus] = useState("");
 
-  // Form State
   const [formData, setFormData] = useState({
     kode_suku_cadang: "",
     nama_suku_cadang: "",
-    kategori: "",
+    category_id: "",
     satuan: "Pcs",
-    harga_jual: 0,
     stok_sekarang: 0,
     stok_minimum: 0,
     status: "active",
@@ -54,13 +62,14 @@ const SparePartList: React.FC = () => {
       setIsLoading(true);
       const response = await apiClient.get("/spare-parts");
 
-      // Mapping API model if `stock` relation is nested
       const mappedParts = (response.data.data || []).map((p: any) => ({
         id: p.id,
         kode_suku_cadang: p.kode_suku_cadang,
         nama_suku_cadang: p.nama_suku_cadang,
-        kategori: p.kategori,
-        harga_jual: parseFloat(p.harga_jual || 0),
+        category: p.category,
+        category_id: p.category_id,
+        kategori: p.category?.nama_kategori,
+        harga_aktif: p.harga_aktif,
         stok_sekarang: p.stock?.stok_sekarang || 0,
         stok_minimum: p.stock?.stok_minimum || 0,
         satuan: "Pcs", // Mock UI missing from API
@@ -89,9 +98,8 @@ const SparePartList: React.FC = () => {
       setFormData({
         kode_suku_cadang: "",
         nama_suku_cadang: "",
-        kategori: "",
+        category_id: "",
         satuan: "Pcs",
-        harga_jual: 0,
         stok_sekarang: 0,
         stok_minimum: 0,
         status: "active",
@@ -106,9 +114,8 @@ const SparePartList: React.FC = () => {
     setFormData({
       kode_suku_cadang: p.kode_suku_cadang,
       nama_suku_cadang: p.nama_suku_cadang,
-      kategori: p.kategori,
+      category_id: p.category_id?.toString() || "",
       satuan: p.satuan || "Pcs",
-      harga_jual: p.harga_jual,
       stok_sekarang: p.stok_sekarang || 0,
       stok_minimum: p.stok_minimum || 0,
       status: "active", // defaulting as not all mocked in database
@@ -121,8 +128,8 @@ const SparePartList: React.FC = () => {
       if (
         !formData.kode_suku_cadang ||
         !formData.nama_suku_cadang ||
-        !formData.kategori ||
-        !formData.harga_jual
+        !formData.category_id ||
+        !formData.satuan
       ) {
         Swal.fire({
           icon: "warning",
@@ -154,9 +161,8 @@ const SparePartList: React.FC = () => {
       setFormData({
         kode_suku_cadang: "",
         nama_suku_cadang: "",
-        kategori: "",
+        category_id: "",
         satuan: "Pcs",
-        harga_jual: 0,
         stok_sekarang: 0,
         stok_minimum: 0,
         status: "active",
@@ -215,12 +221,14 @@ const SparePartList: React.FC = () => {
     }
   };
 
-  const formatCurrency = (val: number) => {
+  const formatCurrency = (val: number | string | undefined | null) => {
+    if (!val) return "-";
+    const num = typeof val === "string" ? parseFloat(val) : val;
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(val);
+    }).format(num);
   };
 
   const filteredParts = parts.filter((p) => {
@@ -228,7 +236,7 @@ const SparePartList: React.FC = () => {
       p.nama_suku_cadang.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.kode_suku_cadang.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory
-      ? p.kategori.toLowerCase() === filterCategory.toLowerCase()
+      ? (p.kategori || "").toLowerCase() === filterCategory.toLowerCase()
       : true;
 
     const isCritical = (p.stok_sekarang || 0) <= (p.stok_minimum || 0);
@@ -309,9 +317,9 @@ const SparePartList: React.FC = () => {
                 onChange={(e) => setFilterCategory(e.target.value)}
               >
                 <option value="">Semua kategori</option>
-                {uniqueCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                {categoriesData?.map((c: any) => (
+                  <option key={c.id} value={c.nama_kategori}>
+                    {c.nama_kategori}
                   </option>
                 ))}
               </select>
@@ -422,7 +430,7 @@ const SparePartList: React.FC = () => {
                         {p.kategori}
                       </td>
                       <td className="text-sm text-gray-800 px-4 py-3 text-right">
-                        {formatCurrency(p.harga_jual)}
+                        {formatCurrency(p.harga_aktif)}
                       </td>
                       <td className="text-sm text-gray-800 px-4 py-3 text-right">
                         {p.stok_sekarang}
@@ -510,15 +518,22 @@ const SparePartList: React.FC = () => {
               </div>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Kategori *</label>
-                <input
-                  type="text"
+                <select
                   className={styles.formInput}
-                  placeholder="Pilih kategori"
-                  value={formData.kategori}
+                  value={formData.category_id}
                   onChange={(e) =>
-                    setFormData({ ...formData, kategori: e.target.value })
+                    setFormData({ ...formData, category_id: e.target.value })
                   }
-                />
+                >
+                  <option value="" disabled>
+                    Pilih Kategori
+                  </option>
+                  {categoriesData?.map((c) => (
+                    <option key={c.id} value={c.id.toString()}>
+                      {c.nama_kategori}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Satuan *</label>

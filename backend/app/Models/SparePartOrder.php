@@ -17,6 +17,9 @@ class SparePartOrder extends Model
     protected $casts = [
         'jumlah' => 'integer',
         'status' => OrderStatus::class,
+        'tanggal' => 'date',
+        'tanggal_awal' => 'date',
+        'tanggal_akhir' => 'date',
         'tanggal_keputusan' => 'datetime',
     ];
 

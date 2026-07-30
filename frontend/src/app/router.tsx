@@ -7,9 +7,10 @@ import Login from "../features/authorizer/Login";
 import BaseLayout from "../components/layout/BaseLayout";
 // Admin
 import AdminDashboard from "../features/dashboards/AdminDashboard";
-import UserList from "../features/users/UserList";
-import MechanicList from "../features/mechanics/MechanicList";
-import SparePartList from "../features/spare-parts/SparePartList";
+import { UsersList } from "./features/users/UsersList";
+import { MechanicsList } from "./features/mechanics/MechanicsList";
+import { CategoryList } from "./features/categories/CategoryList";
+import { PersonnelList } from "./features/personnel/PersonnelList";
 // FO & KOPERASI
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
@@ -81,6 +82,8 @@ export const router = createBrowserRouter([
           { path: "users", element: <UserList /> },
           { path: "mechanics", element: <MechanicList /> },
           { path: "spare-parts", element: <SparePartList /> },
+          { path: "categories", element: <CategoryList /> },
+          { path: "personnels", element: <PersonnelList /> },
         ],
       },
     ],

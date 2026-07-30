@@ -12,7 +12,7 @@ class SparePartOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = SparePartOrder::with(['user', 'sparePart', 'sparePartReceipt'])->orderBy('created_at', 'desc')->paginate($request->query('per_page', 1000));
+        $orders = SparePartOrder::with(['user', 'sparePart', 'sparePartShipments'])->orderBy('created_at', 'desc')->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,
@@ -29,7 +29,7 @@ class SparePartOrderController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $sparePartOrder->load(['user', 'sparePart', 'sparePartReceipt']),
+            'data' => $sparePartOrder->load(['user', 'sparePart', 'sparePartShipments']),
         ]);
     }
 
@@ -46,6 +46,7 @@ class SparePartOrderController extends Controller
             'spare_part_id' => $validated['spare_part_id'],
             'jumlah' => $validated['jumlah'],
             'status' => OrderStatus::Menunggu,
+            'tanggal' => now()->toDateString(),
             'catatan_fo' => $validated['catatan'] ?? null,
         ]);
 
@@ -78,6 +79,32 @@ class SparePartOrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Keputusan order berhasil disimpan.',
+            'data' => $order,
+        ]);
+    }
+
+    public function estimate(Request $request, SparePartOrder $order)
+    {
+        if ($order->status->value !== OrderStatus::Menunggu->value) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Estimasi hanya bisa diisi saat order masih menunggu.',
+            ], 422);
+        }
+
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
+
+        $order->update([
+            'tanggal_awal' => $request->tanggal_awal,
+            'tanggal_akhir' => $request->tanggal_akhir,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estimasi ketersediaan berhasil disimpan.',
             'data' => $order,
         ]);
     }
