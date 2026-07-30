@@ -34,8 +34,7 @@ class AuthorizerController extends Controller
             ], 403);
         }
 
-        Auth::login($login);
-        $request->session()->regenerate();
+        $token = $login->createToken('auth-token')->plainTextToken;
 
         // Record login activity for the admin dashboard chart
         try {
@@ -46,14 +45,14 @@ class AuthorizerController extends Controller
                 'logged_in_at' => now(),
             ]);
         } catch (\Exception $e) {
-            // Silently fail — don't block login if logging fails
+            // Silently fail
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
             'data' => [
-                'token' => 'SPA-cookie-session',
+                'token' => $token,
                 'role' => $login->user->role->value,
                 'user' => $login->user,
             ],
@@ -65,16 +64,18 @@ class AuthorizerController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil diambil',
-            'data' => $request->user()->load('user'),
+            'data' => [
+                'user' => $request->user()->load('user')
+            ]
         ]);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // Revoke the token that was used to authenticate the current request
+        if ($request->user()) {
+            $request->user()->currentAccessToken()->delete();
+        }
 
         return response()->json([
             'success' => true,

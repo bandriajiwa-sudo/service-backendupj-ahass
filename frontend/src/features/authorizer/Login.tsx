@@ -121,7 +121,7 @@ const Login: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-  const { checkAuth } = useAuth();
+  const { checkAuth, login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,8 +135,12 @@ const Login: React.FC = () => {
       });
 
       if (response.data.success) {
-        await checkAuth(); // Pull full user context
+        const token = response.data.data.token;
+        const user = response.data.data.user;
         const role = response.data.data.role as string;
+
+        login(user, token);
+        await checkAuth(); // Pull full user context with bearer now attached
 
         // Redirect based on role explicitly for UX
         switch (role) {
@@ -204,9 +208,9 @@ const Login: React.FC = () => {
             UPJ Otomotif & AHASS BLPT DIY
           </h3>
 
-          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl"> 
-            Pengelolaan Transaksi dan Persediaan Suku Cadang yang Terintegrasi, Akurat, dan
-            Mudah Dipantau.
+          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl">
+            Pengelolaan Transaksi dan Persediaan Suku Cadang yang Terintegrasi,
+            Akurat, dan Mudah Dipantau.
           </p>
         </div>
       </div>

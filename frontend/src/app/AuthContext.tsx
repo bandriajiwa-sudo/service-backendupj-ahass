@@ -13,7 +13,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -45,12 +45,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
+      localStorage.removeItem("auth_token");
       setUser(null);
       window.location.href = "/login";
     }
   };
 
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
+    localStorage.setItem("auth_token", token);
     setUser(userData);
   };
 
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Listen for unauthorized interceptor
     const handleUnauthorized = () => {
+      localStorage.removeItem("auth_token");
       setUser(null);
       setIsLoading(false);
     };

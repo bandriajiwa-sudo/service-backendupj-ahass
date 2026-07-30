@@ -10,17 +10,18 @@ export const apiClient = axios.create({
     Accept: "application/json",
     "Content-Type": "application/json",
   },
-  withCredentials: true, // Crucial for Sanctum cookies
-  withXSRFToken: true,   // Crucial for Axios 1.6+ cross-origin CSRF headers
 });
 
-// Setup CSRF configuration
-// Note: Sanctum requires pulling CSRF token from the base domain before logging in
-export const fetchCsrfToken = async () => {
-  // /sanctum/csrf-cookie is usually at the root URL (not prefixed by /api/v1)
-  const rootUrl = API_URL.replace(/\/api\/v1\/?$/, "");
-  await apiClient.get(`${rootUrl}/sanctum/csrf-cookie`);
-};
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// CSRF is no longer required for stateless Bearer Tokens
+export const fetchCsrfToken = async () => {};
 
 // Response Interceptor for Unauthorized handling
 apiClient.interceptors.response.use(
