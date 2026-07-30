@@ -61,11 +61,13 @@ class AuthorizerController extends Controller
 
     public function me(Request $request)
     {
+        $login = $request->user()->load('user');
+
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil diambil',
             'data' => [
-                'user' => $request->user()->load('user')
+                'user' => $login->user
             ]
         ]);
     }
