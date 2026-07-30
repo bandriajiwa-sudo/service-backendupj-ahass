@@ -6,7 +6,8 @@ use App\Http\Controllers\Api\V1\MechanicController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SparePartController;
 use App\Http\Controllers\Api\V1\SparePartOrderController;
-use App\Http\Controllers\Api\V1\SparePartReceiptController;
+use App\Http\Controllers\Api\V1\SparePartShipmentController;
+use App\Http\Controllers\Api\V1\SparePartReturnController;
 use App\Http\Controllers\Api\V1\StockController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -69,13 +70,17 @@ $apiRoutes = function () {
             Route::put('/spare-part-orders/{order}', [SparePartOrderController::class, 'update']);
             Route::delete('/spare-part-orders/{order}', [SparePartOrderController::class, 'destroy']);
 
-            Route::patch('/spare-part-receipts/{receipt}/verification', [SparePartReceiptController::class, 'verification']);
+            Route::patch('/spare-part-shipments/{shipment}/verify', [SparePartShipmentController::class, 'verification']);
+            Route::post('/spare-part-returns', [SparePartReturnController::class, 'store']);
         });
 
         // Koperasi Focus
         Route::middleware('role:koperasi')->group(function () {
             Route::patch('/spare-part-orders/{order}/decision', [SparePartOrderController::class, 'decision']);
-            Route::post('/spare-part-receipts', [SparePartReceiptController::class, 'store']);
+            Route::post('/spare-part-shipments', [SparePartShipmentController::class, 'store']);
+            Route::post('/spare-part-shipments/{shipment}/evidences', [SparePartShipmentController::class, 'uploadEvidence']);
+            Route::post('/spare-part-shipments/{shipment}/submit', [SparePartShipmentController::class, 'submit']);
+            Route::post('/spare-part-returns/{return}/replacement-shipment', [SparePartReturnController::class, 'createReplacement']);
         });
 
         // Shared Transaction & Order Reads (FO & UPJ mostly)
@@ -87,8 +92,13 @@ $apiRoutes = function () {
             Route::get('/spare-part-orders', [SparePartOrderController::class, 'index']);
             Route::get('/spare-part-orders/{order}', [SparePartOrderController::class, 'show']);
 
-            Route::get('/spare-part-receipts', [SparePartReceiptController::class, 'index']);
-            Route::get('/spare-part-receipts/{receipt}', [SparePartReceiptController::class, 'show']);
+            Route::get('/spare-part-shipments', [SparePartShipmentController::class, 'index']);
+            Route::get('/spare-part-shipments/{shipment}', [SparePartShipmentController::class, 'show']);
+
+            Route::get('/spare-part-returns', [SparePartReturnController::class, 'index']);
+            Route::get('/spare-part-returns/{return}', [SparePartReturnController::class, 'show']);
+
+            Route::get('/shipment-evidences/{evidence}/download', [SparePartShipmentController::class, 'downloadEvidence']);
         });
 
         // Kepala UPJ Specific Reports & Dashboard

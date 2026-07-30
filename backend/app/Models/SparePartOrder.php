@@ -6,7 +6,7 @@ use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SparePartOrder extends Model
 {
@@ -30,8 +30,13 @@ class SparePartOrder extends Model
         return $this->belongsTo(SparePart::class);
     }
 
-    public function sparePartReceipt(): HasOne
+    public function sparePartShipments(): HasMany
     {
-        return $this->hasOne(SparePartReceipt::class);
+        return $this->hasMany(SparePartShipment::class);
+    }
+
+    public function sparePartReturns(): HasMany
+    {
+        return $this->hasMany(SparePartReturn::class);
     }
 }

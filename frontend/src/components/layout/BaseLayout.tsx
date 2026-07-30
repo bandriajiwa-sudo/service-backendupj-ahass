@@ -86,6 +86,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         icon: Package,
         label: "Penerimaan Suku Cadang",
       });
+      menu.push({
+        path: "returns",
+        icon: FileText,
+        label: "Manajemen Retur",
+      });
     } else if (role === "kepala_upj") {
       menu.push({
         path: "laporan-jasa",
@@ -106,8 +111,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
     <div className={styles.layoutWrapper}>
       {/* Mobile Backdrop Overlay */}
       {isMobile && isSidebarOpen && (
-        <div 
-          className={styles.mobileOverlay} 
+        <div
+          className={styles.mobileOverlay}
           onClick={() => setSidebarOpen(false)}
         />
       )}

@@ -1,0 +1,256 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Enums\OrderStatus;
+use App\Enums\ShipmentStatus;
+use App\Http\Controllers\Controller;
+use App\Models\ShipmentEvidence;
+use App\Models\SparePartOrder;
+use App\Models\SparePartReturn;
+use App\Models\SparePartShipment;
+use App\Models\SparePartStock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+
+class SparePartShipmentController extends Controller
+{
+    public function index(Request $request)
+    {
+        $shipments = SparePartShipment::with(['sparePartOrder.sparePart', 'shippedBy', 'verifiedBy'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->query('per_page', 100)); // Batasi 100 max pagination sesuai PRD
+
+        return response()->json([
+            'success' => true,
+            'data' => $shipments->items(),
+            'meta' => [
+                'current_page' => $shipments->currentPage(),
+                'per_page' => $shipments->perPage(),
+                'total' => $shipments->total(),
+            ],
+        ]);
+    }
+
+    public function show(SparePartShipment $shipment)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $shipment->load(['sparePartOrder.sparePart', 'evidences']),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'spare_part_order_id' => 'required|exists:spare_part_orders,id',
+            'quantity' => 'required|integer|min:1',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
+        ]);
+
+        $order = SparePartOrder::findOrFail($validated['spare_part_order_id']);
+
+        if ($order->status->value !== OrderStatus::Disetujui->value) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengiriman hanya bisa dibuat untuk Order yang sudah disetujui Koperasi.',
+            ], 422);
+        }
+
+        // Prevent multiple initial shipments for the same order
+        if ($order->sparePartShipments()->where('shipment_type', 'initial')->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengiriman awal (Initial Shipment) untuk order ini sudah dibuat sebelumnya.',
+            ], 422);
+        }
+
+        $shipment = SparePartShipment::create([
+            'spare_part_order_id' => $order->id,
+            'shipment_type' => 'initial',
+            'quantity' => $validated['quantity'],
+            'harga_beli' => $validated['harga_beli'],
+            'harga_jual' => $validated['harga_jual'],
+            'status' => 'menunggu_verifikasi',
+            'shipped_by' => auth()->id() ?? 1,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Draft Pengiriman awal telah dicatat. Silakan lengkapi dengan Bukti (Evidence).',
+            'data' => $shipment,
+        ], 201);
+    }
+
+    public function uploadEvidence(Request $request, SparePartShipment $shipment)
+    {
+        $request->validate([
+            'evidence_type' => ['required', Rule::in(['shipment_initial', 'damage_or_defect', 'shipment_replacement'])],
+            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // V1 PRD 5MB limit
+        ]);
+
+        $file = $request->file('file');
+        $path = $file->store('shipment_evidences', 'local');
+
+        $evidence = ShipmentEvidence::create([
+            'spare_part_shipment_id' => $shipment->id,
+            'evidence_type' => $request->evidence_type,
+            'storage_disk' => 'local',
+            'storage_path' => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'size_bytes' => $file->getSize(),
+            'sha256' => hash_file('sha256', $file->getRealPath()),
+            'uploaded_by' => auth()->id() ?? 1,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berkas bukti pengiriman berhasil diunggah dengan aman.',
+            'data' => $evidence,
+        ]);
+    }
+
+    public function downloadEvidence(ShipmentEvidence $evidence)
+    {
+        if (!Storage::disk($evidence->storage_disk)->exists($evidence->storage_path)) {
+            return response()->json(['success' => false, 'message' => 'File bukti hilang/tidak ditemukan.'], 404);
+        }
+
+        return Storage::disk($evidence->storage_disk)->download(
+            $evidence->storage_path,
+            $evidence->original_filename
+        );
+    }
+
+    // Submit for actual verification (Optional if we just bypass with pure FO verify straight)
+    public function submit(Request $request, SparePartShipment $shipment)
+    {
+        // Must have at least 1 evidence of correct type
+        $hasEvidence = $shipment->evidences()
+            ->where('evidence_type', $shipment->shipment_type === 'initial' ? 'shipment_initial' : 'shipment_replacement')
+            ->exists();
+
+        if (!$hasEvidence) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Koperasi harus mengunggah setidaknya 1 bukti foto/berkas sebelum mensubmit logistik.'
+            ], 422);
+        }
+
+        $shipment->update(['status' => 'menunggu_verifikasi']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Distribusi Logistik telah diajukan ke Front Office dan siap diperiksa.',
+        ]);
+    }
+
+    public function verification(Request $request, SparePartShipment $shipment)
+    {
+        $request->validate([
+            'status' => ['required', Rule::in(['disetujui', 'ditolak'])],
+            'rejection_note' => 'required_if:status,ditolak|nullable|string',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Lock Idempotensi berlapis transaksi
+            $lockedShipment = SparePartShipment::where('id', $shipment->id)->lockForUpdate()->first();
+
+            if ($lockedShipment->status !== 'menunggu_verifikasi') {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status pengiriman ini secara atomik telah dikerjakan di sesi sebelumnya.',
+                ], 409);
+            }
+
+            if ($request->status === 'ditolak') {
+                // Return wajib ada bukti defect
+                $hasDamageEvidence = $lockedShipment->evidences()
+                    ->where('evidence_type', 'damage_or_defect')
+                    ->exists();
+
+                if (!$hasDamageEvidence) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Anda belum melampirkan berkas bukti barang rusak/cacat (Damage Evidence).'
+                    ], 422);
+                }
+
+                $lockedShipment->status = 'ditolak';
+                $lockedShipment->rejection_note = $request->rejection_note;
+                $lockedShipment->verified_by = auth()->id() ?? 1;
+                $lockedShipment->verified_at = now();
+                $lockedShipment->save();
+
+                // Lemparkan komplain ini ke tabel SparePartReturns
+                SparePartReturn::create([
+                    'spare_part_order_id' => $lockedShipment->spare_part_order_id,
+                    'spare_part_shipment_id' => $lockedShipment->id,
+                    'quantity' => $lockedShipment->quantity,
+                    'reason' => $request->rejection_note,
+                    'status' => 'menunggu_pengiriman_ulang',
+                    'created_by' => auth()->id() ?? 1,
+                ]);
+            }
+
+            if ($request->status === 'disetujui') {
+                $lockedShipment->status = 'disetujui';
+                $lockedShipment->verified_by = auth()->id() ?? 1;
+                $lockedShipment->verified_at = now();
+                $lockedShipment->stock_posted_at = now();
+                $lockedShipment->save();
+
+                // Row Lock Penjumlahan Inventori (P0 Idempotent)
+                $stock = SparePartStock::where('spare_part_id', $lockedShipment->sparePartOrder->spare_part_id)
+                    ->lockForUpdate()->first();
+
+                if ($stock) {
+                    $stock->stok_sekarang += $lockedShipment->quantity;
+                    $stock->terakhir_diperbarui = now();
+                    $stock->save();
+
+                    // Resolve Retur if this is a replacement!
+                    if ($lockedShipment->shipment_type === 'replacement') {
+                        $pendingReturn = SparePartReturn::where('spare_part_order_id', $lockedShipment->spare_part_order_id)
+                            ->where('status', 'dikirim_ulang')->first();
+
+                        if ($pendingReturn) {
+                            $pendingReturn->status = 'selesai';
+                            $pendingReturn->resolved_at = now();
+                            $pendingReturn->save();
+                        }
+                    }
+
+                    // Tancapkan pembaruan update katalog sentral master Sparepart
+                    $sparePart = $lockedShipment->sparePartOrder->sparePart;
+                    if ($sparePart && $lockedShipment->harga_jual) {
+                        $sparePart->harga_jual = $lockedShipment->harga_jual;
+                        $sparePart->save();
+                    }
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Distribusi sukses diverifikasi.',
+                'data' => $lockedShipment,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error("Shipment Verify Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kendala peladen saat memusatkan validasi final logistik.',
+            ], 500);
+        }
+    }
+}

@@ -13,15 +13,14 @@ import SparePartList from "../features/spare-parts/SparePartList";
 // FO & KOPERASI
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
-import ReceiptList from "../features/orders/ReceiptList";
+import ShipmentList from "../features/orders/ShipmentList";
 import FODashboard from "../features/dashboard/FODashboard";
 import FOHistory from "../features/dashboard/FOHistory";
 import FOStockInfo from "../features/dashboard/FOStockInfo";
 import NotaPrint from "../features/print/NotaPrint";
 import KoperasiDashboard from "../features/dashboard/KoperasiDashboard";
 import KoperasiOrders from "../features/koperasi/KoperasiOrders";
-import KoperasiPenerimaan from "../features/koperasi/KoperasiPenerimaan";
-import KoperasiRiwayat from "../features/koperasi/KoperasiRiwayat";
+import KoperasiReturns from "../features/koperasi/KoperasiReturns";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
 import LaporanJasa from "../features/upj/LaporanJasa";
 import LaporanSukuCadang from "../features/upj/LaporanSukuCadang";
@@ -97,9 +96,10 @@ export const router = createBrowserRouter([
           { path: "transaksi-baru", element: <TransactionList /> },
           { path: "daftar-transaksi", element: <FOHistory /> },
           { path: "informasi-stok", element: <FOStockInfo /> },
+          { path: "penerimaan-stok", element: <ShipmentList /> },
           { path: "dafatar-transaksi/nota/:id", element: <NotaPrint /> }, // Specifically handling mockup 19
           { path: "orders", element: <OrderList /> },
-          { path: "receipts", element: <ReceiptList /> },
+          { path: "receipts", element: <ShipmentList /> },
         ],
       },
     ],
@@ -109,12 +109,12 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={["koperasi"]} />,
     children: [
       {
-        element: <BaseLayout title="Koperasi" />,
+        element: <BaseLayout title="Panel Koperasi" />,
         children: [
           { path: "dashboard", element: <KoperasiDashboard /> },
           { path: "orders", element: <KoperasiOrders /> },
-          { path: "penerimaan", element: <KoperasiPenerimaan /> },
-          { path: "riwayat-penerimaan", element: <KoperasiRiwayat /> },
+          { path: "riwayat-penerimaan", element: <ShipmentList /> },
+          { path: "returns", element: <KoperasiReturns /> },
         ],
       },
     ],
