@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { apiClient, api } from "../../lib/api";
+import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
