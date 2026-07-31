@@ -47,7 +47,6 @@ class SparePartShipmentController extends Controller
         $validated = $request->validate([
             'spare_part_order_id' => 'required|exists:spare_part_orders,id',
             'quantity' => 'required|integer|min:1',
-            'harga_beli' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
         ]);
 
@@ -72,7 +71,6 @@ class SparePartShipmentController extends Controller
             'spare_part_order_id' => $order->id,
             'shipment_type' => 'initial',
             'quantity' => $validated['quantity'],
-            'harga_beli' => $validated['harga_beli'],
             'harga_jual' => $validated['harga_jual'],
             'status' => 'menunggu_verifikasi',
             'shipped_by' => auth()->id() ?? 1,

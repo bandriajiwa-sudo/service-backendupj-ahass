@@ -57,7 +57,6 @@ const ShipmentList: React.FC = () => {
   const [formData, setFormData] = useState({
     spare_part_order_id: "",
     quantity: "1",
-    harga_beli: "",
     harga_jual: "",
   });
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
@@ -102,12 +101,11 @@ const ShipmentList: React.FC = () => {
     if (
       !formData.spare_part_order_id ||
       !formData.quantity ||
-      !formData.harga_beli ||
       !formData.harga_jual
     ) {
       Swal.fire({
         icon: "warning",
-        text: "Lengkapi field wajib (*) termasuk harga beli & jual",
+        text: "Lengkapi field wajib (*) pada form pengiriman",
       });
       return;
     }
@@ -149,7 +147,6 @@ const ShipmentList: React.FC = () => {
       setFormData({
         spare_part_order_id: "",
         quantity: "1",
-        harga_beli: "",
         harga_jual: "",
       });
       setEvidenceFile(null);
@@ -397,12 +394,12 @@ const ShipmentList: React.FC = () => {
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />
-            {user?.role === "koperasi" && (
+            {user?.role === "koperasi" && !isFormOpen && (
               <button
                 className={styles.btnPrimary}
-                onClick={() => setIsFormOpen(!isFormOpen)}
+                onClick={() => setIsFormOpen(true)}
               >
-                {isFormOpen ? "Batal Surat Jalan" : "+ Buat Surat Jalan DO"}
+                + Buat Surat Jalan DO
               </button>
             )}
           </div>
@@ -466,26 +463,7 @@ const ShipmentList: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={styles.formLabel}>
-                      Harga Beli (Rp) *
-                    </label>
-                    <input
-                      type="number"
-                      className={styles.formInput}
-                      min="0"
-                      value={formData.harga_beli}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          harga_beli: e.target.value,
-                        })
-                      }
-                      required
-                      placeholder="Cth: 50000"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                   <div>
                     <label className={styles.formLabel}>
                       Harga Jual UPJ (Rp) *
@@ -505,7 +483,8 @@ const ShipmentList: React.FC = () => {
                       placeholder="Cth: 65000"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      (Akan meng-update harga rujukan sentral SparePart)
+                      (Otomatis meng-update harga referensi jualan di sistem
+                      Suku Cadang)
                     </p>
                   </div>
                 </div>
@@ -551,10 +530,17 @@ const ShipmentList: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
+                  >
+                    Batal
+                  </button>
                   <button
                     type="submit"
-                    className={styles.btnPrimary}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors"
                     disabled={isSubmitting}
                   >
                     {isSubmitting
