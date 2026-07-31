@@ -323,6 +323,15 @@ const OrderList: React.FC = () => {
     }).format(new Date(ds));
   };
 
+  const formatDateOnly = (ds: string) => {
+    if (!ds) return "-";
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(ds));
+  };
+
   const displayedOrders = orders.filter((o: any) => {
     // 1. Search
     const searchLow = searchTerm.toLowerCase();
@@ -475,7 +484,8 @@ const OrderList: React.FC = () => {
                       {o.spare_part?.nama_suku_cadang}
                       {o.tanggal_awal && o.tanggal_akhir && (
                         <div className="text-xs text-blue-600 mt-1 font-normal bg-blue-50 px-2 py-1 rounded inline-block">
-                          Est: {o.tanggal_awal} s/d {o.tanggal_akhir}
+                          Est: {formatDateOnly(o.tanggal_awal)} s/d{" "}
+                          {formatDateOnly(o.tanggal_akhir)}
                         </div>
                       )}
                     </td>
