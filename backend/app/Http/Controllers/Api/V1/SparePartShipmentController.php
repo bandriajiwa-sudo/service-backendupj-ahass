@@ -91,13 +91,17 @@ class SparePartShipmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('shipment_evidences', 'local');
+
+        // Membaca file ke dalam raw binary lalu melakukan representasi Base64 untuk disuntikkan ke kolom DB LONGTEXT.
+        // Langkah krusial ini menghindari issue serverless storage (e.g. Vercel read-only filesystem limit).
+        $base64Data = base64_encode(file_get_contents($file->getRealPath()));
 
         $evidence = ShipmentEvidence::create([
             'spare_part_shipment_id' => $shipment->id,
             'evidence_type' => $request->evidence_type,
-            'storage_disk' => 'local',
-            'storage_path' => $path,
+            'storage_disk' => 'database',
+            'storage_path' => null,
+            'base64_data' => $base64Data,
             'original_filename' => $file->getClientOriginalName(),
             'mime_type' => $file->getMimeType(),
             'size_bytes' => $file->getSize(),
@@ -114,14 +118,16 @@ class SparePartShipmentController extends Controller
 
     public function downloadEvidence(ShipmentEvidence $evidence)
     {
-        if (!Storage::disk($evidence->storage_disk)->exists($evidence->storage_path)) {
-            return response()->json(['success' => false, 'message' => 'File bukti hilang/tidak ditemukan.'], 404);
+        // Decode base64 menjadi aliran byte
+        if ($evidence->storage_disk === 'database' && $evidence->base64_data) {
+            $fileContent = base64_decode($evidence->base64_data);
+            return response($fileContent)
+                ->header('Content-Type', $evidence->mime_type)
+                ->header('Content-Length', strlen($fileContent))
+                ->header('Content-Disposition', 'attachment; filename="' . $evidence->original_filename . '"');
         }
 
-        return Storage::disk($evidence->storage_disk)->download(
-            $evidence->storage_path,
-            $evidence->original_filename
-        );
+        return response()->json(['success' => false, 'message' => 'Format berkas bukti V1 tidak kompatibel atau rusak.'], 404);
     }
 
     // Submit for actual verification (Optional if we just bypass with pure FO verify straight)
