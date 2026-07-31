@@ -140,9 +140,12 @@ const SparePartList: React.FC = () => {
       }
 
       const payload: any = { ...formData };
+      payload.category_id = Number(payload.category_id);
+
       if (!editPartId) {
         // Backend expects 'stok_awal' on creation
-        payload.stok_awal = payload.stok_sekarang;
+        payload.stok_awal = Number(payload.stok_sekarang) || 0;
+        payload.stok_minimum = Number(payload.stok_minimum) || 0;
         delete payload.stok_sekarang;
       }
 
@@ -150,6 +153,8 @@ const SparePartList: React.FC = () => {
       delete payload.status; // computed from stock levels
 
       if (editPartId) {
+        payload.stok_sekarang = Number(payload.stok_sekarang) || 0;
+        payload.stok_minimum = Number(payload.stok_minimum) || 0;
         await apiClient.put(`/spare-parts/${editPartId}`, payload);
       } else {
         await apiClient.post("/spare-parts", payload);

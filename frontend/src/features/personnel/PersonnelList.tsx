@@ -8,6 +8,9 @@ interface User {
   nama_user: string;
   role: string;
   status: string;
+  login?: {
+    username: string;
+  };
 }
 
 interface Personnel {
@@ -141,7 +144,7 @@ export const PersonnelList = () => {
               >
                 <td className="p-4 text-gray-600">{p.id}</td>
                 <td className="p-4 text-gray-800 font-medium">
-                  {p.user?.nama_user}{" "}
+                  {p.user?.login?.username || p.user?.nama_user}{" "}
                   <span className="text-xs text-gray-400">
                     ({p.user?.role})
                   </span>
@@ -211,7 +214,7 @@ export const PersonnelList = () => {
                     </option>
                     {usersData?.map((u: User) => (
                       <option key={u.id} value={u.id}>
-                        {u.nama_user} ({u.role})
+                        {u.login?.username || u.nama_user} ({u.role})
                       </option>
                     ))}
                   </select>

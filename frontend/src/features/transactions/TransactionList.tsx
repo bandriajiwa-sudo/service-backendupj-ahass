@@ -20,8 +20,8 @@ interface SparePart {
   id: number;
   kode_suku_cadang: string;
   nama_suku_cadang: string;
-  kategori: string;
-  harga_jual: number;
+  category?: { nama_kategori: string };
+  harga_aktif?: string | number;
   stok_sekarang: number;
 }
 
@@ -188,18 +188,18 @@ const TransactionList: React.FC = () => {
         ...partForm,
         id_master_suku_cadang: pId,
         kode_suku_cadang: part.kode_suku_cadang,
-        kategori: part.kategori,
+        kategori: part.category?.nama_kategori || "-",
         stok_tersedia: part.stok_sekarang.toString(),
-        harga_jual: part.harga_jual.toString(),
+        harga_jual: part.harga_aktif?.toString() || "0",
       });
     }
   };
 
   const kategoriList = Array.from(
-    new Set(spareParts.map((p) => p.kategori).filter(Boolean)),
+    new Set(spareParts.map((p) => p.category?.nama_kategori).filter(Boolean)),
   );
   const filteredParts = selectedKategori
-    ? spareParts.filter((p) => p.kategori === selectedKategori)
+    ? spareParts.filter((p) => p.category?.nama_kategori === selectedKategori)
     : spareParts;
 
   const addJasa = () => {
@@ -251,11 +251,11 @@ const TransactionList: React.FC = () => {
       id_master_suku_cadang: part.id,
       kode_suku_cadang: part.kode_suku_cadang,
       nama_suku_cadang: part.nama_suku_cadang,
-      kategori: part.kategori,
+      kategori: part.category?.nama_kategori || "-",
       qty: qty,
-      harga_satuan: part.harga_jual,
+      harga_satuan: Number(part.harga_aktif) || 0,
       stok_tersedia: part.stok_sekarang,
-      subtotal: part.harga_jual * qty,
+      subtotal: (Number(part.harga_aktif) || 0) * qty,
     };
     setPartList([...partList, newItem]);
     setPartForm({

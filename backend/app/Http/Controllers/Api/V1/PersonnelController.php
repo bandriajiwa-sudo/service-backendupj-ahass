@@ -12,7 +12,7 @@ class PersonnelController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Personnel::with('user:id,nama_user,role,status')->orderBy('nama_pegawai')->get(),
+            'data' => Personnel::with('user:id,nama_user,role,status', 'user.login:id,user_id,username')->orderBy('nama_pegawai')->get(),
         ]);
     }
 
@@ -30,7 +30,7 @@ class PersonnelController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data personel berhasil ditambahkan.',
-            'data' => $personnel->load('user:id,nama_user,role,status'),
+            'data' => $personnel->load('user:id,nama_user,role,status', 'user.login:id,user_id,username'),
         ], 201);
     }
 
@@ -38,7 +38,7 @@ class PersonnelController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $personnel->load('user:id,nama_user,role,status'),
+            'data' => $personnel->load('user:id,nama_user,role,status', 'user.login:id,user_id,username'),
         ]);
     }
 
@@ -55,7 +55,7 @@ class PersonnelController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data personel berhasil diperbarui.',
-            'data' => $personnel->load('user:id,nama_user,role,status'),
+            'data' => $personnel->load('user:id,nama_user,role,status', 'user.login:id,user_id,username'),
         ]);
     }
 
