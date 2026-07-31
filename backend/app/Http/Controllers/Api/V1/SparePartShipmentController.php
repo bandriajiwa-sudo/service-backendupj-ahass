@@ -92,16 +92,15 @@ class SparePartShipmentController extends Controller
 
         $file = $request->file('file');
 
-        // Membaca file ke dalam raw binary lalu melakukan representasi Base64 untuk disuntikkan ke kolom DB LONGTEXT.
-        // Langkah krusial ini menghindari issue serverless storage (e.g. Vercel read-only filesystem limit).
-        $base64Data = base64_encode(file_get_contents($file->getRealPath()));
+        // Simpan ke Object Storage AWS S3 (Atau layer kloningan S3 Supabase)
+        $path = $file->store('shipment_evidences', 's3');
 
         $evidence = ShipmentEvidence::create([
             'spare_part_shipment_id' => $shipment->id,
             'evidence_type' => $request->evidence_type,
-            'storage_disk' => 'database',
-            'storage_path' => null,
-            'base64_data' => $base64Data,
+            'storage_disk' => 's3',
+            'storage_path' => $path,
+            'base64_data' => null,
             'original_filename' => $file->getClientOriginalName(),
             'mime_type' => $file->getMimeType(),
             'size_bytes' => $file->getSize(),
@@ -118,7 +117,15 @@ class SparePartShipmentController extends Controller
 
     public function downloadEvidence(ShipmentEvidence $evidence)
     {
-        // Decode base64 menjadi aliran byte
+        // 1. Storage S3 AWS / Supabase Cloud
+        if ($evidence->storage_disk === 's3' && $evidence->storage_path) {
+            if (!Storage::disk('s3')->exists($evidence->storage_path)) {
+                return response()->json(['success' => false, 'message' => 'Berkas S3 cloud hilang atau bucket tidak terdaftar.'], 404);
+            }
+            return Storage::disk('s3')->download($evidence->storage_path, $evidence->original_filename);
+        }
+
+        // 2. Storage Legacy (Base64 Injection)
         if ($evidence->storage_disk === 'database' && $evidence->base64_data) {
             $fileContent = base64_decode($evidence->base64_data);
             return response($fileContent)
