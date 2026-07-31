@@ -57,7 +57,8 @@ const OrderList: React.FC = () => {
   ).filter(Boolean);
   const filteredModalParts = spareParts.filter((p) => {
     const matchesCategory =
-      modalFilterCategory === "" || p.category?.nama_kategori === modalFilterCategory;
+      modalFilterCategory === "" ||
+      p.category?.nama_kategori === modalFilterCategory;
     return matchesCategory;
   });
 
@@ -237,15 +238,21 @@ const OrderList: React.FC = () => {
 
     try {
       if (koperasiData.mode === "decision") {
-        await apiClient.patch(`/koperasi/orders/${koperasiData.id}/decision`, {
-          status: koperasiData.status,
-          catatan: koperasiData.catatan,
-        });
+        await apiClient.patch(
+          `/spare-part-orders/${koperasiData.id}/decision`,
+          {
+            status: koperasiData.status,
+            catatan: koperasiData.catatan,
+          },
+        );
       } else {
-        await apiClient.patch(`/koperasi/orders/${koperasiData.id}/estimate`, {
-          tanggal_awal: koperasiData.tanggal_awal,
-          tanggal_akhir: koperasiData.tanggal_akhir,
-        });
+        await apiClient.patch(
+          `/spare-part-orders/${koperasiData.id}/estimate`,
+          {
+            tanggal_awal: koperasiData.tanggal_awal,
+            tanggal_akhir: koperasiData.tanggal_akhir,
+          },
+        );
       }
       fetchOrders();
       setIsKoperasiModalOpen(false);

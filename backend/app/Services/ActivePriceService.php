@@ -32,9 +32,23 @@ class ActivePriceService
     public static function getActivePrices(array $sparePartIds): array
     {
         $prices = [];
+        if (empty($sparePartIds)) {
+            return $prices;
+        }
 
-        foreach ($sparePartIds as $id) {
-            $prices[$id] = self::getActivePrice($id);
+        $shipments = SparePartShipment::select('spare_part_orders.spare_part_id', 'spare_part_shipments.harga_jual')
+            ->join('spare_part_orders', 'spare_part_shipments.spare_part_order_id', '=', 'spare_part_orders.id')
+            ->whereIn('spare_part_orders.spare_part_id', $sparePartIds)
+            ->where('spare_part_shipments.status', 'disetujui')
+            ->whereNotNull('spare_part_shipments.verified_at')
+            ->whereNotNull('spare_part_shipments.harga_jual')
+            ->orderBy('spare_part_shipments.verified_at', 'asc')
+            ->orderBy('spare_part_shipments.id', 'asc')
+            ->get();
+
+        // The query orders ascending, so the last assignment will be the latest record
+        foreach ($shipments as $s) {
+            $prices[$s->spare_part_id] = $s->harga_jual;
         }
 
         return $prices;

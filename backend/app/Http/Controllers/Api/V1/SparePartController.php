@@ -14,9 +14,12 @@ class SparePartController extends Controller
     {
         $spareParts = SparePart::with(['stock', 'category'])->paginate(1000);
 
-        // Attach harga aktif dari penerimaan terakhir
-        $items = collect($spareParts->items())->map(function ($sp) {
-            $sp->harga_aktif = ActivePriceService::getActivePrice($sp->id);
+        $items = collect($spareParts->items());
+        $sparePartIds = $items->pluck('id')->toArray();
+        $activePrices = ActivePriceService::getActivePrices($sparePartIds);
+
+        $items = $items->map(function ($sp) use ($activePrices) {
+            $sp->harga_aktif = $activePrices[$sp->id] ?? null;
             return $sp;
         });
 
