@@ -634,9 +634,7 @@ const ShipmentList: React.FC = () => {
         <div className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn p-8 overflow-y-auto">
             <h3 className="text-xl font-bold text-gray-800 mb-6 pb-4 border-b border-gray-200">
-              {editingShipmentId
-                ? "✏️ Edit Surat Jalan DO (Refisi Koperasi)"
-                : "📝 Pencatatan Surat Jalan (DO) Ke UPJ"}
+              {editingShipmentId ? "Edit Surat Jalan" : "Pencatatan Surat Jalan"}
             </h3>
 
             {approvedOrders.length === 0 && !editingShipmentId ? (
@@ -663,7 +661,7 @@ const ShipmentList: React.FC = () => {
                       required
                       disabled={!!editingShipmentId}
                     >
-                      <option value="">-- Pilih Pesanan (Approved) --</option>
+                      <option value="">Pilih Pesanan</option>
                       {approvedOrders.map((o) => (
                         <option key={o.id} value={o.id}>
                           #{o.id} - {o.spare_part.nama_suku_cadang} (Pesan:{" "}
@@ -677,8 +675,8 @@ const ShipmentList: React.FC = () => {
                             o.id.toString() === formData.spare_part_order_id,
                         ) && (
                           <option value={formData.spare_part_order_id}>
-                            -- Order Sedang Diedit (ID:{" "}
-                            {formData.spare_part_order_id}) --
+                            Order Sedang Diedit (ID:{" "}
+                            {formData.spare_part_order_id})
                           </option>
                         )}
                     </select>
@@ -702,7 +700,7 @@ const ShipmentList: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Harga Jual UPJ (Rp) *
+                    Harga Jual UPJ (Rp) 
                   </label>
                   <input
                     type="number"
@@ -821,13 +819,13 @@ const ShipmentList: React.FC = () => {
               {/* Box Rincian Suku Cadang */}
               <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
-                  Informasi Barang (Suku Cadang)
+                  Informasi Order Suku Cadang
                 </h3>
 
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   <div>
                     <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                      Referensi Nomor Order
+                      Nomor Order
                     </label>
                     <div className="text-sm font-bold text-blue-700 bg-blue-50 py-1.5 px-3 rounded inline-block">
                       ORD-
@@ -850,7 +848,7 @@ const ShipmentList: React.FC = () => {
                   </div>
                   <div className="col-span-2">
                     <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                      Nama Suku Cadang Aktif
+                      Nama Suku Cadang 
                     </label>
                     <div className="text-base font-semibold text-gray-800">
                       [
@@ -868,7 +866,7 @@ const ShipmentList: React.FC = () => {
                   {selectedShipmentDetail.rejection_note && (
                     <div className="col-span-2 mt-2 bg-red-50 border border-red-100 rounded p-3">
                       <label className="block text-[11px] font-semibold text-red-600 mb-1">
-                        Catatan Penolakan Defect / Cacat (FO)
+                        Catatan Penolakan (FO)
                       </label>
                       <div className="text-sm text-red-700 italic">
                         " {selectedShipmentDetail.rejection_note} "
@@ -966,7 +964,7 @@ const ShipmentList: React.FC = () => {
                   setPreviewEvidenceUrl(null);
                 }}
               >
-                Tutup Detail
+                Tutup
               </button>
             </div>
           </div>
