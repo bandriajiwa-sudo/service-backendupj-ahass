@@ -714,14 +714,14 @@ const ShipmentList: React.FC = () => {
       {/* MODAL DETAIL ORDER LOGISTIK & GAMBAR */}
       {selectedShipmentDetail && (
         <div
-          className={styles.modalOverlay}
+          className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4"
           onClick={() => {
             setSelectedShipmentDetail(null);
             setPreviewEvidenceUrl(null);
           }}
         >
           <div
-            className={`${styles.modalContent} !max-w-3xl overflow-hidden flex flex-col max-h-[90vh]`}
+            className="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
