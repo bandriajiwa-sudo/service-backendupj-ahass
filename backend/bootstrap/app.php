@@ -40,6 +40,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 \Illuminate\Support\Facades\Log::error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
+                if (config('app.debug')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'DEBUG ERROR: ' . $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ], 500);
+                }
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Terjadi kesalahan sistem pada peladen saat memproses operasional data.',
