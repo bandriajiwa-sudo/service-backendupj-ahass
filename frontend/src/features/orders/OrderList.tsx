@@ -469,7 +469,7 @@ const OrderList: React.FC = () => {
                     <td className="text-sm text-gray-800 px-4 py-3 text-left font-semibold">
                       {o.spare_part?.nama_suku_cadang}
                       {o.tanggal_awal && o.tanggal_akhir && (
-                        <div className="text-xs text-blue-600 mt-1 font-normal bg-blue-50 px-2 py-1 rounded inline-block">
+                        <div className="text-xs text-gray-500 mt-1 font-normal bg-gray-50 border border-gray-200 px-2 py-1 rounded inline-block">
                           Est: {formatDateOnly(o.tanggal_awal)} s/d{" "}
                           {formatDateOnly(o.tanggal_akhir)}
                         </div>
