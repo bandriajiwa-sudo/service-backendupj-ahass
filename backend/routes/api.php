@@ -85,9 +85,13 @@ $apiRoutes = function () {
             Route::patch('/spare-part-orders/{order}/estimate', [SparePartOrderController::class, 'estimate']);
             Route::post('/spare-part-shipments', [SparePartShipmentController::class, 'store']);
             Route::put('/spare-part-shipments/{shipment}', [SparePartShipmentController::class, 'update']);
-            Route::post('/spare-part-shipments/{shipment}/evidences', [SparePartShipmentController::class, 'uploadEvidence']);
             Route::post('/spare-part-shipments/{shipment}/submit', [SparePartShipmentController::class, 'submit']);
             Route::post('/spare-part-returns/{return}/replacement-shipment', [SparePartReturnController::class, 'createReplacement']);
+        });
+
+        // Shared Action Routes (Evidences can be uploaded by Koperasi for initial/replacements, and FO for damage)
+        Route::middleware('role:front_office,koperasi')->group(function () {
+            Route::post('/spare-part-shipments/{shipment}/evidences', [SparePartShipmentController::class, 'uploadEvidence']);
         });
 
         // Shared Transaction & Order Reads (FO & UPJ mostly)
