@@ -265,12 +265,8 @@ class SparePartShipmentController extends Controller
 
                     // Dihapus blok duplikasi Resolve Retur, percayakan pada blok awal saja.
 
-                    // Tancapkan pembaruan update katalog sentral master Sparepart
-                    $sparePart = $lockedShipment->sparePartOrder->sparePart;
-                    if ($sparePart && $lockedShipment->harga_jual) {
-                        $sparePart->harga_jual = $lockedShipment->harga_jual;
-                        $sparePart->save();
-                    }
+                    // Pembaruan harga sekarang ditarik otomatis oleh ActivePriceService 
+                    // pada saat runtime transaksi. Master data spare part tidak menyimpan histori harga.
                 }
             }
 
