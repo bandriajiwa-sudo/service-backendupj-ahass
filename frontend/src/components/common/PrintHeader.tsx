@@ -13,7 +13,7 @@ const PrintHeader: React.FC<PrintHeaderProps> = ({
 }) => {
   return (
     <div className="hidden print:block w-full mb-6">
-      <div className="grid grid-cols-[100px_1fr_100px] items-center border-b-[4px] border-black pb-4 mb-1 border-double">
+      <div className="grid grid-cols-[110px_1fr_110px] items-center pb-3">
         <div className="flex justify-center">
           <img
             src="/logo-blpt.png"
@@ -25,25 +25,25 @@ const PrintHeader: React.FC<PrintHeaderProps> = ({
         <div className="text-center">
           <h2
             className="font-bold text-black font-serif leading-tight"
-            style={{ fontSize: "1.2rem" }}
+            style={{ fontSize: "15px" }}
           >
             PEMERINTAH DAERAH DAERAH ISTIMEWA YOGYAKARTA
           </h2>
           <h1
             className="font-bold text-black mt-1 font-serif leading-tight"
-            style={{ fontSize: "1.4rem" }}
+            style={{ fontSize: "18px" }}
           >
             DINAS PENDIDIKAN, PEMUDA, DAN OLAHRAGA
           </h1>
           <h3
             className="text-black mt-1 uppercase font-serif tracking-widest leading-tight"
-            style={{ fontSize: "1.15rem" }}
+            style={{ fontSize: "14px" }}
           >
             Balai Latihan Pendidikan Teknik
           </h3>
           <p
             className="text-black mt-2 font-serif leading-snug"
-            style={{ fontSize: "0.8rem" }}
+            style={{ fontSize: "11px" }}
           >
             Jalan Kyai Mojo 70, Yogyakarta, 55243
             <br />
@@ -54,7 +54,16 @@ const PrintHeader: React.FC<PrintHeaderProps> = ({
         </div>
         <div></div>
       </div>
-      <div className="border-b-[1.5px] border-black mb-6"></div>
+      {/* Garis Kop Surat Resmi */}
+      <div style={{ borderTop: "3px solid black", width: "100%" }}></div>
+      <div
+        style={{
+          borderTop: "1px solid black",
+          width: "100%",
+          marginTop: "2px",
+          marginBottom: "24px",
+        }}
+      ></div>
 
       <div className="text-center mb-6">
         <h2 className="text-[1.15rem] font-bold text-black mb-1 uppercase tracking-wider">

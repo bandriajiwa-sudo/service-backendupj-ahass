@@ -19,7 +19,13 @@ const PrintFooter: React.FC = () => {
         >
           Kepala UPJ Otomotif,
         </p>
-        <div className="border-b-[1.5px] border-black w-full mb-1"></div>
+        <div
+          style={{
+            borderBottom: "1.5px solid black",
+            width: "100%",
+            marginBottom: "6px",
+          }}
+        ></div>
         <p className="text-black text-left text-sm whitespace-pre">NIP.</p>
       </div>
     </div>
