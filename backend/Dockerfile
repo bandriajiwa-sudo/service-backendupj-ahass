@@ -1,23 +1,24 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
-# Install dependensi sistem & PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    libpq-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql pdo_pgsql pgsql mbstring exif pcntl bcmath gd
+    libpq-dev \
+    postgresql-client
 
-# Install Composer
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www
+WORKDIR /app
+COPY . .
 
-# Expose port (biasanya artisan serve pake 8000, atau pakai fpm di 9000)
-# Biar gampang buat development, kita jalankan artisan serve
-CMD php artisan serve --host=0.0.0.0 --port=8000
+RUN composer install --no-dev --optimize-autoloader
+
+EXPOSE 8000
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
