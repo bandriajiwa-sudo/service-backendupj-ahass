@@ -777,9 +777,7 @@ const OrderList: React.FC = () => {
           orderId={notesModalOrder.id}
           catatanFo={notesModalOrder.catatan_fo}
           catatanKoperasi={notesModalOrder.catatan_koperasi}
-          userRole={user?.role || ""}
           onClose={() => setNotesModalOrder(null)}
-          onNoteSaved={fetchOrders}
         />
       )}
     </div>
