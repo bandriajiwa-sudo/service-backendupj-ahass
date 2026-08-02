@@ -146,9 +146,11 @@ const TransactionList: React.FC = () => {
       const mappedParts = resParts.data.data.map((p: any) => ({
         id: p.id,
         kode_suku_cadang: p.kode_suku_cadang,
-        kategori: p.kategori,
+        kategori: p.category?.nama_kategori || "-",
+        category: p.category,
         nama_suku_cadang: p.nama_suku_cadang,
         harga_jual: parseFloat(p.harga_jual),
+        harga_aktif: parseFloat(p.harga_aktif || p.harga_jual || 0),
         stok_sekarang: p.stock?.stok_sekarang || 0,
       }));
       setSpareParts(mappedParts);
