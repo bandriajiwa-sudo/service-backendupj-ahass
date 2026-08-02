@@ -149,7 +149,6 @@ const SparePartList: React.FC = () => {
         delete payload.stok_sekarang;
       }
 
-      delete payload.satuan; // not a DB field
       delete payload.status; // computed from stock levels
 
       if (editPartId) {
