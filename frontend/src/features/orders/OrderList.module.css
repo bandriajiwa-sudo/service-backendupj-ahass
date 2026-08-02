@@ -369,3 +369,27 @@
     transform: translateY(0) scale(1);
   }
 }
+
+/* ── Mobile Layout ── */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchGroup {
+    max-width: 100%;
+  }
+  .toolbarSelect {
+    width: 100%;
+  }
+  .actionGroup {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
