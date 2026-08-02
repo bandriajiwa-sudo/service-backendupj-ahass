@@ -120,7 +120,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
 
       {/* Sidebar */}
       <aside
-        className={`${styles.sidebar} ${isSidebarOpen ? "" : styles.sidebarClosed}`}
+        className={`${styles.sidebar} ${isSidebarOpen ? "" : styles.sidebarClosed} print:hidden`}
       >
         <div className={styles.sidebarHeader}>
           <div className={styles.brand}>
@@ -169,9 +169,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       </aside>
 
       {/* Main Content */}
-      <main className={styles.mainContent}>
+      <main
+        className={`${styles.mainContent} print:m-0 print:p-0 print:w-full print:absolute print:left-0 print:top-0`}
+      >
         {/* Topbar */}
-        <header className={styles.topbar}>
+        <header className={`${styles.topbar} print:hidden`}>
           <div className={styles.topbarLeft}>
             <button
               className={styles.menuToggle}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Search, Printer } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import styles from "../transactions/TransactionList.module.css";
+import PrintHeader from "../../components/common/PrintHeader";
+import PrintFooter from "../../components/common/PrintFooter";
 
 const LaporanJasa: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -45,6 +47,15 @@ const LaporanJasa: React.FC = () => {
     }).format(val || 0);
   };
 
+  const getFormatPeriod = () => {
+    if (!startDate && !endDate) return "Semua Periode";
+    const start = startDate ? new Date(startDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric'}) : "...";
+    const end = endDate ? new Date(endDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric'}) : "...";
+    
+    // Format to exact mockup if month is same: e.g "1 - 3 Agustus 2026", but for safety we use full strings or basic parsing.
+    return `Periode: ${startDate ? new Date(startDate).getDate() : '...' } - ${end}`;
+  };
+
   const filteredData = data.filter((item) => {
     const matchSearch =
       item.nama_jasa.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,8 +66,14 @@ const LaporanJasa: React.FC = () => {
   });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.pageHeader}>
+    <div className={`${styles.container} print:p-0 print:m-0`}>
+      <PrintHeader
+        title="Laporan Pendapatan Jasa Servis"
+        subtitle="Unit Produksi dan Jasa (UPJ) Otomotif & AHASS"
+        periodLabel={startDate || endDate ? getFormatPeriod() : ""}
+      />
+
+      <div className={`${styles.pageHeader} print:hidden`}>
         <div>
           <h1 className={styles.pageTitle}>Laporan Jasa Servis</h1>
           <p className={styles.pageSubtitle}>
@@ -205,9 +222,12 @@ const LaporanJasa: React.FC = () => {
                 </tr>
               </tfoot>
             )}
+            )}
           </table>
         </div>
       </div>
+
+      <PrintFooter />
     </div>
   );
 };

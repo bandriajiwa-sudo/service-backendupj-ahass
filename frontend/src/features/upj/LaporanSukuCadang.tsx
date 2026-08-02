@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Search, Printer } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import styles from "../transactions/TransactionList.module.css";
+import PrintHeader from "../../components/common/PrintHeader";
+import PrintFooter from "../../components/common/PrintFooter";
 
 const LaporanSukuCadang: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -46,6 +48,25 @@ const LaporanSukuCadang: React.FC = () => {
     }).format(val || 0);
   };
 
+  const getFormatPeriod = () => {
+    if (!startDate && !endDate) return "Semua Periode";
+    const start = startDate
+      ? new Date(startDate).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "...";
+    const end = endDate
+      ? new Date(endDate).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "...";
+    return `Periode: ${startDate ? new Date(startDate).getDate() : "..."} - ${end}`;
+  };
+
   const filteredData = data.filter((item) => {
     const matchSearch =
       item.spare_part?.nama_suku_cadang
@@ -58,8 +79,14 @@ const LaporanSukuCadang: React.FC = () => {
   });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.pageHeader}>
+    <div className={`${styles.container} print:p-0 print:m-0`}>
+      <PrintHeader
+        title="Laporan Pengadaan Suku Cadang"
+        subtitle="Unit Produksi dan Jasa (UPJ) Otomotif & AHASS"
+        periodLabel={startDate || endDate ? getFormatPeriod() : ""}
+      />
+
+      <div className={`${styles.pageHeader} print:hidden`}>
         <div>
           <h1 className={styles.pageTitle}>Laporan Penjualan Suku Cadang</h1>
           <p className={styles.pageSubtitle}>
@@ -219,6 +246,8 @@ const LaporanSukuCadang: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <PrintFooter />
     </div>
   );
 };
