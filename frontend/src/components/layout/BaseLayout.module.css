@@ -262,3 +262,37 @@
     padding: 16px;
   }
 }
+
+/* Print Overrides */
+@media print {
+  .sidebar,
+  .topbar,
+  .mobileOverlay,
+  .menuToggle {
+    display: none !important;
+  }
+
+  .layoutWrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    background-color: white !important;
+  }
+
+  .mainContent {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .contentCanvas {
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: white !important;
+    height: auto !important;
+  }
+}
