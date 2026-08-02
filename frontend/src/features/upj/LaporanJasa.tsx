@@ -222,7 +222,6 @@ const LaporanJasa: React.FC = () => {
                 </tr>
               </tfoot>
             )}
-            )}
           </table>
         </div>
       </div>
