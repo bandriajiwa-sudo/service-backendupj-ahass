@@ -50,6 +50,7 @@ const ShipmentList: React.FC = () => {
   // Filter State
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("semua");
+  const [filterType, setFilterType] = useState("semua");
   const [filterDate, setFilterDate] = useState("");
   const [activeFOTab, setActiveFOTab] = useState<"initial" | "replacement">(
     "initial",
@@ -443,6 +444,12 @@ const ShipmentList: React.FC = () => {
         return false;
     }
 
+    // 5. Tipe Pengiriman (Koperasi Master Log Filter)
+    if (user?.role === "koperasi" && filterType !== "semua") {
+      if (filterType === "initial" && r.shipment_type === "replacement") return false;
+      if (filterType === "replacement" && r.shipment_type !== "replacement") return false;
+    }
+
     return true;
   });
 
@@ -500,10 +507,21 @@ const ShipmentList: React.FC = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="semua">Semua Status</option>
-              <option value="disetujui">Stok Masuk Lunas</option>
               <option value="menunggu_verifikasi">Tahap Verifikasi</option>
-              <option value="ditolak">Batal Verifikasi</option>
+              <option value="disetujui">Stok Masuk Lunas</option>
+              <option value="ditolak">Batal Verifikasi (Retur)</option>
             </select>
+            {user?.role === "koperasi" && (
+              <select
+                className={styles.toolbarSelect}
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="semua">Semua Tipe</option>
+                <option value="initial">PO Baru</option>
+                <option value="replacement">Pengganti (RPL)</option>
+              </select>
+            )}
             <input
               type="date"
               className={styles.toolbarInput}
