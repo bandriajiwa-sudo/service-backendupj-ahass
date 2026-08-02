@@ -265,6 +265,11 @@
 
 /* Print Overrides */
 @media print {
+  @page {
+    margin: 15mm 20mm;
+    size: A4 portrait;
+  }
+
   .sidebar,
   .topbar,
   .mobileOverlay,
