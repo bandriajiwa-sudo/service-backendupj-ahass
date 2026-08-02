@@ -64,7 +64,7 @@ const LaporanSukuCadang: React.FC = () => {
           year: "numeric",
         })
       : "...";
-    return `Periode: ${startDate ? new Date(startDate).getDate() : "..."} - ${end}`;
+    return `Periode: ${start} s/d ${end}`;
   };
 
   const filteredData = data.filter((item) => {

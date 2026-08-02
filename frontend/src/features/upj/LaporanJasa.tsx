@@ -49,11 +49,22 @@ const LaporanJasa: React.FC = () => {
 
   const getFormatPeriod = () => {
     if (!startDate && !endDate) return "Semua Periode";
-    const start = startDate ? new Date(startDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric'}) : "...";
-    const end = endDate ? new Date(endDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric'}) : "...";
-    
-    // Format to exact mockup if month is same: e.g "1 - 3 Agustus 2026", but for safety we use full strings or basic parsing.
-    return `Periode: ${startDate ? new Date(startDate).getDate() : '...' } - ${end}`;
+    const start = startDate
+      ? new Date(startDate).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "...";
+    const end = endDate
+      ? new Date(endDate).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "...";
+
+    return `Periode: ${start} s/d ${end}`;
   };
 
   const filteredData = data.filter((item) => {
