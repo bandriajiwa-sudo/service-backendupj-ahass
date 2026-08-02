@@ -61,7 +61,9 @@ const ShipmentList: React.FC = () => {
   });
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
 
-  // Modal State for Image/PDF Preview
+  // Modal State for Image/PDF Preview & Detail
+  const [selectedShipmentDetail, setSelectedShipmentDetail] =
+    useState<any>(null);
   const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(
     null,
   );
@@ -217,6 +219,12 @@ const ShipmentList: React.FC = () => {
     } finally {
       setIsPreviewLoading(false);
     }
+  };
+
+  const openDetailModal = (shipment: any) => {
+    setSelectedShipmentDetail(shipment);
+    setPreviewEvidenceUrl(null); // reset selected image in modal
+    setPreviewEvidenceName(null);
   };
 
   const handleVerification = async (shipmentId: number, isApprove: boolean) => {
@@ -592,7 +600,7 @@ const ShipmentList: React.FC = () => {
                 <th className={styles.tableCell}>Order Reference</th>
                 <th className={styles.tableCell}>Total Kirim</th>
                 <th className={styles.tableCell}>Status Fisik</th>
-                <th className={styles.tableCell}>Riwayat Bukti</th>
+                <th className={styles.tableCell}>Detail & Bukti</th>
                 <th className={styles.tableCell}>Aksi Verifikasi (FO)</th>
               </tr>
             </thead>
@@ -636,37 +644,21 @@ const ShipmentList: React.FC = () => {
                     )}
                   </td>
                   <td className={styles.tableCell}>
-                    {shipment.evidences && shipment.evidences.length > 0 ? (
-                      <div className="flex flex-col gap-1">
-                        {shipment.evidences.map((ev) => (
-                          <div key={ev.id} className="flex items-center gap-1">
-                            <button
-                              onClick={() =>
-                                previewEvidence(ev.id, ev.original_filename)
-                              }
-                              disabled={isPreviewLoading}
-                              title="Lihat Detail Bukti"
-                              className="flex-1 flex items-center justify-center gap-1 text-xs text-blue-700 hover:text-white bg-blue-50 hover:bg-blue-600 px-2 py-1.5 rounded transition-colors"
-                            >
-                              <Download size={14} /> Detail
-                            </button>
-                            <button
-                              onClick={() =>
-                                downloadEvidence(ev.id, ev.original_filename)
-                              }
-                              title="Unduh Bukti"
-                              className="text-xs text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded transition-colors"
-                            >
-                              ↓
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-400">
-                        Tidak ada bukti
-                      </span>
-                    )}
+                    <button
+                      onClick={() => openDetailModal(shipment)}
+                      className="inline-flex flex-col items-center justify-center bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded transition-colors text-xs font-semibold shadow-sm w-full max-w-[120px]"
+                    >
+                      <span className="mb-0.5">Lihat Detail</span>
+                      {shipment.evidences && shipment.evidences.length > 0 ? (
+                        <span className="text-[10px] bg-green-100 text-green-800 px-1.5 rounded-full">
+                          + {shipment.evidences.length} Lampiran
+                        </span>
+                      ) : (
+                        <span className="text-[10px] bg-gray-200 text-gray-500 px-1.5 rounded-full">
+                          Kosong
+                        </span>
+                      )}
+                    </button>
                   </td>
                   <td className={styles.tableCell}>
                     {user?.role === "front_office" &&
@@ -719,52 +711,185 @@ const ShipmentList: React.FC = () => {
         </div>
       </div>
 
-      {previewEvidenceUrl && (
+      {/* MODAL DETAIL ORDER LOGISTIK & GAMBAR */}
+      {selectedShipmentDetail && (
         <div
           className={styles.modalOverlay}
           onClick={() => {
+            setSelectedShipmentDetail(null);
             setPreviewEvidenceUrl(null);
-            setPreviewEvidenceName(null);
           }}
         >
           <div
-            className={`${styles.modalContent} !max-w-4xl`}
+            className={`${styles.modalContent} !max-w-3xl overflow-hidden flex flex-col max-h-[90vh]`}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className={styles.panelTitle}>
-              Pratinjau Bukti: {previewEvidenceName}
-            </h2>
-            <div className="flex justify-center mt-4 bg-gray-50 p-2 rounded border border-gray-100">
-              {previewEvidenceName?.toLowerCase().endsWith(".pdf") ? (
-                <iframe
-                  src={previewEvidenceUrl}
-                  width="100%"
-                  height="500px"
-                  title="Bukti PDF"
-                  className="rounded"
-                />
-              ) : (
-                <img
-                  src={previewEvidenceUrl}
-                  alt={previewEvidenceName || "Bukti Surat Jalan"}
-                  style={{
-                    maxHeight: "65vh",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                  }}
-                  className="rounded shadow-sm"
-                />
-              )}
+            {/* Header */}
+            <div className="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center rounded-t-lg">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800 m-0 leading-tight">
+                  Detail Pengiriman Logistik
+                </h2>
+                <div className="text-xs text-gray-500 mt-1 font-medium">
+                  ID: SHP-
+                  {selectedShipmentDetail.id.toString().padStart(4, "0")} |
+                  Dirilis: {formatDate(selectedShipmentDetail.created_at)}
+                </div>
+              </div>
+              <div>{statusBadge(selectedShipmentDetail.status)}</div>
             </div>
-            <div className="flex justify-end mt-5 pt-3 border-t border-gray-100">
+
+            {/* Body */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {/* Box Rincian Suku Cadang */}
+              <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                  Informasi Barang (Suku Cadang)
+                </h3>
+
+                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Referensi Nomor Order
+                    </label>
+                    <div className="text-sm font-bold text-blue-700 bg-blue-50 py-1.5 px-3 rounded inline-block">
+                      ORD-
+                      {selectedShipmentDetail.spare_part_order.id
+                        .toString()
+                        .padStart(4, "0")}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Total Kuantitas Dokumen
+                    </label>
+                    <div className="text-sm font-bold text-gray-900">
+                      {selectedShipmentDetail.quantity}{" "}
+                      <span className="font-normal text-gray-500">
+                        {selectedShipmentDetail.spare_part_order.spare_part
+                          .satuan || "Pcs"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Nama Suku Cadang Aktif
+                    </label>
+                    <div className="text-base font-semibold text-gray-800">
+                      [
+                      {
+                        selectedShipmentDetail.spare_part_order.spare_part
+                          .kode_suku_cadang
+                      }
+                      ] -{" "}
+                      {
+                        selectedShipmentDetail.spare_part_order.spare_part
+                          .nama_suku_cadang
+                      }
+                    </div>
+                  </div>
+                  {selectedShipmentDetail.rejection_note && (
+                    <div className="col-span-2 mt-2 bg-red-50 border border-red-100 rounded p-3">
+                      <label className="block text-[11px] font-semibold text-red-600 mb-1">
+                        Catatan Penolakan Defect / Cacat (FO)
+                      </label>
+                      <div className="text-sm text-red-700 italic">
+                        " {selectedShipmentDetail.rejection_note} "
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Box Lampiran Faktur S3 */}
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                  Lampiran Bukti Dokumen/Foto
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Daftar Tombol Evidences */}
+                  <div className="flex flex-wrap gap-2">
+                    {selectedShipmentDetail.evidences &&
+                    selectedShipmentDetail.evidences.length > 0 ? (
+                      selectedShipmentDetail.evidences.map(
+                        (ev: any, index: number) => (
+                          <div
+                            key={ev.id}
+                            className="flex gap-0.5 shadow-sm rounded overflow-hidden border border-gray-200"
+                          >
+                            <button
+                              onClick={() =>
+                                previewEvidence(ev.id, ev.original_filename)
+                              }
+                              disabled={isPreviewLoading}
+                              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${previewEvidenceName === ev.original_filename ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"}`}
+                            >
+                              <Download size={14} /> Dokumen Lampiran #
+                              {index + 1}
+                            </button>
+                            <button
+                              onClick={() =>
+                                downloadEvidence(ev.id, ev.original_filename)
+                              }
+                              title="Unduh Paksa ke Perangkat"
+                              className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 flex items-center justify-center border-l border-gray-200 transition-colors"
+                            >
+                              ↓
+                            </button>
+                          </div>
+                        ),
+                      )
+                    ) : (
+                      <div className="text-sm text-gray-500 italic bg-gray-50 p-3 rounded w-full text-center border border-dashed border-gray-300">
+                        Tidak ada berkas bukti yang dilampirkan oleh Koperasi
+                        pada pengiriman ini.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Render Area Gambar / PDF (muncul jika ada yg di-klik) */}
+                  {isPreviewLoading && (
+                    <div className="w-full h-32 flex items-center justify-center bg-gray-50 rounded border border-gray-100">
+                      <span className="text-sm text-gray-500 animate-pulse">
+                        Menarik data dari Cloud Storage S3...
+                      </span>
+                    </div>
+                  )}
+
+                  {!isPreviewLoading && previewEvidenceUrl && (
+                    <div className="mt-4 bg-gray-900 rounded-md p-2 flex justify-center items-center overflow-hidden">
+                      {previewEvidenceName?.toLowerCase().endsWith(".pdf") ? (
+                        <iframe
+                          src={previewEvidenceUrl}
+                          width="100%"
+                          height="400px"
+                          title="Bukti PDF"
+                          className="bg-white rounded"
+                        />
+                      ) : (
+                        <img
+                          src={previewEvidenceUrl}
+                          alt={previewEvidenceName || "Bukti Surat Jalan"}
+                          className="max-h-[500px] max-w-full object-contain rounded"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-white border-t border-gray-200 px-6 py-4 flex justify-end rounded-b-lg">
               <button
-                className="px-5 py-2 text-sm font-semibold text-white bg-gray-800 hover:bg-gray-900 shadow-sm rounded-md transition-colors"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-gray-800 hover:bg-gray-900 shadow-md rounded-md transition-all active:scale-95"
                 onClick={() => {
+                  setSelectedShipmentDetail(null);
                   setPreviewEvidenceUrl(null);
-                  setPreviewEvidenceName(null);
                 }}
               >
-                Tutup
+                Tutup Detail
               </button>
             </div>
           </div>
