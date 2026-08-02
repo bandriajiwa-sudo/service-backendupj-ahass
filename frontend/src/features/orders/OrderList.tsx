@@ -530,16 +530,16 @@ const OrderList: React.FC = () => {
                     )}
                     {user?.role === "koperasi" && (
                       <td className="px-4 py-3 text-center">
-                        <div className="flex flex-col gap-2 items-start">
-                          <button
-                            className={styles.btnApprove}
-                            style={{ background: "#3b82f6" }}
-                            onClick={() => handleOpenKoperasiModal(o)}
-                            title="Edit Keputusan"
-                          >
-                            <Pencil size={14} /> Beri Estimasi
-                          </button>
-                          {o.status === "menunggu" && (
+                        {o.status === "menunggu" ? (
+                          <div className="flex flex-col gap-2 items-start">
+                            <button
+                              className={styles.btnApprove}
+                              style={{ background: "#3b82f6" }}
+                              onClick={() => handleOpenKoperasiModal(o)}
+                              title="Beri Estimasi"
+                            >
+                              <Pencil size={14} /> Beri Estimasi
+                            </button>
                             <button
                               className={styles.btnApprove}
                               style={{
@@ -561,8 +561,10 @@ const OrderList: React.FC = () => {
                             >
                               Beri Keputusan
                             </button>
-                          )}
-                        </div>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-400">—</span>
+                        )}
                       </td>
                     )}
                   </tr>
