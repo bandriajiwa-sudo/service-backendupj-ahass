@@ -92,11 +92,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         icon: Package,
         label: "Penerimaan Suku Cadang",
       });
-      menu.push({
-        path: "returns",
-        icon: FileText,
-        label: "Manajemen Retur",
-      });
     } else if (role === "kepala_upj") {
       menu.push({
         path: "laporan-jasa",

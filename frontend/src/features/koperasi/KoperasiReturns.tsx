@@ -34,7 +34,11 @@ interface ReturnTicket {
   };
 }
 
-const KoperasiReturns: React.FC = () => {
+interface KoperasiReturnsProps {
+  isEmbedded?: boolean;
+}
+
+const KoperasiReturns: React.FC<KoperasiReturnsProps> = ({ isEmbedded }) => {
   const { user } = useAuth();
   const [returns, setReturns] = useState<ReturnTicket[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -235,16 +239,18 @@ const KoperasiReturns: React.FC = () => {
   });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.pageHeader}>
-        <div>
-          <h1 className={styles.pageTitle}>Penanganan Retur & Komplain</h1>
-          <p className={styles.pageSubtitle}>
-            Tindak lanjut laporan logistik yang ditolak lapangan
-            (Pecah/Rusak/Cacat)
-          </p>
+    <div className={isEmbedded ? "" : styles.container}>
+      {!isEmbedded && (
+        <div className={styles.pageHeader}>
+          <div>
+            <h1 className={styles.pageTitle}>Penanganan Retur & Komplain</h1>
+            <p className={styles.pageSubtitle}>
+              Tindak lanjut laporan logistik yang ditolak lapangan
+              (Pecah/Rusak/Cacat)
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.tableCard}>
         <div className="p-4 flex flex-wrap gap-4 items-center border-b border-gray-200">

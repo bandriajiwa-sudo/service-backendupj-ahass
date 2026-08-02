@@ -22,7 +22,6 @@ import FOStockInfo from "../features/dashboard/FOStockInfo";
 import NotaPrint from "../features/print/NotaPrint";
 import KoperasiDashboard from "../features/dashboard/KoperasiDashboard";
 import KoperasiOrders from "../features/koperasi/KoperasiOrders";
-import KoperasiReturns from "../features/koperasi/KoperasiReturns";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
 import LaporanJasa from "../features/upj/LaporanJasa";
 import LaporanSukuCadang from "../features/upj/LaporanSukuCadang";
@@ -118,7 +117,10 @@ export const router = createBrowserRouter([
           { path: "dashboard", element: <KoperasiDashboard /> },
           { path: "orders", element: <KoperasiOrders /> },
           { path: "riwayat-penerimaan", element: <ShipmentList /> },
-          { path: "returns", element: <KoperasiReturns /> },
+          {
+            path: "returns",
+            element: <Navigate to="/koperasi/riwayat-penerimaan" replace />,
+          },
         ],
       },
     ],
