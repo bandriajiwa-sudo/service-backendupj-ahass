@@ -593,7 +593,7 @@ const ShipmentList: React.FC = () => {
                     </span>
                   </td>
                   <td className={styles.tableCell}>
-                    {statusBadge(shipment.status)}
+                    {statusBadge(shipment.status, shipment.shipment_type)}
                     {shipment.rejection_note && (
                       <p className="text-xs text-red-600 mt-1 italic max-w-xs">
                         " {shipment.rejection_note} "
