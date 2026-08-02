@@ -19,7 +19,7 @@ class SparePartShipmentController extends Controller
 {
     public function index(Request $request)
     {
-        $shipments = SparePartShipment::with(['sparePartOrder.sparePart', 'shippedBy', 'verifiedBy'])
+        $shipments = SparePartShipment::with(['sparePartOrder.sparePart', 'shippedBy', 'verifiedBy', 'evidences'])
             ->orderBy('created_at', 'desc')
             ->paginate($request->query('per_page', 100)); // Batasi 100 max pagination sesuai PRD
 
