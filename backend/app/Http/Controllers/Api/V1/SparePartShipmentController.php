@@ -263,17 +263,7 @@ class SparePartShipmentController extends Controller
                     $stock->terakhir_diperbarui = now();
                     $stock->save();
 
-                    // Resolve Retur if this is a replacement!
-                    if ($lockedShipment->shipment_type === 'replacement') {
-                        $pendingReturn = SparePartReturn::where('spare_part_order_id', $lockedShipment->spare_part_order_id)
-                            ->where('status', 'dikirim_ulang')->first();
-
-                        if ($pendingReturn) {
-                            $pendingReturn->status = 'selesai';
-                            $pendingReturn->resolved_at = now();
-                            $pendingReturn->save();
-                        }
-                    }
+                    // Dihapus blok duplikasi Resolve Retur, percayakan pada blok awal saja.
 
                     // Tancapkan pembaruan update katalog sentral master Sparepart
                     $sparePart = $lockedShipment->sparePartOrder->sparePart;
@@ -296,7 +286,7 @@ class SparePartShipmentController extends Controller
             \Illuminate\Support\Facades\Log::error("Shipment Verify Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kendala peladen saat memusatkan validasi final logistik.',
+                'message' => 'SysDebug: ' . $e->getMessage() . ' | L:' . $e->getLine(),
             ], 500);
         }
     }
