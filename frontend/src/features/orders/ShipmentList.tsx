@@ -714,7 +714,7 @@ const ShipmentList: React.FC = () => {
       {/* MODAL DETAIL ORDER LOGISTIK & GAMBAR */}
       {selectedShipmentDetail && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
           onClick={() => {
             setSelectedShipmentDetail(null);
             setPreviewEvidenceUrl(null);
