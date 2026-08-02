@@ -367,9 +367,16 @@ const ShipmentList: React.FC = () => {
     }
   };
 
-  const statusBadge = (s: string) => {
+  const statusBadge = (s: string, type: string) => {
     switch (s) {
       case "menunggu_verifikasi":
+        if (type === "replacement") {
+          return (
+            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold inline-block text-center whitespace-nowrap border border-purple-200">
+              Tahap Verifikasi (Retur)
+            </span>
+          );
+        }
         return (
           <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
             Tahap Verifikasi
@@ -567,22 +574,16 @@ const ShipmentList: React.FC = () => {
                   <td className={styles.tableCell}>
                     {user?.role === "front_office" &&
                       shipment.status === "menunggu_verifikasi" && (
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-1.5">
                           <button
-                            className="bg-green-600 hover:bg-green-700 text-white p-2 rounded shadow-sm text-sm"
-                            title="Setujui Barang"
-                            onClick={() =>
-                              handleVerification(shipment.id, true)
-                            }
+                            onClick={() => handleVerification(shipment.id, true)}
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
                           >
-                            Setujui Fisik
+                            Setujui {shipment.shipment_type === 'replacement' ? 'Pengganti' : 'Fisik'}
                           </button>
                           <button
-                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded shadow-sm text-sm"
-                            title="Tolak Barang (Cacat/Kurang)"
-                            onClick={() =>
-                              handleVerification(shipment.id, false)
-                            }
+                            onClick={() => handleVerification(shipment.id, false)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
                           >
                             X Tolak
                           </button>
@@ -590,9 +591,7 @@ const ShipmentList: React.FC = () => {
                       )}
                     {user?.role === "front_office" &&
                       shipment.status !== "menunggu_verifikasi" && (
-                        <span className="text-sm text-gray-400 cursor-not-allowed">
-                          Sudah Diperiksa
-                        </span>
+                        <span className="text-sm text-gray-400">Read-Only</span>
                       )}
                     {user?.role === "koperasi" &&
                       shipment.status === "menunggu_verifikasi" && (
@@ -600,7 +599,7 @@ const ShipmentList: React.FC = () => {
                           onClick={() => handleEditClick(shipment)}
                           className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors border border-gray-300"
                         >
-                          ✎ Edit DO
+                          ✎ Edit {shipment.shipment_type === 'replacement' ? 'RPL' : 'DO'}
                         </button>
                       )}
                     {user?.role === "koperasi" &&
@@ -800,19 +799,24 @@ const ShipmentList: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center rounded-t-lg">
-              <div>
-                <h2 className="text-lg font-bold text-gray-800 m-0 leading-tight">
-                  Detail Pengiriman Logistik
-                </h2>
-                <div className="text-xs text-gray-500 mt-1 font-medium">
-                  ID: SHP-
-                  {selectedShipmentDetail.id.toString().padStart(4, "0")} |
-                  Dirilis: {formatDate(selectedShipmentDetail.created_at)}
+              <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Detail Pengiriman Logistik
+                  </h2>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm font-semibold text-gray-600">
+                      ID: SHP-
+                      {selectedShipmentDetail.id.toString().padStart(4, "0")}
+                    </span>
+                    <span className="text-gray-300">|</span>
+                    <span className="text-xs text-gray-500">
+                      Dirilis: {formatDate(selectedShipmentDetail.created_at)}
+                    </span>
+                  </div>
                 </div>
+                <div>{statusBadge(selectedShipmentDetail.status, selectedShipmentDetail.shipment_type)}</div>
               </div>
-              <div>{statusBadge(selectedShipmentDetail.status)}</div>
-            </div>
 
             {/* Body */}
             <div className="p-6 overflow-y-auto flex-1">
