@@ -698,12 +698,19 @@ const OrderList: React.FC = () => {
                     </select>
                   </div>
 
+                  {(koperasiData.status === "ditolak" || koperasiData.status === "menunggu") && (
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Catatan</label>
+                    <label className={styles.formLabel}>
+                      Catatan {koperasiData.status === "ditolak" ? "*" : "(Opsional)"}
+                    </label>
                     <textarea
                       className={styles.formInput}
                       style={{ minHeight: "80px", resize: "vertical" }}
-                      placeholder="Tambahkan catatan jika ditolak (opsional jika disetujui / pending)"
+                      placeholder={
+                        koperasiData.status === "ditolak"
+                          ? "Wajib: alasan penolakan order..."
+                          : "Tambahkan catatan (opsional)..."
+                      }
                       value={koperasiData.catatan}
                       onChange={(e) =>
                         setKoperasiData({
@@ -711,8 +718,10 @@ const OrderList: React.FC = () => {
                           catatan: e.target.value,
                         })
                       }
+                      required={koperasiData.status === "ditolak"}
                     />
                   </div>
+                  )}
                 </>
               ) : (
                 <div className="flex gap-4 mb-4">
