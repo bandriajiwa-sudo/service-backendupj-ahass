@@ -12,7 +12,7 @@ class SparePartReturnController extends Controller
 {
     public function index(Request $request)
     {
-        $returns = SparePartReturn::with(['sparePartOrder.sparePart', 'sparePartShipment', 'createdBy', 'resolvedBy'])
+        $returns = SparePartReturn::with(['sparePartOrder.sparePart', 'sparePartShipment.evidences', 'createdBy', 'resolvedBy'])
             ->orderBy('created_at', 'desc')
             ->paginate($request->query('per_page', 100));
 
