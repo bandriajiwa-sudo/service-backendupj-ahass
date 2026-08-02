@@ -51,6 +51,9 @@ const ShipmentList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("semua");
   const [filterDate, setFilterDate] = useState("");
+  const [activeFOTab, setActiveFOTab] = useState<"initial" | "replacement">(
+    "initial",
+  );
 
   // Creation State (For Koperasi)
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -432,6 +435,14 @@ const ShipmentList: React.FC = () => {
       if (dbDate !== filterDate) return false;
     }
 
+    // 4. Tab Khusus FO (Phase 4 PRD)
+    if (user?.role === "front_office") {
+      if (activeFOTab === "initial" && r.shipment_type === "replacement")
+        return false;
+      if (activeFOTab === "replacement" && r.shipment_type !== "replacement")
+        return false;
+    }
+
     return true;
   });
 
@@ -445,6 +456,23 @@ const ShipmentList: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {user?.role === "front_office" && (
+        <div className="flex gap-4 mb-4 border-b border-gray-200">
+          <button
+            onClick={() => setActiveFOTab("initial")}
+            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeFOTab === "initial" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          >
+            Tab 1: Penerimaan PO Baru
+          </button>
+          <button
+            onClick={() => setActiveFOTab("replacement")}
+            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeFOTab === "replacement" ? "border-purple-600 text-purple-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          >
+            Tab 2: Barang Retur / Pengganti (RPL)
+          </button>
+        </div>
+      )}
 
       <div className={styles.tableCard}>
         <div className="p-4 flex flex-wrap gap-4 items-center justify-between border-b border-gray-200">
@@ -576,13 +604,20 @@ const ShipmentList: React.FC = () => {
                       shipment.status === "menunggu_verifikasi" && (
                         <div className="flex flex-col gap-1.5">
                           <button
-                            onClick={() => handleVerification(shipment.id, true)}
+                            onClick={() =>
+                              handleVerification(shipment.id, true)
+                            }
                             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
                           >
-                            Setujui {shipment.shipment_type === 'replacement' ? 'Pengganti' : 'Fisik'}
+                            Setujui{" "}
+                            {shipment.shipment_type === "replacement"
+                              ? "Pengganti"
+                              : "Fisik"}
                           </button>
                           <button
-                            onClick={() => handleVerification(shipment.id, false)}
+                            onClick={() =>
+                              handleVerification(shipment.id, false)
+                            }
                             className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
                           >
                             X Tolak
@@ -599,7 +634,10 @@ const ShipmentList: React.FC = () => {
                           onClick={() => handleEditClick(shipment)}
                           className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors border border-gray-300"
                         >
-                          ✎ Edit {shipment.shipment_type === 'replacement' ? 'RPL' : 'DO'}
+                          ✎ Edit{" "}
+                          {shipment.shipment_type === "replacement"
+                            ? "RPL"
+                            : "DO"}
                         </button>
                       )}
                     {user?.role === "koperasi" &&
@@ -633,7 +671,9 @@ const ShipmentList: React.FC = () => {
         <div className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn p-8 overflow-y-auto">
             <h3 className="text-xl font-bold text-gray-800 mb-6 pb-4 border-b border-gray-200">
-              {editingShipmentId ? "Edit Surat Jalan" : "Pencatatan Surat Jalan"}
+              {editingShipmentId
+                ? "Edit Surat Jalan"
+                : "Pencatatan Surat Jalan"}
             </h3>
 
             {approvedOrders.length === 0 && !editingShipmentId ? (
@@ -699,7 +739,7 @@ const ShipmentList: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Harga Jual UPJ (Rp) 
+                    Harga Jual UPJ (Rp)
                   </label>
                   <input
                     type="number"
@@ -799,24 +839,29 @@ const ShipmentList: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">
-                    Detail Pengiriman Logistik
-                  </h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm font-semibold text-gray-600">
-                      ID: SHP-
-                      {selectedShipmentDetail.id.toString().padStart(4, "0")}
-                    </span>
-                    <span className="text-gray-300">|</span>
-                    <span className="text-xs text-gray-500">
-                      Dirilis: {formatDate(selectedShipmentDetail.created_at)}
-                    </span>
-                  </div>
+            <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Detail Pengiriman Logistik
+                </h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-sm font-semibold text-gray-600">
+                    ID: SHP-
+                    {selectedShipmentDetail.id.toString().padStart(4, "0")}
+                  </span>
+                  <span className="text-gray-300">|</span>
+                  <span className="text-xs text-gray-500">
+                    Dirilis: {formatDate(selectedShipmentDetail.created_at)}
+                  </span>
                 </div>
-                <div>{statusBadge(selectedShipmentDetail.status, selectedShipmentDetail.shipment_type)}</div>
               </div>
+              <div>
+                {statusBadge(
+                  selectedShipmentDetail.status,
+                  selectedShipmentDetail.shipment_type,
+                )}
+              </div>
+            </div>
 
             {/* Body */}
             <div className="p-6 overflow-y-auto flex-1">
@@ -852,7 +897,7 @@ const ShipmentList: React.FC = () => {
                   </div>
                   <div className="col-span-2">
                     <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                      Nama Suku Cadang 
+                      Nama Suku Cadang
                     </label>
                     <div className="text-base font-semibold text-gray-800">
                       [
@@ -880,9 +925,13 @@ const ShipmentList: React.FC = () => {
                   {/* Daftar Tombol Evidences */}
                   <div className="flex flex-wrap gap-2">
                     {selectedShipmentDetail.evidences &&
-                    selectedShipmentDetail.evidences.filter((e: any) => e.evidence_type !== "damage_or_defect").length > 0 ? (
+                    selectedShipmentDetail.evidences.filter(
+                      (e: any) => e.evidence_type !== "damage_or_defect",
+                    ).length > 0 ? (
                       selectedShipmentDetail.evidences
-                        .filter((e: any) => e.evidence_type !== "damage_or_defect")
+                        .filter(
+                          (e: any) => e.evidence_type !== "damage_or_defect",
+                        )
                         .map((ev: any, index: number) => (
                           <div
                             key={ev.id}

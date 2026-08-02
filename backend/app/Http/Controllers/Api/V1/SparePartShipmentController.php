@@ -243,6 +243,17 @@ class SparePartShipmentController extends Controller
                 $lockedShipment->stock_posted_at = now();
                 $lockedShipment->save();
 
+                // Phase 5: Otomatisasi Penutupan Tiket Retur 
+                if ($lockedShipment->shipment_type === 'replacement') {
+                    SparePartReturn::where('spare_part_order_id', $lockedShipment->spare_part_order_id)
+                        ->where('status', 'dikirim_ulang')
+                        ->update([
+                            'status' => 'selesai',
+                            'resolved_by' => auth()->id() ?? 1,
+                            'resolved_at' => now(),
+                        ]);
+                }
+
                 // Row Lock Penjumlahan Inventori (P0 Idempotent)
                 $stock = SparePartStock::where('spare_part_id', $lockedShipment->sparePartOrder->spare_part_id)
                     ->lockForUpdate()->first();

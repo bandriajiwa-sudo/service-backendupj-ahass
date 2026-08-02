@@ -270,31 +270,31 @@ Dokumen ini merupakan **Tracker Global** seluruh elemen yang telah dibangun dan 
 
 ### Dashboard Multi-Role
 
-- **Admin:** Panel master data, statistik login log, total pengguna.
-- **Front Office:** Widget stok kritis/restock, transaksi harian, motor selesai servis.
-- **Koperasi:** Panel pesanan masuk, barang ditolak FO, status pengiriman.
-- **Kepala UPJ:** Statistik penjualan, laba rugi, ringkasan operasional.
+- **Admin:** Panel master data,# Arsitektur Retur Logistik & Surat Jalan FO (5 Fase SOP)
 
-### Modul Master Data (Admin)
+Perbaikan arsitektur guna mendukung siklus Pengiriman, Penolakan, Ekskalasi, Verifikasi Pengganti, dan Finalisasi.
 
-- **UserList.tsx:** CRUD pengguna sistem (nama, role, status, username, password).
-- **SparePartList.tsx:** CRUD suku cadang (kode, nama, kategori, harga, stok, batas minimum).
-- **MechanicList.tsx:** CRUD mekanik (kode, nama, status aktif/nonaktif).
+## Proposed Changes
 
-### Modul Transaksi (Front Office)
+### Tabel Pengiriman (`SparePartShipmentController` & `SparePartReturnController`)
+- **[MODIFY] [SparePartReturnController.php](file:///d:/Inventory-Service-Imformation-System/backend/app/Http/Controllers/Api/V1/SparePartReturnController.php)**
+  - Kembalikan (_Rollback_) operasi `createReplacement()` untuk **Menciptakan DO Baru (`SparePartShipment::create`)** dengan status *menunggu_verifikasi* dan _flag_ tipe *'replacement'* sehingga mencetak log baris baru `SHP-0003 RPL`. DO lama (`SHP-0002`) yang statusnya `ditolak` dibiarkan Read-Only.
+- **[MODIFY] [SparePartShipmentController.php](file:///d:/Inventory-Service-Imformation-System/backend/app/Http/Controllers/Api/V1/SparePartShipmentController.php)**
+  - Sisipkan kondisi pada fungsi `verification()`: bila barang yang disetujui_fisik adalah milik `$shipment->shipment_type === 'replacement'`, maka secara implisit mutasikan tiket retur asalnya di tabel `SparePartReturn` dari status *dikirim_ulang* menjadi *selesai*. Berikan *timestamp* resolusi.
 
-- **TransactionList.tsx:** Daftar transaksi servis dengan filter, pencarian, dan detail.
-- **Form Transaksi Baru:** Layout 2 kolom — data pelanggan (kendaraan, nopol) + keranjang kasir (sparepart + jasa mekanik).
+### UI dasbor Front Office Logistik
+- **[MODIFY] [ShipmentList.tsx](file:///d:/Inventory-Service-Imformation-System/frontend/src/features/orders/ShipmentList.tsx)**
+  - Pasang komponen *State* untuk merender **2 Tab Navigasi** bagi Front Office:
+    - Tab 1: **Penerimaan PO Baru** (filter data: `shipment_type === 'initial' || null`)
+    - Tab 2: **Barang Retur/Pengganti (RPL)** (filter data: `shipment_type === 'replacement'`)
+  - Aksi *Setujui Fisik* dan *Tolak* dirender dengan gaya yang sesuai.
 
-### Modul Pesanan Suku Cadang (Front Office ↔ Koperasi)
-
-- **OrderList.tsx:** FO membuat pesanan ke Koperasi, keranjang multi-item.
-- **KoperasiPenerimaan.tsx:** Koperasi melihat dan merespons pesanan masuk.
-
-### Modul Pengiriman & Retur (Fase P1)
-
-- **ShipmentList.tsx:** UI pengiriman barang + upload foto bukti pengemasan. FO memverifikasi dengan SweetAlert2 — tombol Tolak wajib sertakan foto barang cacat.
-- **KoperasiReturns.tsx:** Panel manajemen retur untuk Koperasi — fasilitasi kirim ulang (replacement).
+## Verification Plan
+1. Test penolakan DO dari FO, FO masuk fase Read-Only.
+2. Login Koperasi, temukan tiket Retur, unggah Dokumen Ganti Rugi. 
+3. Sistem Laravel akan meng-generate "SHP-000X RPL".
+4. Login FO, pastikan DO pengganti tersebut hanya muncul di **Tab 2 (RPL)**. Cek apakah DO awal tetap tercatat Read-Only di Tab 1.
+5. FO Menyetujui Fisik RPL, memastikan bahwa Stok Produk bertambah dan status Tiket Koperasi berubah menjadi **Retur Selesai**.
 
 ### Modul Pelaporan
 
