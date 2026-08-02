@@ -62,8 +62,12 @@ const ShipmentList: React.FC = () => {
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
 
   // Modal State for Image/PDF Preview
-  const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(null);
-  const [previewEvidenceName, setPreviewEvidenceName] = useState<string | null>(null);
+  const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(
+    null,
+  );
+  const [previewEvidenceName, setPreviewEvidenceName] = useState<string | null>(
+    null,
+  );
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -204,7 +208,10 @@ const ShipmentList: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       setPreviewEvidenceUrl(url);
     } catch (err) {
-      Swal.fire({ icon: "error", text: "Terjadi kesalahan memuat pratinjau bukti" });
+      Swal.fire({
+        icon: "error",
+        text: "Terjadi kesalahan memuat pratinjau bukti",
+      });
       setPreviewEvidenceUrl(null);
       setPreviewEvidenceName(null);
     } finally {
@@ -634,7 +641,9 @@ const ShipmentList: React.FC = () => {
                         {shipment.evidences.map((ev) => (
                           <div key={ev.id} className="flex items-center gap-1">
                             <button
-                              onClick={() => previewEvidence(ev.id, ev.original_filename)}
+                              onClick={() =>
+                                previewEvidence(ev.id, ev.original_filename)
+                              }
                               disabled={isPreviewLoading}
                               title="Lihat Detail Bukti"
                               className="flex-1 flex items-center justify-center gap-1 text-xs text-blue-700 hover:text-white bg-blue-50 hover:bg-blue-600 px-2 py-1.5 rounded transition-colors"
@@ -642,7 +651,9 @@ const ShipmentList: React.FC = () => {
                               <Download size={14} /> Detail
                             </button>
                             <button
-                              onClick={() => downloadEvidence(ev.id, ev.original_filename)}
+                              onClick={() =>
+                                downloadEvidence(ev.id, ev.original_filename)
+                              }
                               title="Unduh Bukti"
                               className="text-xs text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded transition-colors"
                             >
@@ -707,23 +718,51 @@ const ShipmentList: React.FC = () => {
           </table>
         </div>
       </div>
-    </div>
 
       {previewEvidenceUrl && (
-        <div className={styles.modalOverlay} onClick={() => { setPreviewEvidenceUrl(null); setPreviewEvidenceName(null); }}>
-          <div className={`${styles.modalContent} !max-w-4xl`} onClick={(e) => e.stopPropagation()}>
-            <h2 className={styles.panelTitle}>Pratinjau Bukti: {previewEvidenceName}</h2>
+        <div
+          className={styles.modalOverlay}
+          onClick={() => {
+            setPreviewEvidenceUrl(null);
+            setPreviewEvidenceName(null);
+          }}
+        >
+          <div
+            className={`${styles.modalContent} !max-w-4xl`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className={styles.panelTitle}>
+              Pratinjau Bukti: {previewEvidenceName}
+            </h2>
             <div className="flex justify-center mt-4 bg-gray-50 p-2 rounded border border-gray-100">
-               {previewEvidenceName?.toLowerCase().endsWith('.pdf') ? (
-                  <iframe src={previewEvidenceUrl} width="100%" height="500px" title="Bukti PDF" className="rounded" />
-               ) : (
-                  <img src={previewEvidenceUrl} alt={previewEvidenceName || "Bukti Surat Jalan"} style={{maxHeight: "65vh", maxWidth: "100%", objectFit: "contain"}} className="rounded shadow-sm" />
-               )}
+              {previewEvidenceName?.toLowerCase().endsWith(".pdf") ? (
+                <iframe
+                  src={previewEvidenceUrl}
+                  width="100%"
+                  height="500px"
+                  title="Bukti PDF"
+                  className="rounded"
+                />
+              ) : (
+                <img
+                  src={previewEvidenceUrl}
+                  alt={previewEvidenceName || "Bukti Surat Jalan"}
+                  style={{
+                    maxHeight: "65vh",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                  }}
+                  className="rounded shadow-sm"
+                />
+              )}
             </div>
             <div className="flex justify-end mt-5 pt-3 border-t border-gray-100">
               <button
                 className="px-5 py-2 text-sm font-semibold text-white bg-gray-800 hover:bg-gray-900 shadow-sm rounded-md transition-colors"
-                onClick={() => { setPreviewEvidenceUrl(null); setPreviewEvidenceName(null); }}
+                onClick={() => {
+                  setPreviewEvidenceUrl(null);
+                  setPreviewEvidenceName(null);
+                }}
               >
                 Tutup
               </button>
@@ -731,7 +770,6 @@ const ShipmentList: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
