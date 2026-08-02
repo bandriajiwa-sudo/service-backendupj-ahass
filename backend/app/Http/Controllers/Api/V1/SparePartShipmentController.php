@@ -83,6 +83,31 @@ class SparePartShipmentController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, SparePartShipment $shipment)
+    {
+        if ($shipment->status !== 'menunggu_verifikasi') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengiriman yang sudah diverifikasi tidak dapat diubah.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'quantity' => 'sometimes|integer|min:1',
+            'harga_jual' => 'sometimes|numeric|min:0',
+        ]);
+
+        // Prevent editing if it's not the owner or auth id logic here, but since it's Koperasi role bounded, it's ok for MVP.
+
+        $shipment->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pengiriman DO berhasil diperbarui.',
+            'data' => $shipment,
+        ]);
+    }
+
     public function uploadEvidence(Request $request, SparePartShipment $shipment)
     {
         $request->validate([

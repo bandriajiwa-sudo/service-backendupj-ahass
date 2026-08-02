@@ -73,6 +73,11 @@ const ShipmentList: React.FC = () => {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Edit State
+  const [editingShipmentId, setEditingShipmentId] = useState<number | null>(
+    null,
+  );
+
   useEffect(() => {
     fetchShipments();
     if (user?.role === "koperasi") {
@@ -107,6 +112,17 @@ const ShipmentList: React.FC = () => {
     }
   };
 
+  const handleEditClick = (shipment: any) => {
+    setEditingShipmentId(shipment.id);
+    setFormData({
+      spare_part_order_id: shipment.spare_part_order_id.toString(),
+      quantity: shipment.quantity.toString(),
+      harga_jual: shipment.harga_jual ? shipment.harga_jual.toString() : "",
+    });
+    setEvidenceFile(null);
+    setIsFormOpen(true);
+  };
+
   const handleCreateShipment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
@@ -121,7 +137,7 @@ const ShipmentList: React.FC = () => {
       return;
     }
 
-    if (!evidenceFile) {
+    if (!editingShipmentId && !evidenceFile) {
       Swal.fire({
         icon: "warning",
         text: "Wajib melampirkan berkas bukti / foto barang untuk pengiriman",
@@ -132,46 +148,73 @@ const ShipmentList: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // 1. Buat Draft Pengiriman
-      const res = await apiClient.post("/spare-part-shipments", formData);
-      const shipmentId = res.data.data.id;
+      if (editingShipmentId) {
+        // Mode Edit
+        await apiClient.put(`/spare-part-shipments/${editingShipmentId}`, {
+          quantity: formData.quantity,
+          harga_jual: formData.harga_jual,
+        });
 
-      // 2. Unggah Evidence
-      const formDataObj = new FormData();
-      formDataObj.append("evidence_type", "shipment_initial");
-      formDataObj.append("file", evidenceFile);
+        if (evidenceFile) {
+          const formDataObj = new FormData();
+          formDataObj.append("evidence_type", "shipment_initial");
+          formDataObj.append("file", evidenceFile);
+          await apiClient.post(
+            `/spare-part-shipments/${editingShipmentId}/evidences`,
+            formDataObj,
+            { headers: { "Content-Type": "multipart/form-data" } },
+          );
+        }
 
-      await apiClient.post(
-        `/spare-part-shipments/${shipmentId}/evidences`,
-        formDataObj,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
-      );
+        Swal.fire({
+          icon: "success",
+          title: "Diperbarui",
+          text: "Data pengiriman berhasil disunting dan disimpan.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        // Mode Create
+        const res = await apiClient.post("/spare-part-shipments", formData);
+        const shipmentId = res.data.data.id;
 
-      // 3. Submit Pengiriman
-      await apiClient.post(`/spare-part-shipments/${shipmentId}/submit`);
+        const formDataObj = new FormData();
+        formDataObj.append("evidence_type", "shipment_initial");
+        formDataObj.append("file", evidenceFile!);
+
+        await apiClient.post(
+          `/spare-part-shipments/${shipmentId}/evidences`,
+          formDataObj,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+
+        await apiClient.post(`/spare-part-shipments/${shipmentId}/submit`);
+
+        Swal.fire({
+          icon: "success",
+          title: "Pengiriman Dikirim",
+          text: "Bukti dikirim lancar, menunggu verifikasi lapangan oleh Front Office.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
 
       fetchShipments();
-      fetchApprovedOrders(); // Refresh unhandled orders
+      fetchApprovedOrders();
       setIsFormOpen(false);
+      setEditingShipmentId(null);
       setFormData({
         spare_part_order_id: "",
         quantity: "1",
         harga_jual: "",
       });
       setEvidenceFile(null);
-      Swal.fire({
-        icon: "success",
-        title: "Pengiriman Dikirim",
-        text: "Bukti dikirim lancar, menunggu verifikasi lapangan oleh Front Office.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
     } catch (err: any) {
       Swal.fire({
         icon: "error",
-        title: "Gagal membuat pengiriman",
+        title: "Gagal menyimpan pengiriman",
         text: err.response?.data?.message || err.message,
       });
     } finally {
@@ -433,164 +476,25 @@ const ShipmentList: React.FC = () => {
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
             />
-            {user?.role === "koperasi" && !isFormOpen && (
+            {user?.role === "koperasi" && (
               <button
                 className={styles.btnPrimary}
-                onClick={() => setIsFormOpen(true)}
+                onClick={() => {
+                  setEditingShipmentId(null);
+                  setFormData({
+                    spare_part_order_id: "",
+                    quantity: "1",
+                    harga_jual: "",
+                  });
+                  setEvidenceFile(null);
+                  setIsFormOpen(true);
+                }}
               >
                 + Buat Surat Jalan DO
               </button>
             )}
           </div>
         </div>
-
-        {isFormOpen && user?.role === "koperasi" && (
-          <div className={styles.formContainer}>
-            <h3 className={styles.formTitle}>
-              Pencatatan Surat Jalan (DO) Ke UPJ
-            </h3>
-
-            {approvedOrders.length === 0 ? (
-              <p className="text-gray-500 italic text-sm">
-                Belum ada pesanan yang "Disetujui" dan belum memiliki riwayat
-                pengiriman.
-              </p>
-            ) : (
-              <form onSubmit={handleCreateShipment} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={styles.formLabel}>
-                      Referensi Order Suku Cadang *
-                    </label>
-                    <select
-                      className={styles.formInput}
-                      value={formData.spare_part_order_id}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          spare_part_order_id: e.target.value,
-                        })
-                      }
-                      required
-                    >
-                      <option value="">-- Pilih Pesanan (Approved) --</option>
-                      {approvedOrders.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          #{o.id} - {o.spare_part.nama_suku_cadang} (Pesan:{" "}
-                          {o.jumlah}) | Oleh: {o.user.nama_user}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={styles.formLabel}>
-                      Kuantitas Aktual Dikirim *
-                    </label>
-                    <input
-                      type="number"
-                      className={styles.formInput}
-                      min="1"
-                      value={formData.quantity}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          quantity: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                  <div>
-                    <label className={styles.formLabel}>
-                      Harga Jual UPJ (Rp) *
-                    </label>
-                    <input
-                      type="number"
-                      className={styles.formInput}
-                      min="0"
-                      value={formData.harga_jual}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          harga_jual: e.target.value,
-                        })
-                      }
-                      required
-                      placeholder="Cth: 65000"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      (Otomatis meng-update harga referensi jualan di sistem
-                      Suku Cadang)
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className={styles.formLabel}>
-                    Upload Foto Surat Jalan & Kondisi Barang *
-                  </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-blue-50 cursor-pointer relative">
-                    <div className="space-y-1 text-center">
-                      <Camera className="mx-auto h-12 w-12 text-blue-400" />
-                      <div className="flex text-sm text-gray-600 justify-center">
-                        <label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 p-1"
-                        >
-                          <span>Unggah File</span>
-                          <input
-                            id="file-upload"
-                            name="file-upload"
-                            type="file"
-                            className="sr-only"
-                            accept="image/*,application/pdf"
-                            onChange={(e) => {
-                              if (e.target.files && e.target.files.length > 0) {
-                                setEvidenceFile(e.target.files[0]);
-                              }
-                            }}
-                            required
-                          />
-                        </label>
-                        <p className="pl-1">atau seret file ke sini</p>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        PNG, JPG, PDF up to 5MB
-                      </p>
-                      {evidenceFile && (
-                        <div className="mt-2 text-sm font-semibold text-green-600">
-                          Berkas Terpilih: {evidenceFile.name}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsFormOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting
-                      ? "Mengunggah..."
-                      : "Simpan Terbitkan Pengiriman"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        )}
 
         <div className={styles.tableResponsive}>
           <table className={styles.table}>
@@ -690,9 +594,23 @@ const ShipmentList: React.FC = () => {
                           Sudah Diperiksa
                         </span>
                       )}
-                    {user?.role !== "front_office" && (
-                      <span className="text-sm text-gray-400">Read-Only</span>
-                    )}
+                    {user?.role === "koperasi" &&
+                      shipment.status === "menunggu_verifikasi" && (
+                        <button
+                          onClick={() => handleEditClick(shipment)}
+                          className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors border border-gray-300"
+                        >
+                          ✎ Edit DO
+                        </button>
+                      )}
+                    {user?.role === "koperasi" &&
+                      shipment.status !== "menunggu_verifikasi" && (
+                        <span className="text-sm text-gray-400">Read-Only</span>
+                      )}
+                    {user?.role !== "front_office" &&
+                      user?.role !== "koperasi" && (
+                        <span className="text-sm text-gray-400">Read-Only</span>
+                      )}
                   </td>
                 </tr>
               ))}
@@ -710,6 +628,165 @@ const ShipmentList: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* MODAL FORM SURAT JALAN (CREATE / EDIT) */}
+      {isFormOpen && user?.role === "koperasi" && (
+        <div className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn p-8 overflow-y-auto">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 pb-4 border-b border-gray-200">
+              {editingShipmentId
+                ? "✏️ Edit Surat Jalan DO (Refisi Koperasi)"
+                : "📝 Pencatatan Surat Jalan (DO) Ke UPJ"}
+            </h3>
+
+            {approvedOrders.length === 0 && !editingShipmentId ? (
+              <p className="text-gray-500 italic text-sm">
+                Belum ada pesanan yang "Disetujui" dan belum memiliki riwayat
+                pengiriman.
+              </p>
+            ) : (
+              <form onSubmit={handleCreateShipment} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Referensi Order Suku Cadang *
+                    </label>
+                    <select
+                      className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow disabled:bg-gray-100 disabled:text-gray-500"
+                      value={formData.spare_part_order_id}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          spare_part_order_id: e.target.value,
+                        })
+                      }
+                      required
+                      disabled={!!editingShipmentId}
+                    >
+                      <option value="">-- Pilih Pesanan (Approved) --</option>
+                      {approvedOrders.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          #{o.id} - {o.spare_part.nama_suku_cadang} (Pesan:{" "}
+                          {o.jumlah})
+                        </option>
+                      ))}
+                      {/* Insert option if editing but the order is no longer in "approvedOrders" (since it already has a shipment) */}
+                      {editingShipmentId &&
+                        !approvedOrders.find(
+                          (o) =>
+                            o.id.toString() === formData.spare_part_order_id,
+                        ) && (
+                          <option value={formData.spare_part_order_id}>
+                            -- Order Sedang Diedit (ID:{" "}
+                            {formData.spare_part_order_id}) --
+                          </option>
+                        )}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Kuantitas Aktual Dikirim *
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                      min="1"
+                      value={formData.quantity}
+                      onChange={(e) =>
+                        setFormData({ ...formData, quantity: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Harga Jual UPJ (Rp) *
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                    min="0"
+                    value={formData.harga_jual}
+                    onChange={(e) =>
+                      setFormData({ ...formData, harga_jual: e.target.value })
+                    }
+                    required
+                    placeholder="Cth: 65000"
+                  />
+                  <p className="text-xs text-gray-500 mt-1.5 italic">
+                    (Otomatis mengatur referensi jualan retail di sistem Suku
+                    Cadang)
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    {editingShipmentId
+                      ? "Ubah Bukti Foto Kuitansi/Barang (Opsional)"
+                      : "Upload Foto Surat Jalan & Kondisi Barang *"}
+                  </label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-blue-50 cursor-pointer relative">
+                    <div className="space-y-1 text-center">
+                      <Camera className="mx-auto h-12 w-12 text-blue-400" />
+                      <div className="flex text-sm text-gray-600 justify-center">
+                        <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 p-1 px-2 border border-blue-200 shadow-sm">
+                          <span>Unggah File</span>
+                          <input
+                            type="file"
+                            className="sr-only"
+                            accept="image/*,application/pdf"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                setEvidenceFile(e.target.files[0]);
+                              }
+                            }}
+                            required={!editingShipmentId}
+                          />
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        PNG, JPG, PDF up to 5MB
+                      </p>
+                      {evidenceFile && (
+                        <div className="mt-3 text-sm font-bold text-green-700 bg-green-100 py-1 px-3 rounded inline-block">
+                          ✓ Berkas Dipilih: {evidenceFile.name}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsFormOpen(false);
+                      setEditingShipmentId(null);
+                      setEvidenceFile(null);
+                    }}
+                    className="px-6 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 border border-gray-200 rounded-md shadow-sm hover:bg-gray-200 transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button // button save
+                    type="submit"
+                    className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-colors flex gap-2 items-center"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting
+                      ? "Memproses Data..."
+                      : editingShipmentId
+                        ? "Update Data DO"
+                        : "Simpan & Terbitkan Pengiriman"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* MODAL DETAIL ORDER LOGISTIK & GAMBAR */}
       {selectedShipmentDetail && (

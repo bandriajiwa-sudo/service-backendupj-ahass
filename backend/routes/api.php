@@ -84,6 +84,7 @@ $apiRoutes = function () {
             Route::patch('/spare-part-orders/{order}/decision', [SparePartOrderController::class, 'decision']);
             Route::patch('/spare-part-orders/{order}/estimate', [SparePartOrderController::class, 'estimate']);
             Route::post('/spare-part-shipments', [SparePartShipmentController::class, 'store']);
+            Route::put('/spare-part-shipments/{shipment}', [SparePartShipmentController::class, 'update']);
             Route::post('/spare-part-shipments/{shipment}/evidences', [SparePartShipmentController::class, 'uploadEvidence']);
             Route::post('/spare-part-shipments/{shipment}/submit', [SparePartShipmentController::class, 'submit']);
             Route::post('/spare-part-returns/{return}/replacement-shipment', [SparePartReturnController::class, 'createReplacement']);
