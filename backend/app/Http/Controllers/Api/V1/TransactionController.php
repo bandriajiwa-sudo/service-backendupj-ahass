@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ActivePriceService;
 
 class TransactionController extends Controller
 {
@@ -115,9 +116,15 @@ class TransactionController extends Controller
                         ]);
                     }
 
-                    // Snapshot the selling price
-                    $spMaster = SparePart::find($sp_req['spare_part_id']);
-                    $harga_satuan = $spMaster->harga_jual;
+                    // Snapshot the selling price dynamically
+                    $harga_satuan = ActivePriceService::getActivePrice($sp_req['spare_part_id']) ?? 0;
+                    
+                    if ($harga_satuan <= 0) {
+                        throw ValidationException::withMessages([
+                            'spare_parts' => "Suku Cadang ID {$sp_req['spare_part_id']} belum memiliki harga jual aktif dari Koperasi (Belum diterima dari Supplier)."
+                        ]);
+                    }
+                    
                     $total_harga = $harga_satuan * $sp_req['jumlah'];
 
                     // Deduct stock
