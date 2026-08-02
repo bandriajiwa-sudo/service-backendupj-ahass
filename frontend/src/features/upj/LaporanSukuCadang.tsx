@@ -149,7 +149,7 @@ const LaporanSukuCadang: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto w-full print:overflow-visible">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[800px] text-left border-collapse">
             <thead className="bg-gray-50 border-b border-gray-200 print:bg-gray-100 print:border-b-2 print:border-black">
               <tr>
                 <th className="whitespace-nowrap text-gray-700 text-sm font-semibold px-4 py-3 text-left">

@@ -162,6 +162,7 @@
 }
 
 .tableGroup {
+  min-width: 800px;
   width: 100%;
   border-collapse: collapse;
 }
