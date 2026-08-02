@@ -62,6 +62,8 @@ class SparePartOrderController extends Controller
         $request->validate([
             'status' => ['required', Rule::enum(OrderStatus::class)],
             'catatan' => 'required_if:status,ditolak|nullable|string',
+            'tanggal_awal' => 'nullable|required_if:status,menunggu|date',
+            'tanggal_akhir' => 'nullable|required_if:status,menunggu|date|after_or_equal:tanggal_awal',
         ]);
 
         $updateData = [
@@ -72,6 +74,11 @@ class SparePartOrderController extends Controller
         // Hanya overwrite catatan_koperasi jika Koperasi mengirim alasan (biasanya saat ditolak)
         if ($request->filled('catatan')) {
             $updateData['catatan_koperasi'] = $request->catatan;
+        }
+
+        if ($request->status === OrderStatus::Menunggu->value && $request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $updateData['tanggal_awal'] = $request->tanggal_awal;
+            $updateData['tanggal_akhir'] = $request->tanggal_akhir;
         }
 
         $order->update($updateData);

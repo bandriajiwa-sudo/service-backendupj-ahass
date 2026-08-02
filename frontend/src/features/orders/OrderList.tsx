@@ -72,7 +72,6 @@ const OrderList: React.FC = () => {
     catatan: "",
     tanggal_awal: "",
     tanggal_akhir: "",
-    mode: "decision", // "decision" or "estimate"
   });
 
   useEffect(() => {
@@ -206,65 +205,50 @@ const OrderList: React.FC = () => {
       catatan: o.catatan_koperasi || "",
       tanggal_awal: o.tanggal_awal || "",
       tanggal_akhir: o.tanggal_akhir || "",
-      mode: o.status === "menunggu" ? "estimate" : "decision",
     });
     setIsKoperasiModalOpen(true);
   };
 
   const handleKoperasiSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (koperasiData.mode === "decision") {
-      if (!koperasiData.status) {
-        Swal.fire({
-          icon: "warning",
-          text: "Pilih keputusan terlebih dahulu.",
-        });
-        return;
-      }
-      if (koperasiData.status === "ditolak" && !koperasiData.catatan) {
-        Swal.fire({
-          icon: "warning",
-          text: "Wajib mengisi catatan jika penolakan.",
-        });
-        return;
-      }
-    } else {
-      if (!koperasiData.tanggal_awal || !koperasiData.tanggal_akhir) {
-        Swal.fire({
-          icon: "warning",
-          text: "Rentang tanggal estimasi wajib diisi.",
-        });
-        return;
-      }
+    if (!koperasiData.status) {
+      Swal.fire({
+        icon: "warning",
+        text: "Pilih keputusan terlebih dahulu.",
+      });
+      return;
+    }
+    if (koperasiData.status === "ditolak" && !koperasiData.catatan) {
+      Swal.fire({
+        icon: "warning",
+        text: "Wajib mengisi catatan jika penolakan.",
+      });
+      return;
+    }
+    if (
+      koperasiData.status === "menunggu" &&
+      (!koperasiData.tanggal_awal || !koperasiData.tanggal_akhir)
+    ) {
+      Swal.fire({
+        icon: "warning",
+        text: "Rentang tanggal estimasi wajib diisi jika status pending.",
+      });
+      return;
     }
 
     try {
-      if (koperasiData.mode === "decision") {
-        await apiClient.patch(
-          `/spare-part-orders/${koperasiData.id}/decision`,
-          {
-            status: koperasiData.status,
-            catatan: koperasiData.catatan,
-          },
-        );
-      } else {
-        await apiClient.patch(
-          `/spare-part-orders/${koperasiData.id}/estimate`,
-          {
-            tanggal_awal: koperasiData.tanggal_awal,
-            tanggal_akhir: koperasiData.tanggal_akhir,
-          },
-        );
-      }
+      await apiClient.patch(`/spare-part-orders/${koperasiData.id}/decision`, {
+        status: koperasiData.status,
+        catatan: koperasiData.catatan,
+        tanggal_awal: koperasiData.tanggal_awal,
+        tanggal_akhir: koperasiData.tanggal_akhir,
+      });
       fetchOrders();
       setIsKoperasiModalOpen(false);
       Swal.fire({
         icon: "success",
         title: "Tersimpan",
-        text:
-          koperasiData.mode === "decision"
-            ? "Keputusan order berhasil disimpan."
-            : "Estimasi order berhasil disimpan",
+        text: "Keputusan order berhasil disimpan.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -531,32 +515,14 @@ const OrderList: React.FC = () => {
                     {user?.role === "koperasi" && (
                       <td className="px-4 py-3 text-center">
                         {o.status === "menunggu" ? (
-                          <div className="flex flex-col gap-2 items-start">
-                            <button
-                              className={styles.btnApprove}
-                              style={{ background: "#3b82f6" }}
-                              onClick={() => handleOpenKoperasiModal(o)}
-                              title="Beri Estimasi"
-                            >
-                              <Pencil size={14} /> Beri Estimasi
-                            </button>
+                          <div className="flex flex-col gap-2 items-center">
                             <button
                               className={styles.btnApprove}
                               style={{
                                 background: "#10b981",
-                                marginTop: "4px",
+                                padding: "6px 20px",
                               }}
-                              onClick={() => {
-                                setKoperasiData({
-                                  id: o.id,
-                                  status: "",
-                                  catatan: "",
-                                  tanggal_awal: o.tanggal_awal || "",
-                                  tanggal_akhir: o.tanggal_akhir || "",
-                                  mode: "decision",
-                                });
-                                setIsKoperasiModalOpen(true);
-                              }}
+                              onClick={() => handleOpenKoperasiModal(o)}
                               title="Beri Keputusan"
                             >
                               Beri Keputusan
@@ -668,66 +634,60 @@ const OrderList: React.FC = () => {
       {isKoperasiModalOpen && user?.role === "koperasi" && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2 className={styles.modalTitle}>
-              {koperasiData.mode === "decision"
-                ? "Keputusan Order Koperasi"
-                : "Beri Estimasi Ketersediaan"}
-            </h2>
+            <h2 className={styles.modalTitle}>Keputusan Order Koperasi</h2>
             <form onSubmit={handleKoperasiSubmit}>
-              {koperasiData.mode === "decision" ? (
-                <>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>
-                      Status Keputusan *
-                    </label>
-                    <select
-                      className={styles.formInput}
-                      value={koperasiData.status}
-                      onChange={(e) =>
-                        setKoperasiData({
-                          ...koperasiData,
-                          status: e.target.value,
-                        })
-                      }
-                      required
-                    >
-                      <option value="">-- Pilih Keputusan --</option>
-                      <option value="disetujui">Disetujui</option>
-                      <option value="menunggu">Pending</option>
-                      <option value="ditolak">Ditolak</option>
-                    </select>
-                  </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Status Keputusan *</label>
+                <select
+                  className={styles.formInput}
+                  value={koperasiData.status}
+                  onChange={(e) =>
+                    setKoperasiData({
+                      ...koperasiData,
+                      status: e.target.value,
+                    })
+                  }
+                  required
+                >
+                  <option value="">-- Pilih Keputusan --</option>
+                  <option value="disetujui">Disetujui</option>
+                  <option value="menunggu">Pending</option>
+                  <option value="ditolak">Ditolak</option>
+                </select>
+              </div>
 
-                  {(koperasiData.status === "ditolak" || koperasiData.status === "menunggu") && (
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>
-                      Catatan {koperasiData.status === "ditolak" ? "*" : "(Opsional)"}
-                    </label>
-                    <textarea
-                      className={styles.formInput}
-                      style={{ minHeight: "80px", resize: "vertical" }}
-                      placeholder={
-                        koperasiData.status === "ditolak"
-                          ? "Wajib: alasan penolakan order..."
-                          : "Tambahkan catatan (opsional)..."
-                      }
-                      value={koperasiData.catatan}
-                      onChange={(e) =>
-                        setKoperasiData({
-                          ...koperasiData,
-                          catatan: e.target.value,
-                        })
-                      }
-                      required={koperasiData.status === "ditolak"}
-                    />
-                  </div>
-                  )}
-                </>
-              ) : (
-                <div className="flex gap-4 mb-4">
+              {(koperasiData.status === "ditolak" ||
+                koperasiData.status === "menunggu") && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    Catatan{" "}
+                    {koperasiData.status === "ditolak" ? "*" : "(Opsional)"}
+                  </label>
+                  <textarea
+                    className={styles.formInput}
+                    style={{ minHeight: "80px", resize: "vertical" }}
+                    placeholder={
+                      koperasiData.status === "ditolak"
+                        ? "Wajib: alasan penolakan order..."
+                        : "Tambahkan catatan (opsional)..."
+                    }
+                    value={koperasiData.catatan}
+                    onChange={(e) =>
+                      setKoperasiData({
+                        ...koperasiData,
+                        catatan: e.target.value,
+                      })
+                    }
+                    required={koperasiData.status === "ditolak"}
+                  />
+                </div>
+              )}
+
+              {koperasiData.status === "menunggu" && (
+                <div className="flex gap-4 mb-4 mt-2">
                   <div className="flex-1 space-y-2">
                     <label className="block text-sm font-semibold text-gray-700">
-                      Tanggal Awal Est.
+                      Tanggal Awal Est. *
                     </label>
                     <input
                       type="date"
@@ -744,7 +704,7 @@ const OrderList: React.FC = () => {
                   </div>
                   <div className="flex-1 space-y-2">
                     <label className="block text-sm font-semibold text-gray-700">
-                      Tanggal Akhir Est.
+                      Tanggal Akhir Est. *
                     </label>
                     <input
                       type="date"
