@@ -4,6 +4,7 @@ import { useAuth } from "../../app/AuthContext";
 import { Trash2, Pencil, Search } from "lucide-react";
 import Swal from "sweetalert2";
 import styles from "./OrderList.module.css";
+import NotesModal, { NotesBadge } from "../../components/common/NotesModal";
 
 interface SparePart {
   id: number;
@@ -43,6 +44,7 @@ const OrderList: React.FC = () => {
   // Creation State (For FO)
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editOrderId, setEditOrderId] = useState<number | null>(null);
+  const [notesModalOrder, setNotesModalOrder] = useState<Order | null>(null);
   const [formData, setFormData] = useState({
     spare_part_id: "",
     jumlah: "1",
@@ -495,86 +497,12 @@ const OrderList: React.FC = () => {
                     <td className="text-sm text-gray-800 px-4 py-3 text-center">
                       {statusBadge(o)}
                     </td>
-                    <td
-                      className="text-sm text-gray-800 px-4 py-3 text-left"
-                      style={{
-                        minWidth: "220px",
-                        maxWidth: "300px",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      {!o.catatan_fo && !o.catatan_koperasi && (
-                        <span style={{ color: "#94a3b8" }}>-</span>
-                      )}
-
-                      {o.catatan_fo && (
-                        <div
-                          style={{
-                            marginBottom: o.catatan_koperasi ? "6px" : "0",
-                            backgroundColor: "#f8fafc",
-                            padding: "6px 10px",
-                            borderRadius: "6px",
-                            border: "1px solid #e2e8f0",
-                            transition: "background 0.2s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              fontWeight: 700,
-                              color: "#3b82f6",
-                              display: "block",
-                              marginBottom: "2px",
-                              letterSpacing: "0.02em",
-                            }}
-                          >
-                            FrontOffice:
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.82rem",
-                              color: "#334155",
-                              lineHeight: "1.3",
-                            }}
-                          >
-                            {o.catatan_fo}
-                          </span>
-                        </div>
-                      )}
-
-                      {o.catatan_koperasi && (
-                        <div
-                          style={{
-                            backgroundColor: "#faf5ff",
-                            padding: "6px 10px",
-                            borderRadius: "6px",
-                            border: "1px solid #e9d5ff",
-                            transition: "background 0.2s ease",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              fontWeight: 700,
-                              color: "#9333ea",
-                              display: "block",
-                              marginBottom: "2px",
-                              letterSpacing: "0.02em",
-                            }}
-                          >
-                            Koperasi:
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.82rem",
-                              color: "#334155",
-                              lineHeight: "1.3",
-                            }}
-                          >
-                            {o.catatan_koperasi}
-                          </span>
-                        </div>
-                      )}
+                    <td className="text-sm text-gray-800 px-4 py-3 text-center">
+                      <NotesBadge
+                        catatanFo={o.catatan_fo}
+                        catatanKoperasi={o.catatan_koperasi}
+                        onClick={() => setNotesModalOrder(o)}
+                      />
                     </td>
                     {user?.role === "front_office" && (
                       <td className="px-4 py-3 text-center">
@@ -841,6 +769,18 @@ const OrderList: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* NOTES MODAL */}
+      {notesModalOrder && (
+        <NotesModal
+          orderId={notesModalOrder.id}
+          catatanFo={notesModalOrder.catatan_fo}
+          catatanKoperasi={notesModalOrder.catatan_koperasi}
+          userRole={user?.role || ""}
+          onClose={() => setNotesModalOrder(null)}
+          onNoteSaved={fetchOrders}
+        />
       )}
     </div>
   );
