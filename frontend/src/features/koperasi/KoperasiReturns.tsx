@@ -39,6 +39,16 @@ const KoperasiReturns: React.FC = () => {
   const [returns, setReturns] = useState<ReturnTicket[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Modal State for Image/PDF Preview & Detail
+  const [selectedReturnDetail, setSelectedReturnDetail] = useState<any>(null);
+  const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(
+    null,
+  );
+  const [previewEvidenceName, setPreviewEvidenceName] = useState<string | null>(
+    null,
+  );
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
   const fetchReturns = async () => {
     try {
       const res = await apiClient.get("/spare-part-returns");
@@ -71,6 +81,34 @@ const KoperasiReturns: React.FC = () => {
     } catch (err) {
       Swal.fire({ icon: "error", text: "Terjadi kesalahan unduh bukti retur" });
     }
+  };
+
+  const previewEvidence = async (evidenceId: number, filename: string) => {
+    setIsPreviewLoading(true);
+    setPreviewEvidenceName(filename);
+    try {
+      const response = await apiClient.get(
+        `/shipment-evidences/${evidenceId}/download`,
+        { responseType: "blob" },
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      setPreviewEvidenceUrl(url);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        text: "Terjadi kesalahan memuat pratinjau bukti",
+      });
+      setPreviewEvidenceUrl(null);
+      setPreviewEvidenceName(null);
+    } finally {
+      setIsPreviewLoading(false);
+    }
+  };
+
+  const openDetailModal = (ret: any) => {
+    setSelectedReturnDetail(ret);
+    setPreviewEvidenceUrl(null);
+    setPreviewEvidenceName(null);
   };
 
   const handleCreateReplacement = async (returnId: number) => {
@@ -231,8 +269,8 @@ const KoperasiReturns: React.FC = () => {
                 <th className={styles.tableCell}>
                   Alasan Ditolak / Dikeluhkan
                 </th>
-                <th className={styles.tableCell}>Lampiran (Bukti FO)</th>
                 <th className={styles.tableCell}>Status Retur</th>
+                <th className={styles.tableCell}>Lampiran (Detail)</th>
                 <th className={styles.tableCell}>Aksi Koperasi</th>
               </tr>
             </thead>
@@ -266,33 +304,17 @@ const KoperasiReturns: React.FC = () => {
                     </span>
                   </td>
                   <td className={styles.tableCell}>
-                    {ret.spare_part_shipment.evidences &&
-                    ret.spare_part_shipment.evidences.length > 0 ? (
-                      <div className="flex flex-col gap-1">
-                        {ret.spare_part_shipment.evidences
-                          .filter(
-                            (ev) => ev.evidence_type === "damage_or_defect",
-                          )
-                          .map((ev) => (
-                            <button
-                              key={ev.id}
-                              onClick={() =>
-                                downloadEvidence(ev.id, ev.original_filename)
-                              }
-                              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded"
-                            >
-                              <Download size={14} /> Bukti Cacat FO
-                            </button>
-                          ))}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-400">
-                        Tidak ada bukti
-                      </span>
-                    )}
+                    {statusBadge(ret.status)}
                   </td>
                   <td className={styles.tableCell}>
-                    {statusBadge(ret.status)}
+                    <button
+                      onClick={() => openDetailModal(ret)}
+                      className="bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded text-xs font-semibold border border-blue-200 transition-colors inline-block text-center whitespace-nowrap shadow-sm"
+                    >
+                      Lihat Detail
+                      <br />
+                      Cacat (FO)
+                    </button>
                   </td>
                   <td className={styles.tableCell}>
                     {user?.role === "koperasi" &&
@@ -328,6 +350,187 @@ const KoperasiReturns: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* MODAL DETAIL RETUR & GAMBAR BUKTI */}
+      {selectedReturnDetail && (
+        <div
+          className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          onClick={() => {
+            setSelectedReturnDetail(null);
+            setPreviewEvidenceUrl(null);
+            setPreviewEvidenceName(null);
+          }}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Detail Retur Logistik (Bukt Penolakan FO)
+                </h2>
+                <div className="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                  <span>
+                    Tiket: RET-
+                    {selectedReturnDetail.id.toString().padStart(4, "0")}
+                  </span>
+                  <span>|</span>
+                  <span>
+                    Log: {formatDate(selectedReturnDetail.created_at)}
+                  </span>
+                </div>
+              </div>
+              <div>{statusBadge(selectedReturnDetail.status)}</div>
+            </div>
+
+            <div className="p-6 overflow-y-auto bg-gray-50 flex-1">
+              <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                  Informasi Suku Cadang & Penolakan
+                </h3>
+
+                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Nomor Order Reference
+                    </label>
+                    <div className="text-sm font-bold text-blue-700 bg-blue-50 py-1.5 px-3 rounded inline-block">
+                      ORD-
+                      {selectedReturnDetail.spare_part_order.id
+                        .toString()
+                        .padStart(4, "0")}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Kuantitas Unit Diminta Ganti
+                    </label>
+                    <div className="text-sm font-semibold text-gray-800">
+                      {selectedReturnDetail.quantity} Unit
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      Nama Suku Cadang Aktif
+                    </label>
+                    <div className="text-base font-semibold text-gray-800">
+                      {
+                        selectedReturnDetail.spare_part_order.spare_part
+                          .nama_suku_cadang
+                      }
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 mt-2 bg-red-50 border border-red-100 rounded p-3">
+                    <label className="block text-[11px] font-semibold text-red-600 mb-1">
+                      Catatan Keluhan Penolakan (FO)
+                    </label>
+                    <div className="text-sm text-red-700 italic">
+                      " {selectedReturnDetail.reason} "
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                  Lampiran Bukti Dokumen/Foto (Dari Front Office)
+                </h3>
+
+                {selectedReturnDetail.spare_part_shipment.evidences &&
+                selectedReturnDetail.spare_part_shipment.evidences.filter(
+                  (e: any) => e.evidence_type === "damage_or_defect",
+                ).length > 0 ? (
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    {selectedReturnDetail.spare_part_shipment.evidences
+                      .filter(
+                        (e: any) => e.evidence_type === "damage_or_defect",
+                      )
+                      .map((ev: any, idx: number) => (
+                        <div
+                          key={ev.id}
+                          className="flex items-center gap-0 border border-gray-200 rounded overflow-hidden shadow-sm hover:shadow-md bg-white transition-all group"
+                        >
+                          <button
+                            onClick={() =>
+                              previewEvidence(ev.id, ev.original_filename)
+                            }
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            <span className="font-semibold">
+                              Foto Bukti Cacat/Rusak #{idx + 1}
+                            </span>
+                          </button>
+                          <button
+                            title="Download Berkas Awal"
+                            onClick={() =>
+                              downloadEvidence(ev.id, ev.original_filename)
+                            }
+                            className="px-3 py-2 text-gray-400 border-l border-gray-200 hover:text-blue-600 hover:bg-blue-50 transition-colors h-full"
+                          >
+                            <Download size={16} />
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <div className="text-center p-6 border border-dashed border-gray-300 rounded mb-6 text-gray-400 text-sm">
+                    Tidak ada berkas bukti penolakan yang dilampirkan oleh Front
+                    Office.
+                  </div>
+                )}
+
+                {isPreviewLoading ? (
+                  <div className="h-64 flex flex-col items-center justify-center bg-gray-100 animate-pulse rounded-lg border border-gray-200">
+                    <p className="text-gray-500 font-medium">
+                      Memuat Foto Bukti S3...
+                    </p>
+                  </div>
+                ) : previewEvidenceUrl ? (
+                  <div className="bg-gray-100 rounded-lg p-2 border border-gray-200 shadow-inner flex flex-col">
+                    <div className="text-xs text-gray-500 mb-2 px-2 py-1 font-mono">
+                      Pratinjau: {previewEvidenceName}
+                    </div>
+                    {previewEvidenceName?.toLowerCase().endsWith(".pdf") ? (
+                      <iframe
+                        src={previewEvidenceUrl}
+                        className="w-full h-96 rounded border border-gray-300"
+                        title="PDF Preview"
+                      />
+                    ) : (
+                      <img
+                        src={previewEvidenceUrl}
+                        alt="Bukti Preview"
+                        className="w-full h-auto max-h-[500px] object-contain rounded border border-gray-300 bg-white"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="h-20 flex items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                    <p className="text-xs text-gray-400">
+                      Klik salah satu tombol lampiran di atas untuk pratinjau
+                      bukti penolakan Koperasi.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-100 bg-white flex justify-end sticky bottom-0">
+              <button
+                className="px-6 py-2.5 text-sm font-bold text-white bg-gray-800 rounded-md shadow hover:bg-gray-700 transition-colors"
+                onClick={() => {
+                  setSelectedReturnDetail(null);
+                  setPreviewEvidenceUrl(null);
+                }}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

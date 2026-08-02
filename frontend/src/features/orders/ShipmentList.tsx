@@ -863,16 +863,6 @@ const ShipmentList: React.FC = () => {
                       }
                     </div>
                   </div>
-                  {selectedShipmentDetail.rejection_note && (
-                    <div className="col-span-2 mt-2 bg-red-50 border border-red-100 rounded p-3">
-                      <label className="block text-[11px] font-semibold text-red-600 mb-1">
-                        Catatan Penolakan (FO)
-                      </label>
-                      <div className="text-sm text-red-700 italic">
-                        " {selectedShipmentDetail.rejection_note} "
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -886,9 +876,10 @@ const ShipmentList: React.FC = () => {
                   {/* Daftar Tombol Evidences */}
                   <div className="flex flex-wrap gap-2">
                     {selectedShipmentDetail.evidences &&
-                    selectedShipmentDetail.evidences.length > 0 ? (
-                      selectedShipmentDetail.evidences.map(
-                        (ev: any, index: number) => (
+                    selectedShipmentDetail.evidences.filter((e: any) => e.evidence_type !== "damage_or_defect").length > 0 ? (
+                      selectedShipmentDetail.evidences
+                        .filter((e: any) => e.evidence_type !== "damage_or_defect")
+                        .map((ev: any, index: number) => (
                           <div
                             key={ev.id}
                             className="flex gap-0.5 shadow-sm rounded overflow-hidden border border-gray-200"
@@ -913,8 +904,7 @@ const ShipmentList: React.FC = () => {
                               ↓
                             </button>
                           </div>
-                        ),
-                      )
+                        ))
                     ) : (
                       <div className="text-sm text-gray-500 italic bg-gray-50 p-3 rounded w-full text-center border border-dashed border-gray-300">
                         Tidak ada berkas bukti yang dilampirkan oleh Koperasi
