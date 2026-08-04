@@ -65,6 +65,14 @@ const ShipmentList: React.FC = () => {
   const [approvedOrders, setApprovedOrders] = useState<OrderDetail[]>([]);
   const [viewDocumentOrder, setViewDocumentOrder] = useState<any | null>(null);
 
+  // FO Batch Verify State
+  const [batchSelections, setBatchSelections] = useState<
+    Record<
+      number,
+      { status: "disetujui" | "ditolak"; alasan?: string; foto?: File | null }
+    >
+  >({});
+
   // Filter State
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("semua");
@@ -307,100 +315,78 @@ const ShipmentList: React.FC = () => {
     setPreviewEvidenceName(null);
   };
 
-  const handleVerification = async (shipmentId: number, isApprove: boolean) => {
-    if (isApprove) {
-      try {
-        await apiClient.patch(`/spare-part-shipments/${shipmentId}/verify`, {
-          status: "disetujui",
-        });
-        fetchShipments();
-        Swal.fire({
-          icon: "success",
-          title: "Terverifikasi!",
-          text: "Stok inventori telah otomatis diperbarui sistem. Jika ini retur, tiket Retur tertutup tuntas.",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      } catch (err: any) {
+  const submitBatchVerification = async () => {
+    const selectedIds = Object.keys(batchSelections).map(Number);
+    if (selectedIds.length === 0) return;
+
+    // Validasi & Setup Items Array
+    const items = [];
+    for (const sid of selectedIds) {
+      const selection = batchSelections[sid];
+      if (selection.status === "ditolak" && !selection.alasan) {
         Swal.fire({
           icon: "error",
-          text: err.response?.data?.message || "Terjadi kesalahan",
+          text: "Semua barang yang ditolak wajib memiliki alasan!",
         });
+        return;
       }
-    } else {
-      const { value: formValues } = await Swal.fire({
-        title: "Tolak Pengiriman",
-        html: `
-          <textarea id="swal-input1" class="swal2-textarea" placeholder="Alasan Penolakan..."></textarea>
-          <label style="display:block; text-align:left; margin-top:20px; font-weight:bold;">Lampiran Foto Cacat/Kerusakan dari Kurir:</label>
-          <input type="file" id="swal-input2" class="swal2-file" accept="image/*,application/pdf">
-        `,
-        preConfirm: () => {
-          const text = (
-            document.getElementById("swal-input1") as HTMLTextAreaElement
-          ).value;
-          const fileInput = document.getElementById(
-            "swal-input2",
-          ) as HTMLInputElement;
-          const file = fileInput.files ? fileInput.files[0] : null;
-
-          if (!text) {
-            Swal.showValidationMessage("Alasan penolakan diwajibkan.");
-            return false; // blocks promise
-          }
-          if (!file) {
-            Swal.showValidationMessage(
-              "Bukti foto barang cacat/rusak diwajibkan.",
-            );
-            return false;
-          }
-          return { text, file };
-        },
-        showCancelButton: true,
-      });
-
-      if (formValues) {
+      if (selection.status === "ditolak" && !selection.foto) {
         Swal.fire({
-          title: "Mengunggah Laporan Retur...",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
+          icon: "error",
+          text: "Semua barang yang ditolak wajib menyertakan foto bukti kerusakan!",
         });
-        try {
-          // 1. Upload Damage Evidence First!
+        return;
+      }
+      items.push({ shipment_id: sid, ...selection });
+    }
+
+    Swal.fire({
+      title: "Mengeksekusi Verifikasi Massal...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+      // 1. Concurrent Image Uploads for Returns
+      for (const item of items) {
+        if (item.status === "ditolak" && item.foto) {
           const formDataObj = new FormData();
           formDataObj.append("evidence_type", "damage_or_defect");
-          formDataObj.append("file", formValues.file);
+          formDataObj.append("file", item.foto);
 
           await apiClient.post(
-            `/spare-part-shipments/${shipmentId}/evidences`,
+            `/spare-part-shipments/${item.shipment_id}/evidences`,
             formDataObj,
             { headers: { "Content-Type": "multipart/form-data" } },
           );
-
-          // 2. Commit Verification Reject -> Returns Automatically Created By Backend
-          await apiClient.patch(`/spare-part-shipments/${shipmentId}/verify`, {
-            status: "ditolak",
-            rejection_note: formValues.text,
-          });
-
-          fetchShipments();
-          Swal.fire({
-            icon: "success",
-            title: "Pengaduan Dicatat",
-            text: "Tiket Retur resmi dilempar ke Koperasi untuk ditangani.",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-        } catch (err: any) {
-          Swal.fire({
-            icon: "error",
-            text:
-              err.response?.data?.message || "Terjadi kesalahan sinkronisasi",
-          });
         }
       }
+
+      // 2. Submit Bulk JSON (Auto grouped by BE)
+      const submitPayload = {
+        items: items.map((i) => ({
+          shipment_id: i.shipment_id,
+          status: i.status,
+          alasan: i.alasan,
+        })),
+      };
+
+      await apiClient.post("/spare-part-shipments/batch-verify", submitPayload);
+
+      fetchShipments();
+      setBatchSelections({});
+      Swal.fire({
+        icon: "success",
+        title: "Selesai!",
+        text: "Logistik diverifikasi dan Tiket Retur dikoordinasikan.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        text: err.response?.data?.message || "Terjadi kesalahan sinkronisasi",
+      });
     }
   };
 
@@ -638,7 +624,11 @@ const ShipmentList: React.FC = () => {
                   <th className={styles.tableCell}>Total Kirim</th>
                   <th className={styles.tableCell}>Status Fisik</th>
                   <th className={styles.tableCell}>Detail & Bukti</th>
-                  <th className={styles.tableCell}>Aksi Verifikasi (FO)</th>
+                  {user?.role === "front_office" ? (
+                    <th className={styles.tableCell}>Pilih (Bulk)</th>
+                  ) : (
+                    <th className={styles.tableCell}>Aksi Verifikasi</th>
+                  )}
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
@@ -716,26 +706,117 @@ const ShipmentList: React.FC = () => {
                     <td className={styles.tableCell}>
                       {user?.role === "front_office" &&
                         shipment.status === "menunggu_verifikasi" && (
-                          <div className="flex flex-col gap-1.5">
-                            <button
-                              onClick={() =>
-                                handleVerification(shipment.id, true)
-                              }
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
-                            >
-                              Setujui{" "}
-                              {shipment.shipment_type === "replacement"
-                                ? "Pengganti"
-                                : "Fisik"}
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleVerification(shipment.id, false)
-                              }
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow transition-colors"
-                            >
-                              X Tolak
-                            </button>
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                              <input
+                                type="checkbox"
+                                className="form-checkbox text-blue-600 rounded"
+                                checked={!!batchSelections[shipment.id]}
+                                onChange={(e) => {
+                                  if (e.target.checked)
+                                    setBatchSelections({
+                                      ...batchSelections,
+                                      [shipment.id]: { status: "disetujui" },
+                                    });
+                                  else {
+                                    const copy = { ...batchSelections };
+                                    delete copy[shipment.id];
+                                    setBatchSelections(copy);
+                                  }
+                                }}
+                              />
+                              <span className="font-semibold text-gray-700">
+                                Verifikasi Item
+                              </span>
+                            </label>
+
+                            {batchSelections[shipment.id] && (
+                              <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs space-y-2">
+                                <div className="flex space-x-2 mb-2">
+                                  <label className="flex items-center space-x-1 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      checked={
+                                        batchSelections[shipment.id].status ===
+                                        "disetujui"
+                                      }
+                                      onChange={() =>
+                                        setBatchSelections({
+                                          ...batchSelections,
+                                          [shipment.id]: {
+                                            ...batchSelections[shipment.id],
+                                            status: "disetujui",
+                                          },
+                                        })
+                                      }
+                                    />
+                                    <span className="text-green-700 font-bold">
+                                      Terima Baik
+                                    </span>
+                                  </label>
+                                  <label className="flex items-center space-x-1 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      checked={
+                                        batchSelections[shipment.id].status ===
+                                        "ditolak"
+                                      }
+                                      onChange={() =>
+                                        setBatchSelections({
+                                          ...batchSelections,
+                                          [shipment.id]: {
+                                            ...batchSelections[shipment.id],
+                                            status: "ditolak",
+                                          },
+                                        })
+                                      }
+                                    />
+                                    <span className="text-red-700 font-bold">
+                                      Retur (Bermasalah)
+                                    </span>
+                                  </label>
+                                </div>
+
+                                {batchSelections[shipment.id].status ===
+                                  "ditolak" && (
+                                  <div className="space-y-2 fade-in">
+                                    <input
+                                      type="text"
+                                      className="w-full px-2 py-1 border rounded"
+                                      placeholder="Alasan retur (pecah, dll)..."
+                                      value={
+                                        batchSelections[shipment.id].alasan ||
+                                        ""
+                                      }
+                                      onChange={(e) =>
+                                        setBatchSelections({
+                                          ...batchSelections,
+                                          [shipment.id]: {
+                                            ...batchSelections[shipment.id],
+                                            alasan: e.target.value,
+                                          },
+                                        })
+                                      }
+                                    />
+                                    <input
+                                      type="file"
+                                      className="w-full"
+                                      onChange={(e) =>
+                                        setBatchSelections({
+                                          ...batchSelections,
+                                          [shipment.id]: {
+                                            ...batchSelections[shipment.id],
+                                            foto: e.target.files
+                                              ? e.target.files[0]
+                                              : null,
+                                          },
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                       {user?.role === "front_office" &&
@@ -750,7 +831,7 @@ const ShipmentList: React.FC = () => {
                             onClick={() => handleEditClick(shipment)}
                             className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors border border-gray-300"
                           >
-                            ✎ Edit{" "}
+                            ✏️ Edit{" "}
                             {shipment.shipment_type === "replacement"
                               ? "RPL"
                               : "DO"}
@@ -784,6 +865,41 @@ const ShipmentList: React.FC = () => {
               </tbody>
             </table>
           </div>
+
+          {/* FLOATING BOTTOM BAR FOR BATCH SUBMIT */}
+          {user?.role === "front_office" &&
+            Object.keys(batchSelections).length > 0 && (
+              <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg flex justify-between items-center z-50">
+                <div className="text-sm text-gray-700 font-bold">
+                  <span className="text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                    {Object.keys(batchSelections).length}
+                  </span>{" "}
+                  Barang Dipilih
+                  <span className="ml-4 text-green-700 bg-green-100 px-2 py-1 rounded">
+                    {
+                      Object.values(batchSelections).filter(
+                        (x) => x.status === "disetujui",
+                      ).length
+                    }{" "}
+                    Terima Lunas
+                  </span>
+                  <span className="ml-2 text-red-700 bg-red-100 px-2 py-1 rounded">
+                    {
+                      Object.values(batchSelections).filter(
+                        (x) => x.status === "ditolak",
+                      ).length
+                    }{" "}
+                    Ajukan Retur
+                  </span>
+                </div>
+                <button
+                  onClick={submitBatchVerification}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors"
+                >
+                  Konfirmasi Verifikasi Massal &rarr;
+                </button>
+              </div>
+            )}
         </div>
 
         {/* MODAL FORM SURAT JALAN (CREATE / EDIT) */}

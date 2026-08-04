@@ -75,6 +75,7 @@ $apiRoutes = function () {
             Route::put('/spare-part-orders/{order}', [SparePartOrderController::class, 'update']);
             Route::delete('/spare-part-orders/{order}', [SparePartOrderController::class, 'destroy']);
 
+            Route::post('/spare-part-shipments/batch-verify', [SparePartShipmentController::class, 'batchVerification']);
             Route::patch('/spare-part-shipments/{shipment}/verify', [SparePartShipmentController::class, 'verification']);
             Route::post('/spare-part-returns', [SparePartReturnController::class, 'store']);
         });

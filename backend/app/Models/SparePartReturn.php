@@ -10,9 +10,10 @@ class SparePartReturn extends Model
 {
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'resolved_at' => 'datetime',
-    ];
+    public function sparePartReturnHeader(): BelongsTo
+    {
+        return $this->belongsTo(SparePartReturnHeader::class);
+    }
 
     public function sparePartOrderDetail(): BelongsTo
     {
@@ -27,15 +28,5 @@ class SparePartReturn extends Model
     public function evidences(): HasMany
     {
         return $this->hasMany(ShipmentEvidence::class);
-    }
-
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function resolvedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'resolved_by');
     }
 }

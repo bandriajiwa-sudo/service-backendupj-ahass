@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\SparePartReturnHeader;
 use App\Models\SparePartReturn;
 use App\Models\SparePartShipment;
 use Illuminate\Http\Request;
@@ -12,30 +13,42 @@ class SparePartReturnController extends Controller
 {
     public function index(Request $request)
     {
-        $returns = SparePartReturn::with(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder', 'sparePartShipment.evidences', 'createdBy', 'resolvedBy'])
+        $headers = SparePartReturnHeader::with([
+            'sparePartOrder',
+            'createdBy',
+            'resolvedBy',
+            'sparePartReturns.sparePartOrderDetail.sparePart',
+            'sparePartReturns.sparePartShipment.evidences'
+        ])
             ->orderBy('created_at', 'desc')
-            ->paginate($request->query('per_page', 100));
+            ->paginate($request->query('per_page', 50));
 
         return response()->json([
             'success' => true,
-            'data' => $returns->items(),
+            'data' => $headers->items(),
             'meta' => [
-                'current_page' => $returns->currentPage(),
-                'per_page' => $returns->perPage(),
-                'total' => $returns->total(),
+                'current_page' => $headers->currentPage(),
+                'per_page' => $headers->perPage(),
+                'total' => $headers->total(),
             ],
         ]);
     }
 
-    public function show(SparePartReturn $return)
+    public function show(SparePartReturnHeader $return)
     {
         return response()->json([
             'success' => true,
-            'data' => $return->load(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder', 'evidences', 'sparePartShipment.evidences']),
+            'data' => $return->load([
+                'sparePartOrder',
+                'createdBy',
+                'resolvedBy',
+                'sparePartReturns.sparePartOrderDetail.sparePart',
+                'sparePartReturns.sparePartShipment.evidences'
+            ]),
         ]);
     }
 
-    public function createReplacement(Request $request, SparePartReturn $return)
+    public function createReplacement(Request $request, SparePartReturnHeader $return)
     {
         if ($return->status !== 'menunggu_pengiriman_ulang') {
             return response()->json([
@@ -46,9 +59,9 @@ class SparePartReturnController extends Controller
 
         DB::beginTransaction();
         try {
-            $lockedReturn = SparePartReturn::where('id', $return->id)->lockForUpdate()->first();
+            $lockedHeader = SparePartReturnHeader::where('id', $return->id)->lockForUpdate()->first();
 
-            if ($lockedReturn->status !== 'menunggu_pengiriman_ulang') {
+            if ($lockedHeader->status !== 'menunggu_pengiriman_ulang') {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
@@ -56,27 +69,30 @@ class SparePartReturnController extends Controller
                 ], 409);
             }
 
-            // Membangun entitas Shipment kedua (Replacement)
-            $replacementShipment = SparePartShipment::create([
-                'spare_part_order_detail_id' => $lockedReturn->spare_part_order_detail_id,
-                'shipment_type' => 'replacement',
-                'quantity' => $lockedReturn->quantity,
-                'harga_jual' => $lockedReturn->sparePartShipment->harga_jual,
-                'status' => 'menunggu_verifikasi',
-                'shipped_by' => auth()->id() ?? 1,
-            ]);
+            // Membangun entitas Shipment kedua (Replacement) untuk SEMUA ITEM di dalam tiket retur ini
+            $replacements = [];
+            foreach ($lockedHeader->sparePartReturns as $detail) {
+                $replacements[] = SparePartShipment::create([
+                    'spare_part_order_detail_id' => $detail->spare_part_order_detail_id,
+                    'shipment_type' => 'replacement',
+                    'quantity' => $detail->quantity,
+                    'harga_jual' => $detail->sparePartShipment->harga_jual,
+                    'status' => 'menunggu_verifikasi',
+                    'shipped_by' => auth()->id() ?? 1,
+                ]);
+            }
 
             // Mutasi status Retur menjadi dikirim_ulang
-            $lockedReturn->status = 'dikirim_ulang';
-            $lockedReturn->resolved_by = auth()->id() ?? 1;
-            $lockedReturn->save();
+            $lockedHeader->status = 'dikirim_ulang';
+            $lockedHeader->resolved_by = auth()->id() ?? 1;
+            $lockedHeader->save();
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pengiriman barang ganti rugi (Replacement Shipment) sukses dipersiapkan. Mohon lengkapi fotonya.',
-                'data' => $replacementShipment,
+                'message' => 'Pengiriman barang ganti rugi (Replacement Shipment) sukses dipersiapkan untuk semua item di dalam tiket.',
+                'data' => $replacements,
             ], 201);
 
         } catch (\Exception $e) {

@@ -3,15 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use App\Models\Category;
-use App\Models\User;
-use App\Models\SparePartOrder;
-use App\Models\SparePartOrderDetail;
-use App\Models\SparePartShipment;
 use App\Models\SparePart;
 use App\Models\SparePartStock;
+use Carbon\Carbon;
 
 class SparePartSeeder extends Seeder
 {
@@ -21,155 +16,110 @@ class SparePartSeeder extends Seeder
 
         $data = [
             // Kategori: Mesin (MSN-001 s/d MSN-025)
-            ['kode_suku_cadang' => 'MSN-001', 'nama_suku_cadang' => 'Piston Kit Standard', 'kategori' => 'Mesin', 'harga_jual' => 175000],
-            ['kode_suku_cadang' => 'MSN-002', 'nama_suku_cadang' => 'Ring Piston Standard', 'kategori' => 'Mesin', 'harga_jual' => 85000],
-            ['kode_suku_cadang' => 'MSN-003', 'nama_suku_cadang' => 'Klep Intake (In)', 'kategori' => 'Mesin', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'MSN-004', 'nama_suku_cadang' => 'Klep Exhaust (Ex)', 'kategori' => 'Mesin', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'MSN-005', 'nama_suku_cadang' => 'Noken As (Camshaft)', 'kategori' => 'Mesin', 'harga_jual' => 250000],
-            ['kode_suku_cadang' => 'MSN-006', 'nama_suku_cadang' => 'Kruk As (Crankshaft)', 'kategori' => 'Mesin', 'harga_jual' => 650000],
-            ['kode_suku_cadang' => 'MSN-007', 'nama_suku_cadang' => 'Rantai Keteng (Timing Chain)', 'kategori' => 'Mesin', 'harga_jual' => 95000],
-            ['kode_suku_cadang' => 'MSN-008', 'nama_suku_cadang' => 'Tensioner Rantai Keteng', 'kategori' => 'Mesin', 'harga_jual' => 120000],
-            ['kode_suku_cadang' => 'MSN-009', 'nama_suku_cadang' => 'Busi NGK C7HSA', 'kategori' => 'Mesin', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'MSN-010', 'nama_suku_cadang' => 'Busi Iridium', 'kategori' => 'Mesin', 'harga_jual' => 95000],
-            ['kode_suku_cadang' => 'MSN-011', 'nama_suku_cadang' => 'Koil Pengapian', 'kategori' => 'Mesin', 'harga_jual' => 135000],
-            ['kode_suku_cadang' => 'MSN-012', 'nama_suku_cadang' => 'Paking Blok Mesin', 'kategori' => 'Mesin', 'harga_jual' => 25000],
-            ['kode_suku_cadang' => 'MSN-013', 'nama_suku_cadang' => 'Paking Head Silinder', 'kategori' => 'Mesin', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'MSN-014', 'nama_suku_cadang' => 'Sil Klep', 'kategori' => 'Mesin', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'MSN-015', 'nama_suku_cadang' => 'Bos Klep', 'kategori' => 'Mesin', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'MSN-016', 'nama_suku_cadang' => 'Kipas Radiator', 'kategori' => 'Mesin', 'harga_jual' => 55000],
-            ['kode_suku_cadang' => 'MSN-017', 'nama_suku_cadang' => 'Pompa Air (Water Pump)', 'kategori' => 'Mesin', 'harga_jual' => 185000],
-            ['kode_suku_cadang' => 'MSN-018', 'nama_suku_cadang' => 'Karburator Assy', 'kategori' => 'Mesin', 'harga_jual' => 450000],
-            ['kode_suku_cadang' => 'MSN-019', 'nama_suku_cadang' => 'Injektor', 'kategori' => 'Mesin', 'harga_jual' => 210000],
-            ['kode_suku_cadang' => 'MSN-020', 'nama_suku_cadang' => 'Throttle Body Assy', 'kategori' => 'Mesin', 'harga_jual' => 550000],
-            ['kode_suku_cadang' => 'MSN-021', 'nama_suku_cadang' => 'Intake Manifold', 'kategori' => 'Mesin', 'harga_jual' => 85000],
-            ['kode_suku_cadang' => 'MSN-022', 'nama_suku_cadang' => 'Knalpot Standard', 'kategori' => 'Mesin', 'harga_jual' => 450000],
-            ['kode_suku_cadang' => 'MSN-023', 'nama_suku_cadang' => 'Paking Knalpot', 'kategori' => 'Mesin', 'harga_jual' => 10000],
-            ['kode_suku_cadang' => 'MSN-024', 'nama_suku_cadang' => 'Baut Blok Mesin Set', 'kategori' => 'Mesin', 'harga_jual' => 65000],
-            ['kode_suku_cadang' => 'MSN-025', 'nama_suku_cadang' => 'Ring Baut Oli', 'kategori' => 'Mesin', 'harga_jual' => 2000],
+            ['kode' => 'MSN-001', 'nama' => 'Piston Kit Standard', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-002', 'nama' => 'Ring Piston Standard', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-003', 'nama' => 'Klep Intake (In)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-004', 'nama' => 'Klep Exhaust (Ex)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-005', 'nama' => 'Noken As (Camshaft)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-006', 'nama' => 'Kruk As (Crankshaft)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-007', 'nama' => 'Rantai Keteng (Timing Chain)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-008', 'nama' => 'Tensioner Rantai Keteng', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-009', 'nama' => 'Busi NGK C7HSA', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-010', 'nama' => 'Busi Iridium', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-011', 'nama' => 'Koil Pengapian', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-012', 'nama' => 'Paking Blok Mesin', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-013', 'nama' => 'Paking Head Silinder', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-014', 'nama' => 'Sil Klep', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-015', 'nama' => 'Bos Klep', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-016', 'nama' => 'Kipas Radiator', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-017', 'nama' => 'Pompa Air (Water Pump)', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-018', 'nama' => 'Karburator Assy', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-019', 'nama' => 'Injektor', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-020', 'nama' => 'Throttle Body Assy', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-021', 'nama' => 'Intake Manifold', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-022', 'nama' => 'Knalpot Standard', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-023', 'nama' => 'Paking Knalpot', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-024', 'nama' => 'Baut Blok Mesin Set', 'kategori' => 'Mesin'],
+            ['kode' => 'MSN-025', 'nama' => 'Ring Baut Oli', 'kategori' => 'Mesin'],
 
             // Kategori: Bodi (BOD-001 s/d BOD-025)
-            ['kode_suku_cadang' => 'BOD-001', 'nama_suku_cadang' => 'Sayap Depan Kanan (Leg Shield)', 'kategori' => 'Bodi', 'harga_jual' => 150000],
-            ['kode_suku_cadang' => 'BOD-002', 'nama_suku_cadang' => 'Sayap Depan Kiri', 'kategori' => 'Bodi', 'harga_jual' => 150000],
-            ['kode_suku_cadang' => 'BOD-003', 'nama_suku_cadang' => 'Spakbor Depan', 'kategori' => 'Bodi', 'harga_jual' => 120000],
-            ['kode_suku_cadang' => 'BOD-004', 'nama_suku_cadang' => 'Spakbor Belakang', 'kategori' => 'Bodi', 'harga_jual' => 95000],
-            ['kode_suku_cadang' => 'BOD-005', 'nama_suku_cadang' => 'Batok Lampu Depan', 'kategori' => 'Bodi', 'harga_jual' => 110000],
-            ['kode_suku_cadang' => 'BOD-006', 'nama_suku_cadang' => 'Batok Belakang (Speedometer)', 'kategori' => 'Bodi', 'harga_jual' => 75000],
-            ['kode_suku_cadang' => 'BOD-007', 'nama_suku_cadang' => 'Cover Knalpot (Protector)', 'kategori' => 'Bodi', 'harga_jual' => 65000],
-            ['kode_suku_cadang' => 'BOD-008', 'nama_suku_cadang' => 'Cover Radiator', 'kategori' => 'Bodi', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'BOD-009', 'nama_suku_cadang' => 'Cover CVT Plastik', 'kategori' => 'Bodi', 'harga_jual' => 85000],
-            ['kode_suku_cadang' => 'BOD-010', 'nama_suku_cadang' => 'Behel Belakang (Grip Pillion)', 'kategori' => 'Bodi', 'harga_jual' => 150000],
-            ['kode_suku_cadang' => 'BOD-011', 'nama_suku_cadang' => 'Jok Motor Assy', 'kategori' => 'Bodi', 'harga_jual' => 250000],
-            ['kode_suku_cadang' => 'BOD-012', 'nama_suku_cadang' => 'Kulit Jok Sintetis', 'kategori' => 'Bodi', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'BOD-013', 'nama_suku_cadang' => 'Spion Kanan Standard', 'kategori' => 'Bodi', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'BOD-014', 'nama_suku_cadang' => 'Spion Kiri Standard', 'kategori' => 'Bodi', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'BOD-015', 'nama_suku_cadang' => 'Standar Tengah (Main Stand)', 'kategori' => 'Bodi', 'harga_jual' => 120000],
-            ['kode_suku_cadang' => 'BOD-016', 'nama_suku_cadang' => 'Standar Samping (Side Stand)', 'kategori' => 'Bodi', 'harga_jual' => 65000],
-            ['kode_suku_cadang' => 'BOD-017', 'nama_suku_cadang' => 'Per Standar Tengah', 'kategori' => 'Bodi', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'BOD-018', 'nama_suku_cadang' => 'Per Standar Samping', 'kategori' => 'Bodi', 'harga_jual' => 10000],
-            ['kode_suku_cadang' => 'BOD-019', 'nama_suku_cadang' => 'Step Depan Kanan (Besi)', 'kategori' => 'Bodi', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'BOD-020', 'nama_suku_cadang' => 'Step Depan Kiri (Besi)', 'kategori' => 'Bodi', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'BOD-021', 'nama_suku_cadang' => 'Footstep Belakang Set', 'kategori' => 'Bodi', 'harga_jual' => 85000],
-            ['kode_suku_cadang' => 'BOD-022', 'nama_suku_cadang' => 'Karet Footstep Depan', 'kategori' => 'Bodi', 'harga_jual' => 20000],
-            ['kode_suku_cadang' => 'BOD-023', 'nama_suku_cadang' => 'Mata Kucing (Reflektor)', 'kategori' => 'Bodi', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'BOD-024', 'nama_suku_cadang' => 'Klip Bodi Plastik (Kancing)', 'kategori' => 'Bodi', 'harga_jual' => 2000],
-            ['kode_suku_cadang' => 'BOD-025', 'nama_suku_cadang' => 'Baut Bodi Halus (Visor)', 'kategori' => 'Bodi', 'harga_jual' => 3000],
+            ['kode' => 'BOD-001', 'nama' => 'Sayap Depan Kanan (Leg Shield)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-002', 'nama' => 'Sayap Depan Kiri', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-003', 'nama' => 'Spakbor Depan', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-004', 'nama' => 'Spakbor Belakang', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-005', 'nama' => 'Batok Lampu Depan', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-006', 'nama' => 'Batok Belakang (Speedometer)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-007', 'nama' => 'Cover Knalpot (Protector)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-008', 'nama' => 'Cover Radiator', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-009', 'nama' => 'Cover CVT Plastik', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-010', 'nama' => 'Behel Belakang (Grip Pillion)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-011', 'nama' => 'Jok Motor Assy', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-012', 'nama' => 'Kulit Jok Sintetis', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-013', 'nama' => 'Spion Kanan Standard', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-014', 'nama' => 'Spion Kiri Standard', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-015', 'nama' => 'Standar Tengah (Main Stand)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-016', 'nama' => 'Standar Samping (Side Stand)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-017', 'nama' => 'Per Standar Tengah', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-018', 'nama' => 'Per Standar Samping', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-019', 'nama' => 'Step Depan Kanan (Besi)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-020', 'nama' => 'Step Depan Kiri (Besi)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-021', 'nama' => 'Footstep Belakang Set', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-022', 'nama' => 'Karet Footstep Depan', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-023', 'nama' => 'Mata Kucing (Reflektor)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-024', 'nama' => 'Klip Bodi Plastik (Kancing)', 'kategori' => 'Bodi'],
+            ['kode' => 'BOD-025', 'nama' => 'Baut Bodi Halus (Visor)', 'kategori' => 'Bodi'],
 
-            // Kategori: Roda & Ban (ROD-001 s/d ROD-025)
-            ['kode_suku_cadang' => 'ROD-001', 'nama_suku_cadang' => 'Ban Luar Depan Tubetype 80/90-14', 'kategori' => 'Ban', 'harga_jual' => 165000],
-            ['kode_suku_cadang' => 'ROD-002', 'nama_suku_cadang' => 'Ban Luar Belakang Tubetype 90/90-14', 'kategori' => 'Ban', 'harga_jual' => 195000],
-            ['kode_suku_cadang' => 'ROD-003', 'nama_suku_cadang' => 'Ban Luar Depan Tubeless 90/80-14', 'kategori' => 'Ban', 'harga_jual' => 220000],
-            ['kode_suku_cadang' => 'ROD-004', 'nama_suku_cadang' => 'Ban Luar Belakang Tubeless 100/80-14', 'kategori' => 'Ban', 'harga_jual' => 250000],
-            ['kode_suku_cadang' => 'ROD-005', 'nama_suku_cadang' => 'Ban Dalam Ring 14 Standard', 'kategori' => 'Ban', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'ROD-006', 'nama_suku_cadang' => 'Ban Luar Depan Sport 90/80-17', 'kategori' => 'Ban', 'harga_jual' => 280000],
-            ['kode_suku_cadang' => 'ROD-007', 'nama_suku_cadang' => 'Ban Luar Belakang Sport 120/70-17', 'kategori' => 'Ban', 'harga_jual' => 450000],
-            ['kode_suku_cadang' => 'ROD-008', 'nama_suku_cadang' => 'Ban Dalam Ring 17 Standard', 'kategori' => 'Ban', 'harga_jual' => 40000],
-            ['kode_suku_cadang' => 'ROD-009', 'nama_suku_cadang' => 'Pentil Tubeless Besi', 'kategori' => 'Ban', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'ROD-010', 'nama_suku_cadang' => 'Pentil Tubeless Karet', 'kategori' => 'Ban', 'harga_jual' => 10000],
-            ['kode_suku_cadang' => 'ROD-011', 'nama_suku_cadang' => 'Cairan Anti Bocor Ban Tubeless', 'kategori' => 'Cairan', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'ROD-012', 'nama_suku_cadang' => 'Velg Racing Depan Ring 14', 'kategori' => 'Roda', 'harga_jual' => 450000],
-            ['kode_suku_cadang' => 'ROD-013', 'nama_suku_cadang' => 'Velg Racing Belakang Ring 14', 'kategori' => 'Roda', 'harga_jual' => 550000],
-            ['kode_suku_cadang' => 'ROD-014', 'nama_suku_cadang' => 'Velg Jari-jari (Rim Besi) Ring 17', 'kategori' => 'Roda', 'harga_jual' => 185000],
-            ['kode_suku_cadang' => 'ROD-015', 'nama_suku_cadang' => 'Jari-jari Roda (Spoke Set) Depan', 'kategori' => 'Roda', 'harga_jual' => 65000],
-            ['kode_suku_cadang' => 'ROD-016', 'nama_suku_cadang' => 'Jari-jari Roda (Spoke Set) Belakang', 'kategori' => 'Roda', 'harga_jual' => 65000],
-            ['kode_suku_cadang' => 'ROD-017', 'nama_suku_cadang' => 'Tromol Depan (Hub)', 'kategori' => 'Roda', 'harga_jual' => 135000],
-            ['kode_suku_cadang' => 'ROD-018', 'nama_suku_cadang' => 'Tromol Belakang (Hub)', 'kategori' => 'Roda', 'harga_jual' => 185000],
-            ['kode_suku_cadang' => 'ROD-019', 'nama_suku_cadang' => 'Bearing Roda Depan (6201)', 'kategori' => 'Roda', 'harga_jual' => 25000],
-            ['kode_suku_cadang' => 'ROD-020', 'nama_suku_cadang' => 'Bearing Roda Belakang (6302)', 'kategori' => 'Roda', 'harga_jual' => 35000],
-            ['kode_suku_cadang' => 'ROD-021', 'nama_suku_cadang' => 'Bos Roda Depan (Collar)', 'kategori' => 'Roda', 'harga_jual' => 25000],
-            ['kode_suku_cadang' => 'ROD-022', 'nama_suku_cadang' => 'Seal Debu Roda Depan', 'kategori' => 'Roda', 'harga_jual' => 15000],
-            ['kode_suku_cadang' => 'ROD-023', 'nama_suku_cadang' => 'As Roda Depan', 'kategori' => 'Roda', 'harga_jual' => 45000],
-            ['kode_suku_cadang' => 'ROD-024', 'nama_suku_cadang' => 'As Roda Belakang Matic', 'kategori' => 'Roda', 'harga_jual' => 85000],
-            ['kode_suku_cadang' => 'ROD-025', 'nama_suku_cadang' => 'Mur As Roda Belakang', 'kategori' => 'Roda', 'harga_jual' => 15000],
+            // Kategori: Ban & Roda (ROD-001 s/d ROD-025)
+            ['kode' => 'ROD-001', 'nama' => 'Ban Luar Depan Tubetype 80/90-14', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-002', 'nama' => 'Ban Luar Belakang Tubetype 90/90-14', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-003', 'nama' => 'Ban Luar Depan Tubeless 90/80-14', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-004', 'nama' => 'Ban Luar Belakang Tubeless 100/80-14', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-005', 'nama' => 'Ban Dalam Ring 14 Standard', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-006', 'nama' => 'Ban Luar Depan Sport 90/80-17', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-007', 'nama' => 'Ban Luar Belakang Sport 120/70-17', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-008', 'nama' => 'Ban Dalam Ring 17 Standard', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-009', 'nama' => 'Pentil Tubeless Besi', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-010', 'nama' => 'Pentil Tubeless Karet', 'kategori' => 'Ban'],
+            ['kode' => 'ROD-011', 'nama' => 'Cairan Anti Bocor Ban Tubeless', 'kategori' => 'Cairan'],
+            ['kode' => 'ROD-012', 'nama' => 'Velg Racing Depan Ring 14', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-013', 'nama' => 'Velg Racing Belakang Ring 14', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-014', 'nama' => 'Velg Jari-jari (Rim Besi) Ring 17', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-015', 'nama' => 'Jari-jari Roda (Spoke Set) Depan', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-016', 'nama' => 'Jari-jari Roda (Spoke Set) Belakang', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-017', 'nama' => 'Tromol Depan (Hub)', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-018', 'nama' => 'Tromol Belakang (Hub)', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-019', 'nama' => 'Bearing Roda Depan (6201)', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-020', 'nama' => 'Bearing Roda Belakang (6302)', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-021', 'nama' => 'Bos Roda Depan (Collar)', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-022', 'nama' => 'Seal Debu Roda Depan', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-023', 'nama' => 'As Roda Depan', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-024', 'nama' => 'As Roda Belakang Matic', 'kategori' => 'Roda'],
+            ['kode' => 'ROD-025', 'nama' => 'Mur As Roda Belakang', 'kategori' => 'Roda'],
         ];
 
-        DB::statement('TRUNCATE TABLE spare_part_price_logs CASCADE');
-        DB::statement('TRUNCATE TABLE spare_part_shipments CASCADE');
-        DB::statement('TRUNCATE TABLE spare_part_order_details CASCADE');
-        DB::statement('TRUNCATE TABLE spare_part_orders CASCADE');
-        DB::statement('TRUNCATE TABLE spare_part_stocks CASCADE');
-        DB::statement('TRUNCATE TABLE spare_parts CASCADE');
-        DB::statement('TRUNCATE TABLE categories CASCADE');
+        foreach ($data as $item) {
+            $cat = Category::firstOrCreate(
+                ['nama_kategori' => $item['kategori']],
+                ['kode_kategori' => strtoupper(substr($item['kategori'], 0, 3)) . '-' . str_pad(Category::count() + 1, 3, '0', STR_PAD_LEFT)]
+            );
 
-        // Define FO User for orders and Koperasi user for Shipments mapping
-        $foUser = User::where('role', 'front_office')->first();
-        $kpUser = User::where('role', 'koperasi')->first();
-
-        DB::beginTransaction();
-        try {
-            // Create single dummy order for initialization
-            $dummyOrder = SparePartOrder::create([
-                'user_id' => $foUser ? $foUser->id : 1,
-                'nomor_surat_order' => 'SO-' . date('Ymd') . '-0000',
-                'status' => 'disetujui',
-                'tanggal_pengajuan' => $now,
-            ]);
-
-            foreach ($data as $item) {
-                // Handle categories
-                $cat = Category::firstOrCreate(['nama_kategori' => $item['kategori']]);
-
-                // Create SparePart
-                $sp = SparePart::create([
-                    'kode_suku_cadang' => $item['kode_suku_cadang'],
-                    'nama_suku_cadang' => $item['nama_suku_cadang'],
+            $sp = SparePart::updateOrCreate(
+                ['kode_suku_cadang' => $item['kode']],
+                [
+                    'nama_suku_cadang' => $item['nama'],
                     'category_id' => $cat->id,
                     'satuan' => 'Pcs',
-                ]);
+                ]
+            );
 
-                // Insert Stock
-                $stokSekarang = rand(15, 60);
-                SparePartStock::create([
-                    'spare_part_id' => $sp->id,
-                    'stok_sekarang' => $stokSekarang,
-                    'stok_minimum' => 15,
+            SparePartStock::updateOrCreate(
+                ['spare_part_id' => $sp->id],
+                [
+                    'stok_sekarang' => 0,
+                    'stok_minimum' => 5,
                     'terakhir_diperbarui' => $now,
-                ]);
-
-                // Create Order Detail bridging logic to attach pricing history 
-                $od = SparePartOrderDetail::create([
-                    'spare_part_order_id' => $dummyOrder->id,
-                    'spare_part_id' => $sp->id,
-                    'jumlah_qty' => $stokSekarang
-                ]);
-
-                // Create verified shipment recording active base price
-                SparePartShipment::create([
-                    'spare_part_order_detail_id' => $od->id,
-                    'shipped_by' => $kpUser ? $kpUser->id : 1,
-                    'verified_by' => $foUser ? $foUser->id : 1,
-                    'quantity' => $stokSekarang,
-                    'status' => 'disetujui',
-                    'shipment_type' => 'initial',
-                    'harga_jual' => $item['harga_jual'],
-                    'verified_at' => $now,
-                    'shipped_at' => $now,
-                    'stock_posted_at' => $now,
-                ]);
-            }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            echo "Failed Seeding: " . $e->getMessage() . "\n";
+                ]
+            );
         }
     }
 }

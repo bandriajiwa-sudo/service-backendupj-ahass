@@ -80,5 +80,8 @@ class DatabaseSeeder extends Seeder
             ['user_id' => $upj->id],
             ['nama_pegawai' => 'Kepala UPJ Otomotif', 'unit_kerja' => 'UPJ Otomotif BLPT DIY', 'posisi' => 'Kepala UPJ']
         );
+
+        // Seed Master Data Suku Cadang
+        $this->call(SparePartSeeder::class);
     }
 }

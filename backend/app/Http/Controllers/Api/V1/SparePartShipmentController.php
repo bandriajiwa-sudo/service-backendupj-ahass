@@ -185,6 +185,96 @@ class SparePartShipmentController extends Controller
         ]);
     }
 
+    public function batchVerification(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.shipment_id' => 'required|exists:spare_part_shipments,id',
+            'items.*.status' => ['required', Rule::in(['disetujui', 'ditolak'])],
+            'items.*.alasan' => 'nullable|string'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $returnHeaders = [];
+
+            foreach ($request->items as $item) {
+                $lockedShipment = SparePartShipment::where('id', $item['shipment_id'])->lockForUpdate()->first();
+
+                if ($lockedShipment->status !== 'menunggu_verifikasi')
+                    continue;
+
+                if ($item['status'] === 'ditolak') {
+                    $hasDamageEvidence = $lockedShipment->evidences()->where('evidence_type', 'damage_or_defect')->exists();
+                    if (!$hasDamageEvidence) {
+                        DB::rollBack();
+                        return response()->json(['success' => false, 'message' => 'Laporan barang rusak wajib melampirkan foto bukti (Damage Evidence).'], 422);
+                    }
+
+                    $lockedShipment->status = 'ditolak';
+                    $lockedShipment->rejection_note = $item['alasan'] ?? 'Barang cacat';
+                    $lockedShipment->verified_by = auth()->id() ?? 1;
+                    $lockedShipment->verified_at = now();
+                    $lockedShipment->save();
+
+                    $orderId = $lockedShipment->sparePartOrderDetail->spare_part_order_id;
+                    if (!isset($returnHeaders[$orderId])) {
+                        $returnHeaders[$orderId] = \App\Models\SparePartReturnHeader::create([
+                            'nomor_tiket_retur' => 'RET-' . date('Ymd') . '-' . rand(1000, 9999),
+                            'spare_part_order_id' => $orderId,
+                            'status' => 'menunggu_pengiriman_ulang',
+                            'created_by' => auth()->id() ?? 1,
+                        ]);
+                    }
+
+                    \App\Models\SparePartReturn::create([
+                        'spare_part_return_header_id' => $returnHeaders[$orderId]->id,
+                        'spare_part_order_detail_id' => $lockedShipment->spare_part_order_detail_id,
+                        'spare_part_shipment_id' => $lockedShipment->id,
+                        'quantity' => $lockedShipment->quantity,
+                        'reason' => $item['alasan'] ?? 'Barang cacat',
+                    ]);
+                }
+
+                if ($item['status'] === 'disetujui') {
+                    $lockedShipment->status = 'disetujui';
+                    $lockedShipment->verified_by = auth()->id() ?? 1;
+                    $lockedShipment->verified_at = now();
+                    $lockedShipment->stock_posted_at = now();
+                    $lockedShipment->save();
+
+                    if ($lockedShipment->shipment_type === 'replacement') {
+                        $returnDetail = \App\Models\SparePartReturn::where('spare_part_order_detail_id', $lockedShipment->spare_part_order_detail_id)->first();
+                        if ($returnDetail && $returnDetail->sparePartReturnHeader) {
+                            $returnDetail->sparePartReturnHeader->update([
+                                'status' => 'selesai',
+                                'resolved_by' => auth()->id() ?? 1,
+                                'resolved_at' => now(),
+                            ]);
+                        }
+                    }
+
+                    $stock = \App\Models\SparePartStock::where('spare_part_id', $lockedShipment->sparePartOrderDetail->spare_part_id)->lockForUpdate()->first();
+                    if ($stock) {
+                        $stock->stok_sekarang += $lockedShipment->quantity;
+                        $stock->terakhir_diperbarui = now();
+                        $stock->save();
+                    }
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Verifikasi massal telah selesai dieksekusi!'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'SysDebug: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function verification(Request $request, SparePartShipment $shipment)
     {
         $request->validate([
