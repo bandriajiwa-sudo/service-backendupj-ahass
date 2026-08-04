@@ -5,7 +5,6 @@ import { Search, Camera, Check, X } from "lucide-react";
 import styles from "../orders/ShipmentList.module.css";
 
 export default function KoperasiReturns() {
-  
   const [returnHeaders, setReturnHeaders] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -364,7 +363,7 @@ export default function KoperasiReturns() {
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Upload Bukti Fisik DO Pengganti *
                         </label>
-                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-indigo-200 border-dashed rounded-md cursor-pointer hover:bg-indigo-50 transition bg-gray-50 mb-4">
+                        <label className="relative overflow-hidden flex flex-col items-center justify-center w-full h-32 border-2 border-indigo-200 border-dashed rounded-md cursor-pointer hover:bg-indigo-50 transition bg-gray-50 mb-4">
                           <div className="flex flex-col items-center justify-center pt-2 pb-2">
                             <Camera className="w-6 h-6 text-indigo-400 mb-2" />
                             <p className="text-sm text-gray-600 font-medium">
