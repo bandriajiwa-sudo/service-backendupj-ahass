@@ -102,7 +102,7 @@ export default function ShipmentList() {
 
   // Derived: Group FO Shipments (Tab 1)
   const groupedOrders = useMemo(() => {
-    const list = shipments.filter((s) => s.shipment_type === "initial");
+    const list = shipments;
     const groups: Record<string, any> = {};
 
     list.forEach((s: any) => {
@@ -651,11 +651,15 @@ export default function ShipmentList() {
                     className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-sm ${
                       viewDetailReturn.header.status === "selesai"
                         ? "bg-green-100 text-green-700"
+                        : viewDetailReturn.header.status === "dikirim_ulang"
+                        ? "bg-blue-100 text-blue-700"
                         : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
                     {viewDetailReturn.header.status === "selesai"
                       ? "SELESAI DITANGANI"
+                      : viewDetailReturn.header.status === "dikirim_ulang"
+                      ? "DIKIRIM ULANG / CEK TAB 1"
                       : "PROSES KOPERASI"}
                   </span>
                 </div>
