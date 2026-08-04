@@ -13,6 +13,7 @@ COPY . .
 # Environment Variabel harus dimasukkan saat Build Time pada React Vite
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV NODE_OPTIONS="--max_old_space_size=2048"
 
 # Jalankan vite build
 RUN npm run build
@@ -29,9 +30,9 @@ RUN echo 'server { \
     root /usr/share/nginx/html; \
     index index.html; \
     location / { \
-        try_files $uri $uri/ /index.html; \
+    try_files $uri $uri/ /index.html; \
     } \
-}' > /etc/nginx/conf.d/default.conf
+    }' > /etc/nginx/conf.d/default.conf
 
 # Ubah konfigurasi "Listen 80" menjadi mendengarkan PORT publik Railway pada Runtime
 CMD sed -i -e 's/listen 80;/listen '"${PORT:-80}"';/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
