@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from react;
 import { apiClient } from "../../lib/api";
-import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
-import { Search, Download, Camera, FileText, X } from "lucide-react";
-import PrintHeader from "../../components/common/PrintHeader";
+import { Search, Camera, Check, X, XCircle } from "lucide-react";
 import styles from "./ShipmentList.module.css";
-import KoperasiReturns from "../koperasi/KoperasiReturns";
-
-interface User {
-  nama_user: string;
-}
 
 interface OrderDetail {
   id: number;
@@ -19,32 +12,25 @@ interface OrderDetail {
     nama_suku_cadang: string;
     satuan?: string;
   };
-  spare_part_shipments: Shipment[];
-  spare_part_order: Order;
 }
-
 interface Order {
   id: number;
   nomor_surat_order: string;
   status: string;
   created_at: string;
-  user: User;
   spare_part_order_details: OrderDetail[];
 }
-
 interface ShipmentEvidence {
   id: number;
   evidence_type: string;
   original_filename: string;
 }
-
 interface Shipment {
   id: number;
   quantity: number;
-  status: "menunggu_verifikasi" | "disetujui" | "ditolak";
+  status: string;
   rejection_note: string | null;
   created_at: string;
-  verified_at: string | null;
   shipment_type: string;
   spare_part_order_detail: {
     id: number;
@@ -59,64 +45,35 @@ interface Shipment {
   evidences?: ShipmentEvidence[];
 }
 
-const ShipmentList: React.FC = () => {
-  const { user } = useAuth();
+export default function ShipmentList() {
   const [shipments, setShipments] = useState<Shipment[]>([]);
-  const [approvedOrders, setApprovedOrders] = useState<OrderDetail[]>([]);
-  const [viewDocumentOrder, setViewDocumentOrder] = useState<any | null>(null);
+  const [returnHeaders, setReturnHeaders] = useState<any[]>([]);
 
-  // FO Batch Verify State
-  const [batchSelections, setBatchSelections] = useState<
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFOTab, setActiveFOTab] = useState<"initial" | "returns">(
+    "initial",
+  );
+
+  // Modal FO: Partial Return Verification
+  const [verifyBatchOrder, setVerifyBatchOrder] = useState<any | null>(null);
+  const [batchDecisions, setBatchDecisions] = useState<
     Record<
       number,
       { status: "disetujui" | "ditolak"; alasan?: string; foto?: File | null }
     >
   >({});
-
-  // Filter State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("semua");
-  const [filterType, setFilterType] = useState("semua");
-  const [filterDate, setFilterDate] = useState("");
-  const [activeFOTab, setActiveFOTab] = useState<"initial" | "replacement">(
-    "initial",
-  );
-  const [activeKoperasiTab, setActiveKoperasiTab] = useState<
-    "initial" | "returns"
-  >("initial");
-
-  // Creation State (For Koperasi)
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    spare_part_order_detail_id: "",
-    quantity: "1",
-    harga_jual: "",
-  });
-  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
-
-  // Modal State for Image/PDF Preview & Detail
-  const [selectedShipmentDetail, setSelectedShipmentDetail] =
-    useState<any>(null);
-  const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(
-    null,
-  );
-  const [previewEvidenceName, setPreviewEvidenceName] = useState<string | null>(
-    null,
-  );
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Edit State
-  const [editingShipmentId, setEditingShipmentId] = useState<number | null>(
-    null,
-  );
+  // Modal FO: Return Detail
+  const [viewDetailReturn, setViewDetailReturn] = useState<any | null>(null);
 
   useEffect(() => {
     fetchShipments();
-    if (user?.role === "koperasi") {
-      fetchApprovedOrders();
+    if (activeFOTab === "returns") {
+      fetchReturnHeaders();
     }
-  }, [user]);
+  }, [activeFOTab]);
 
   const fetchShipments = async () => {
     try {
@@ -124,1259 +81,629 @@ const ShipmentList: React.FC = () => {
       setShipments(res.data.data);
     } catch (err: any) {
       console.error(err);
-      Swal.fire({ icon: "error", text: "Gagal memuat data pengiriman barang" });
+      Swal.fire({ icon: "error", text: "Gagal memuat data pengiriman" });
     }
   };
 
-  const fetchApprovedOrders = async () => {
+  const fetchReturnHeaders = async () => {
     try {
-      const res = await apiClient.get("/spare-part-orders");
-      // Filter out approved orders and extract their unfulfilled details
-      const filtered = res.data.data.filter(
-        (o: any) => o.status === "disetujui",
-      );
-      const details: any[] = [];
+      const res = await apiClient.get("/spare-part-returns");
+      const headers = res.data.data;
 
-      filtered.forEach((order: any) => {
-        (order.spare_part_order_details || []).forEach((detail: any) => {
-          const hasInitialShipment = detail.spare_part_shipments?.some(
-            (s: any) => s.shipment_type === "initial",
-          );
-          if (!hasInitialShipment) {
-            details.push({
-              ...detail,
-              spare_part_order: order,
-            });
-          }
-        });
-      });
-      setApprovedOrders(details);
+      const formatted = headers.map((header: any) => ({
+        header: header,
+        items: header.spare_part_returns || [],
+      }));
+      setReturnHeaders(formatted);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleEditClick = (shipment: any) => {
-    setEditingShipmentId(shipment.id);
-    setFormData({
-      spare_part_order_detail_id:
-        shipment.spare_part_order_detail_id.toString(),
-      quantity: shipment.quantity.toString(),
-      harga_jual: shipment.harga_jual ? shipment.harga_jual.toString() : "",
+  // Derived: Group FO Shipments (Tab 1)
+  const groupedOrders = useMemo(() => {
+    const list = shipments.filter((s) => s.shipment_type === "initial");
+    const groups: Record<string, any> = {};
+
+    list.forEach((s) => {
+      const order = s.spare_part_order_detail?.spare_part_order;
+      if (!order) return;
+      const orderNo = order.nomor_surat_order;
+      if (!groups[orderNo]) {
+        groups[orderNo] = {
+          order: order,
+          shipments: [],
+          totalQty: 0,
+          types: new Set(),
+          statusFisik: "Disetujui",
+        };
+      }
+      groups[orderNo].shipments.push(s);
+      groups[orderNo].totalQty += s.quantity;
+      groups[orderNo].types.add(
+        s.spare_part_order_detail.spare_part.kode_suku_cadang,
+      );
+
+      // Determine overall group status
+      if (s.status === "menunggu_verifikasi") {
+        groups[orderNo].statusFisik = "Tahap Verifikasi";
+      } else if (
+        groups[orderNo].statusFisik !== "Tahap Verifikasi" &&
+        s.status === "ditolak"
+      ) {
+        groups[orderNo].statusFisik = "Ada Retur";
+      }
     });
-    setEvidenceFile(null);
-    setIsFormOpen(true);
+
+    return Object.values(groups)
+      .filter((g) => {
+        if (!searchTerm) return true;
+        return g.order.nomor_surat_order
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      })
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.order.created_at).getTime() -
+          new Date(a.order.created_at).getTime(),
+      );
+  }, [shipments, searchTerm]);
+
+  const handleOpenVerifyBatch = (group: any) => {
+    const initDecisions: any = {};
+    group.shipments.forEach((s: any) => {
+      if (s.status === "menunggu_verifikasi") {
+        // Default select "disetujui" to save FO time
+        initDecisions[s.id] = { status: "disetujui", alasan: "", foto: null };
+      }
+    });
+    setBatchDecisions(initDecisions);
+    setVerifyBatchOrder(group);
   };
 
-  const handleCreateShipment = async (e: React.FormEvent) => {
+  const handleBatchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !formData.spare_part_order_detail_id ||
-      !formData.quantity ||
-      !formData.harga_jual
-    ) {
-      Swal.fire({
-        icon: "warning",
-        text: "Lengkapi field wajib (*) pada form pengiriman",
-      });
-      return;
-    }
 
-    if (!editingShipmentId && !evidenceFile) {
-      Swal.fire({
-        icon: "warning",
-        text: "Wajib melampirkan berkas bukti / foto barang untuk pengiriman",
-      });
-      return;
-    }
+    // Validation: If any "ditolak", it must have foto+alasan attached
+    let invalid = false;
+    const payloadItems: any[] = [];
+    const formData = new FormData();
 
-    setIsSubmitting(true);
-
-    try {
-      if (editingShipmentId) {
-        // Mode Edit
-        await apiClient.put(`/spare-part-shipments/${editingShipmentId}`, {
-          quantity: formData.quantity,
-          harga_jual: formData.harga_jual,
-        });
-
-        if (evidenceFile) {
-          const formDataObj = new FormData();
-          formDataObj.append("evidence_type", "shipment_initial");
-          formDataObj.append("file", evidenceFile);
-          await apiClient.post(
-            `/spare-part-shipments/${editingShipmentId}/evidences`,
-            formDataObj,
-            { headers: { "Content-Type": "multipart/form-data" } },
-          );
+    Object.entries(batchDecisions).forEach(([shipmentId, decision]) => {
+      if (decision.status === "ditolak") {
+        if (!decision.alasan || !decision.foto) {
+          invalid = true;
         }
-
-        Swal.fire({
-          icon: "success",
-          title: "Diperbarui",
-          text: "Data pengiriman berhasil disunting dan disimpan.",
-          timer: 1500,
-          showConfirmButton: false,
+        payloadItems.push({
+          shipment_id: parseInt(shipmentId),
+          status: "ditolak",
+          alasan: decision.alasan,
         });
+        formData.append(`foto_${shipmentId}`, decision.foto as Blob);
       } else {
-        // Mode Create
-        const res = await apiClient.post("/spare-part-shipments", formData);
-        const shipmentId = res.data.data.id;
-
-        const formDataObj = new FormData();
-        formDataObj.append("evidence_type", "shipment_initial");
-        formDataObj.append("file", evidenceFile!);
-
-        await apiClient.post(
-          `/spare-part-shipments/${shipmentId}/evidences`,
-          formDataObj,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          },
-        );
-
-        await apiClient.post(`/spare-part-shipments/${shipmentId}/submit`);
-
-        Swal.fire({
-          icon: "success",
-          title: "Pengiriman Dikirim",
-          text: "Bukti dikirim lancar, menunggu verifikasi lapangan oleh Front Office.",
-          timer: 1500,
-          showConfirmButton: false,
+        payloadItems.push({
+          shipment_id: parseInt(shipmentId),
+          status: "disetujui",
+          alasan: null,
         });
       }
+    });
 
-      fetchShipments();
-      fetchApprovedOrders();
-      setIsFormOpen(false);
-      setEditingShipmentId(null);
-      setFormData({
-        spare_part_order_detail_id: "",
-        quantity: "1",
-        harga_jual: "",
+    if (invalid) {
+      Swal.fire({
+        icon: "warning",
+        text: "Semua item dengan status [RETUR] wajib melampirkan Alasan dan Foto Bukti",
       });
-      setEvidenceFile(null);
+      return;
+    }
+
+    if (payloadItems.length === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      // Send via JSON first, wait backend needs foto dynamically.
+      // Current backend batchVerification doesn't support file upload multipart directly matching shipment_id gracefully.
+      // Wait! The user says `batchVerification` takes Array. But if there's photo, we must upload independently or write a wrapper.
+      // In the current `SparePartShipmentController::batchVerification`, it expects Damage Evidence to ALREADY exist.
+      // So we must UPLOAD PHOTOS FIRST via /spare-part-shipments/{id}/evidences !
+
+      let uploaded = 0;
+      for (const [id, dec] of Object.entries(batchDecisions)) {
+        if (dec.status === "ditolak" && dec.foto) {
+          const fd = new FormData();
+          fd.append("evidence_type", "damage_or_defect");
+          fd.append("file", dec.foto);
+          await apiClient.post(`/spare-part-shipments/${id}/evidences`, fd, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          uploaded++;
+        }
+      }
+
+      // Then execute verification batch
+      await apiClient.post("/spare-part-shipments/batch-verify", {
+        items: payloadItems,
+      });
+
+      Swal.fire({
+        icon: "success",
+        text: "Konfirmasi Penerimaan selesai diproses!",
+      });
+      setVerifyBatchOrder(null);
+      fetchShipments();
     } catch (err: any) {
+      console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Gagal menyimpan pengiriman",
-        text: err.response?.data?.message || err.message,
+        text: err.response?.data?.message || "Gagal menyimpan hasil verifikasi",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const downloadEvidence = async (evidenceId: number, filename: string) => {
-    try {
-      const response = await apiClient.get(
-        `/shipment-evidences/${evidenceId}/download`,
-        {
-          responseType: "blob",
-        },
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      Swal.fire({ icon: "error", text: "Terjadi kesalahan unduh bukti" });
-    }
-  };
-
-  const previewEvidence = async (evidenceId: number, filename: string) => {
-    setIsPreviewLoading(true);
-    setPreviewEvidenceName(filename);
-    try {
-      const response = await apiClient.get(
-        `/shipment-evidences/${evidenceId}/download`,
-        { responseType: "blob" },
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      setPreviewEvidenceUrl(url);
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        text: "Terjadi kesalahan memuat pratinjau bukti",
-      });
-      setPreviewEvidenceUrl(null);
-      setPreviewEvidenceName(null);
-    } finally {
-      setIsPreviewLoading(false);
-    }
-  };
-
-  const openDetailModal = (shipment: any) => {
-    setSelectedShipmentDetail(shipment);
-    setPreviewEvidenceUrl(null); // reset selected image in modal
-    setPreviewEvidenceName(null);
-  };
-
-  const submitBatchVerification = async () => {
-    const selectedIds = Object.keys(batchSelections).map(Number);
-    if (selectedIds.length === 0) return;
-
-    // Validasi & Setup Items Array
-    const items = [];
-    for (const sid of selectedIds) {
-      const selection = batchSelections[sid];
-      if (selection.status === "ditolak" && !selection.alasan) {
-        Swal.fire({
-          icon: "error",
-          text: "Semua barang yang ditolak wajib memiliki alasan!",
-        });
-        return;
-      }
-      if (selection.status === "ditolak" && !selection.foto) {
-        Swal.fire({
-          icon: "error",
-          text: "Semua barang yang ditolak wajib menyertakan foto bukti kerusakan!",
-        });
-        return;
-      }
-      items.push({ shipment_id: sid, ...selection });
-    }
-
-    Swal.fire({
-      title: "Mengeksekusi Verifikasi Massal...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    try {
-      // 1. Concurrent Image Uploads for Returns
-      for (const item of items) {
-        if (item.status === "ditolak" && item.foto) {
-          const formDataObj = new FormData();
-          formDataObj.append("evidence_type", "damage_or_defect");
-          formDataObj.append("file", item.foto);
-
-          await apiClient.post(
-            `/spare-part-shipments/${item.shipment_id}/evidences`,
-            formDataObj,
-            { headers: { "Content-Type": "multipart/form-data" } },
-          );
-        }
-      }
-
-      // 2. Submit Bulk JSON (Auto grouped by BE)
-      const submitPayload = {
-        items: items.map((i) => ({
-          shipment_id: i.shipment_id,
-          status: i.status,
-          alasan: i.alasan,
-        })),
-      };
-
-      await apiClient.post("/spare-part-shipments/batch-verify", submitPayload);
-
-      fetchShipments();
-      setBatchSelections({});
-      Swal.fire({
-        icon: "success",
-        title: "Selesai!",
-        text: "Logistik diverifikasi dan Tiket Retur dikoordinasikan.",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        text: err.response?.data?.message || "Terjadi kesalahan sinkronisasi",
-      });
-    }
-  };
-
-  const statusBadge = (s: string, type: string) => {
-    switch (s) {
-      case "menunggu_verifikasi":
-        if (type === "replacement") {
-          return (
-            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold inline-block text-center whitespace-nowrap border border-purple-200">
-              Tahap Verifikasi (Retur)
-            </span>
-          );
-        }
-        return (
-          <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
-            Tahap Verifikasi
-          </span>
-        );
-      case "disetujui":
-        return (
-          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
-            Stok Masuk Lunas
-          </span>
-        );
-      case "ditolak":
-        return (
-          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
-            Batal Verifikasi
-          </span>
-        );
-      default:
-        return (
-          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold inline-block text-center whitespace-nowrap">
-            {s}
-          </span>
-        );
-    }
-  };
-
-  const formatDate = (ds: string) => {
-    if (!ds) return "-";
-    return new Intl.DateTimeFormat("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(ds));
-  };
-
-  const getStatusName = (status: string) => {
-    const s: { [key: string]: string } = {
-      menunggu: "Menunggu Persetujuan",
-      diproses: "Sedang Diproses",
-      disetujui: "Disetujui Gudang",
-      ditolak: "Ditolak / Dibatalkan",
-    };
-    return s[status] || status;
-  };
-
-  const displayedShipments = shipments.filter((r) => {
-    // 1. Search (Nama suku cadang or pembuat order)
-    const suku = (
-      r.spare_part_order_detail?.spare_part?.nama_suku_cadang || ""
-    ).toLowerCase();
-    const sub = (
-      r.spare_part_order_detail?.spare_part_order?.user?.nama_user || ""
-    ).toLowerCase();
-    const s = searchTerm.toLowerCase();
-    if (searchTerm && !suku.includes(s) && !sub.includes(s)) return false;
-
-    // 2. Status
-    if (filterStatus !== "semua" && r.status !== filterStatus) return false;
-
-    // 3. Date
-    if (filterDate) {
-      const dbDate = new Date(r.created_at).toISOString().split("T")[0];
-      if (dbDate !== filterDate) return false;
-    }
-
-    // 4. Tab Khusus FO (Phase 4 PRD)
-    if (user?.role === "front_office") {
-      if (activeFOTab === "initial" && r.shipment_type === "replacement")
-        return false;
-      if (activeFOTab === "replacement" && r.shipment_type !== "replacement")
-        return false;
-    }
-
-    // 5. Tipe Pengiriman (Koperasi Master Log Filter)
-    if (user?.role === "koperasi") {
-      if (activeKoperasiTab === "initial" && r.shipment_type === "replacement")
-        return false;
-      if (filterType !== "semua") {
-        if (filterType === "initial" && r.shipment_type === "replacement")
-          return false;
-        if (filterType === "replacement" && r.shipment_type !== "replacement")
-          return false;
-      }
-    }
-
-    return true;
-  });
-
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <div>
-          <h1 className={styles.pageTitle}>Logistik Pengiriman DO</h1>
-          <p className={styles.pageSubtitle}>
-            Catat kedatangan logistik gudang & lampirkan dokumen foto faktur
-          </p>
+        <h1 className={styles.pageTitle}>Logistik Pengiriman DO</h1>
+        <p className={styles.pageSubtitle}>
+          Catat kedatangan logistik gudang & lampirkan dokumen foto faktur
+        </p>
+      </div>
+
+      <div className={styles.tabsContainer}>
+        <button
+          className={`${styles.tab} ${activeFOTab === "initial" ? styles.activeTab : ""}`}
+          onClick={() => setActiveFOTab("initial")}
+        >
+          Tab 1: Penerimaan PO Baru
+        </button>
+        <button
+          className={`${styles.tab} ${activeFOTab === "returns" ? styles.activeTab : ""}`}
+          onClick={() => setActiveFOTab("returns")}
+        >
+          Tab 2: Barang Retur (Tiket RPL)
+        </button>
+      </div>
+
+      <div className={styles.toolbar}>
+        <div className={styles.filters}>
+          <div className="relative w-64 md:w-auto">
+            <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              className={`${styles.searchInput} pl-9`}
+              placeholder="Cari referensi atau tiket..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
-      {user?.role === "front_office" && (
-        <div className="flex gap-4 mb-4 border-b border-gray-200">
-          <button
-            onClick={() => setActiveFOTab("initial")}
-            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeFOTab === "initial" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
-          >
-            Tab 1: Penerimaan PO Baru
-          </button>
-          <button
-            onClick={() => setActiveFOTab("replacement")}
-            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeFOTab === "replacement" ? "border-purple-600 text-purple-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
-          >
-            Tab 2: Barang Retur / Pengganti (RPL)
-          </button>
-        </div>
-      )}
-
-      {user?.role === "koperasi" && (
-        <div className="flex gap-4 mb-4 border-b border-gray-200">
-          <button
-            onClick={() => setActiveKoperasiTab("initial")}
-            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeKoperasiTab === "initial" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
-          >
-            Tab 1: Penerimaan Suku Cadang
-          </button>
-          <button
-            onClick={() => setActiveKoperasiTab("returns")}
-            className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${activeKoperasiTab === "returns" ? "border-purple-600 text-purple-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
-          >
-            Tab 2: Manajemen Retur
-          </button>
-        </div>
-      )}
-
-      {user?.role === "koperasi" && activeKoperasiTab === "returns" && (
-        <KoperasiReturns isEmbedded={true} />
-      )}
-
-      <div
-        style={{
-          display:
-            user?.role === "koperasi" && activeKoperasiTab === "returns"
-              ? "none"
-              : "block",
-        }}
-      >
+      {activeFOTab === "initial" && (
         <div className={styles.tableCard}>
-          <div className="p-4 flex flex-wrap gap-4 items-center justify-between border-b border-gray-200">
-            <div className={styles.searchGroup}>
-              <Search className={styles.searchIcon} size={18} />
-              <input
-                type="text"
-                placeholder="Cari suku cadang atau pengaju..."
-                className={styles.toolbarInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px",
-                alignItems: "center",
-              }}
-            >
-              <select
-                className={styles.toolbarSelect}
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="semua">Semua Status</option>
-                <option value="menunggu_verifikasi">Tahap Verifikasi</option>
-                <option value="disetujui">Stok Masuk Lunas</option>
-                <option value="ditolak">Batal Verifikasi (Retur)</option>
-              </select>
-              {user?.role === "koperasi" && (
-                <select
-                  className={styles.toolbarSelect}
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                >
-                  <option value="semua">Semua Tipe</option>
-                  <option value="initial">PO Baru</option>
-                  <option value="replacement">Pengganti (RPL)</option>
-                </select>
-              )}
-              <input
-                type="date"
-                className={styles.toolbarInput}
-                style={{ width: "200px" }}
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
-              {user?.role === "koperasi" && (
-                <button
-                  className={styles.btnPrimary}
-                  onClick={() => {
-                    setEditingShipmentId(null);
-                    setFormData({
-                      spare_part_order_detail_id: "",
-                      quantity: "1",
-                      harga_jual: "",
-                    });
-                    setEvidenceFile(null);
-                    setIsFormOpen(true);
-                  }}
-                >
-                  + Buat Surat Jalan DO
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className={styles.tableResponsive}>
+          <div className={styles.tableWrapper}>
             <table className={styles.table}>
-              <thead className={styles.tableHead}>
+              <thead>
                 <tr>
-                  <th className={styles.tableCell}>Kode</th>
-                  <th className={styles.tableCell}>Order Reference</th>
-                  <th className={styles.tableCell}>Total Kirim</th>
-                  <th className={styles.tableCell}>Status Fisik</th>
-                  <th className={styles.tableCell}>Detail & Bukti</th>
-                  {user?.role === "front_office" ? (
-                    <th className={styles.tableCell}>Pilih (Bulk)</th>
-                  ) : (
-                    <th className={styles.tableCell}>Aksi Verifikasi</th>
-                  )}
+                  <th>Order Reference</th>
+                  <th>Ringkasan Barang</th>
+                  <th>Total Kirim</th>
+                  <th>Status Fisik</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
-              <tbody className={styles.tableBody}>
-                {displayedShipments.map((shipment) => (
-                  <tr key={shipment.id} className={styles.tableRow}>
-                    <td className={styles.tableCell}>
-                      <span className="font-semibold text-gray-700">
-                        SHP-{shipment.id.toString().padStart(4, "0")}
-                        {shipment.shipment_type === "replacement" && (
-                          <span className="ml-2 bg-purple-100 text-purple-700 text-xs px-1.5 py-0.5 rounded">
-                            RPL
-                          </span>
-                        )}
-                      </span>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Log: {formatDate(shipment.created_at)}
-                      </div>
+              <tbody>
+                {groupedOrders.map((group, idx) => (
+                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                    <td className="font-semibold text-gray-800">
+                      {group.order.nomor_surat_order}
                     </td>
-                    <td className={styles.tableCell}>
-                      <span className="font-medium text-gray-800">
-                        {shipment.spare_part_order_detail.spare_part_order
-                          .nomor_surat_order || "---"}
-                      </span>
-                      <br />
-                      <span className="text-sm text-gray-600">
-                        {
-                          shipment.spare_part_order_detail.spare_part
-                            .nama_suku_cadang
-                        }
-                      </span>
+                    <td className="text-sm text-gray-600">
+                      {group.types.size} Jenis Suku Cadang
                     </td>
-                    <td className={styles.tableCell}>
-                      <span className="font-bold text-gray-900">
-                        {shipment.quantity} Pcs
-                      </span>
+                    <td className="font-medium text-gray-700">
+                      {group.totalQty} Item
                     </td>
-                    <td className={styles.tableCell}>
-                      {statusBadge(shipment.status, shipment.shipment_type)}
-                      {shipment.rejection_note && (
-                        <p className="text-xs text-red-600 mt-1 italic max-w-xs">
-                          " {shipment.rejection_note} "
-                        </p>
-                      )}
-                    </td>
-                    <td className={styles.tableCell}>
-                      <button
-                        onClick={() => openDetailModal(shipment)}
-                        className="inline-flex flex-col items-center justify-center bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded transition-colors text-xs font-semibold shadow-sm w-full max-w-[120px] mb-2"
+                    <td>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          group.statusFisik === "Tahap Verifikasi"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : group.statusFisik === "Ada Retur"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-green-100 text-green-700"
+                        }`}
                       >
-                        <span className="mb-0.5">Lihat Detail</span>
-                        {shipment.evidences && shipment.evidences.length > 0 ? (
-                          <span className="text-[10px] bg-green-100 text-green-800 px-1.5 rounded-full">
-                            + {shipment.evidences.length} Lampiran
-                          </span>
-                        ) : (
-                          <span className="text-[10px] bg-gray-200 text-gray-500 px-1.5 rounded-full">
-                            Kosong
-                          </span>
-                        )}
-                      </button>
-
-                      <button
-                        title="Lihat / Cetak DO A4"
-                        className="inline-flex items-center justify-center w-full max-w-[120px] py-1.5 bg-gray-50 border border-gray-200 text-gray-700 font-medium text-xs rounded hover:bg-gray-100 transition-colors"
-                        onClick={() =>
-                          setViewDocumentOrder(
-                            shipment.spare_part_order_detail.spare_part_order,
-                          )
-                        }
-                      >
-                        <FileText className="w-3.5 h-3.5 mr-1 text-gray-500" />
-                        View A4
-                      </button>
+                        {group.statusFisik}
+                      </span>
                     </td>
-                    <td className={styles.tableCell}>
-                      {user?.role === "front_office" &&
-                        shipment.status === "menunggu_verifikasi" && (
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                              <input
-                                type="checkbox"
-                                className="form-checkbox text-blue-600 rounded"
-                                checked={!!batchSelections[shipment.id]}
-                                onChange={(e) => {
-                                  if (e.target.checked)
-                                    setBatchSelections({
-                                      ...batchSelections,
-                                      [shipment.id]: { status: "disetujui" },
-                                    });
-                                  else {
-                                    const copy = { ...batchSelections };
-                                    delete copy[shipment.id];
-                                    setBatchSelections(copy);
-                                  }
-                                }}
-                              />
-                              <span className="font-semibold text-gray-700">
-                                Verifikasi Item
-                              </span>
-                            </label>
-
-                            {batchSelections[shipment.id] && (
-                              <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs space-y-2">
-                                <div className="flex space-x-2 mb-2">
-                                  <label className="flex items-center space-x-1 cursor-pointer">
-                                    <input
-                                      type="radio"
-                                      checked={
-                                        batchSelections[shipment.id].status ===
-                                        "disetujui"
-                                      }
-                                      onChange={() =>
-                                        setBatchSelections({
-                                          ...batchSelections,
-                                          [shipment.id]: {
-                                            ...batchSelections[shipment.id],
-                                            status: "disetujui",
-                                          },
-                                        })
-                                      }
-                                    />
-                                    <span className="text-green-700 font-bold">
-                                      Terima Baik
-                                    </span>
-                                  </label>
-                                  <label className="flex items-center space-x-1 cursor-pointer">
-                                    <input
-                                      type="radio"
-                                      checked={
-                                        batchSelections[shipment.id].status ===
-                                        "ditolak"
-                                      }
-                                      onChange={() =>
-                                        setBatchSelections({
-                                          ...batchSelections,
-                                          [shipment.id]: {
-                                            ...batchSelections[shipment.id],
-                                            status: "ditolak",
-                                          },
-                                        })
-                                      }
-                                    />
-                                    <span className="text-red-700 font-bold">
-                                      Retur (Bermasalah)
-                                    </span>
-                                  </label>
-                                </div>
-
-                                {batchSelections[shipment.id].status ===
-                                  "ditolak" && (
-                                  <div className="space-y-2 fade-in">
-                                    <input
-                                      type="text"
-                                      className="w-full px-2 py-1 border rounded"
-                                      placeholder="Alasan retur (pecah, dll)..."
-                                      value={
-                                        batchSelections[shipment.id].alasan ||
-                                        ""
-                                      }
-                                      onChange={(e) =>
-                                        setBatchSelections({
-                                          ...batchSelections,
-                                          [shipment.id]: {
-                                            ...batchSelections[shipment.id],
-                                            alasan: e.target.value,
-                                          },
-                                        })
-                                      }
-                                    />
-                                    <input
-                                      type="file"
-                                      className="w-full"
-                                      onChange={(e) =>
-                                        setBatchSelections({
-                                          ...batchSelections,
-                                          [shipment.id]: {
-                                            ...batchSelections[shipment.id],
-                                            foto: e.target.files
-                                              ? e.target.files[0]
-                                              : null,
-                                          },
-                                        })
-                                      }
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      {user?.role === "front_office" &&
-                        shipment.status !== "menunggu_verifikasi" && (
-                          <span className="text-sm text-gray-400">
-                            Read-Only
-                          </span>
-                        )}
-                      {user?.role === "koperasi" &&
-                        shipment.status === "menunggu_verifikasi" && (
-                          <button
-                            onClick={() => handleEditClick(shipment)}
-                            className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-colors border border-gray-300"
-                          >
-                            ✏️ Edit{" "}
-                            {shipment.shipment_type === "replacement"
-                              ? "RPL"
-                              : "DO"}
-                          </button>
-                        )}
-                      {user?.role === "koperasi" &&
-                        shipment.status !== "menunggu_verifikasi" && (
-                          <span className="text-sm text-gray-400">
-                            Read-Only
-                          </span>
-                        )}
-                      {user?.role !== "front_office" &&
-                        user?.role !== "koperasi" && (
-                          <span className="text-sm text-gray-400">
-                            Read-Only
-                          </span>
-                        )}
+                    <td>
+                      <button
+                        onClick={() => handleOpenVerifyBatch(group)}
+                        disabled={group.statusFisik !== "Tahap Verifikasi"}
+                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
+                          group.statusFisik === "Tahap Verifikasi"
+                            ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        <Check className="w-4 h-4" />
+                        {group.statusFisik === "Tahap Verifikasi"
+                          ? "[ 👁️ Proses Penerimaan ]"
+                          : "Selesai"}
+                      </button>
                     </td>
                   </tr>
                 ))}
-                {displayedShipments.length === 0 && (
+                {groupedOrders.length === 0 && (
                   <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-8 text-center text-gray-500 bg-gray-50"
-                    >
-                      Tidak ada riwayat pengiriman logistik ditemukan.
+                    <td colSpan={5} className="text-center p-8 text-gray-500">
+                      Tidak ada pengiriman batch ditemukan.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+      )}
 
-          {/* FLOATING BOTTOM BAR FOR BATCH SUBMIT */}
-          {user?.role === "front_office" &&
-            Object.keys(batchSelections).length > 0 && (
-              <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg flex justify-between items-center z-50">
-                <div className="text-sm text-gray-700 font-bold">
-                  <span className="text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                    {Object.keys(batchSelections).length}
-                  </span>{" "}
-                  Barang Dipilih
-                  <span className="ml-4 text-green-700 bg-green-100 px-2 py-1 rounded">
-                    {
-                      Object.values(batchSelections).filter(
-                        (x) => x.status === "disetujui",
-                      ).length
-                    }{" "}
-                    Terima Lunas
-                  </span>
-                  <span className="ml-2 text-red-700 bg-red-100 px-2 py-1 rounded">
-                    {
-                      Object.values(batchSelections).filter(
-                        (x) => x.status === "ditolak",
-                      ).length
-                    }{" "}
-                    Ajukan Retur
-                  </span>
-                </div>
+      {/* TIKET RETUR TAB (FO) */}
+      {activeFOTab === "returns" && (
+        <div className={styles.tableCard}>
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>No Tiket Retur</th>
+                  <th>Referensi Order Awal</th>
+                  <th>Jumlah Barang Retur</th>
+                  <th>Status Respon Koperasi</th>
+                  <th>Waktu Laporan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {returnHeaders.map((grp: any, idx: number) => (
+                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                    <td className="font-bold text-gray-800">
+                      {grp.header.nomor_tiket_retur}
+                    </td>
+                    <td className="text-gray-600 font-medium">
+                      SO-XXX // need expansion support
+                    </td>
+                    <td className="font-semibold text-gray-700">
+                      {grp.items.reduce(
+                        (acc: any, i: any) => acc + i.quantity,
+                        0,
+                      )}{" "}
+                      Item
+                    </td>
+                    <td>
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                          grp.header.status === "menunggu_pengiriman_ulang"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : grp.header.status === "dikirim_ulang"
+                              ? "bg-blue-100 text-blue-700"
+                              : grp.header.status === "selesai"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {grp.header.status.replace(/_/g, " ").toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="text-gray-500 text-sm">
+                      {new Date(grp.header.created_at).toLocaleString("id-ID")}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => setViewDetailReturn(grp)}
+                        className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded text-sm font-semibold transition"
+                      >
+                        [ 👁️ Detail Retur ]
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Partial Return Verify Modal */}
+      {verifyBatchOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Cek Fisik & Penerimaan Barang
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Ref: {verifyBatchOrder.order.nomor_surat_order}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={submitBatchVerification}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors"
+                  type="button"
+                  onClick={() => {
+                    // Set all to disetujui shortcut
+                    const updated = { ...batchDecisions };
+                    Object.keys(updated).forEach((k) => {
+                      updated[parseInt(k)].status = "disetujui";
+                    });
+                    setBatchDecisions(updated);
+                  }}
+                  className="px-4 py-2 bg-green-50 text-green-700 font-semibold rounded hover:bg-green-100 text-sm flex items-center gap-2 transition"
                 >
-                  Konfirmasi Verifikasi Massal &rarr;
+                  [ ✅ Terima Semua Baik ]
+                </button>
+                <button
+                  onClick={() => setVerifyBatchOrder(null)}
+                  className="text-gray-400 hover:text-red-500 transition"
+                >
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-            )}
-        </div>
-
-        {/* MODAL FORM SURAT JALAN (CREATE / EDIT) */}
-        {isFormOpen && user?.role === "koperasi" && (
-          <div className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn p-8 overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 pb-4 border-b border-gray-200">
-                {editingShipmentId
-                  ? "Edit Surat Jalan"
-                  : "Pencatatan Surat Jalan"}
-              </h3>
-
-              {approvedOrders.length === 0 && !editingShipmentId ? (
-                <p className="text-gray-500 italic text-sm">
-                  Belum ada pesanan yang "Disetujui" dan belum memiliki riwayat
-                  pengiriman.
-                </p>
-              ) : (
-                <form onSubmit={handleCreateShipment} className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Referensi Order Suku Cadang *
-                      </label>
-                      <select
-                        className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow disabled:bg-gray-100 disabled:text-gray-500"
-                        value={formData.spare_part_order_detail_id}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            spare_part_order_detail_id: e.target.value,
-                          })
-                        }
-                        required
-                        disabled={!!editingShipmentId}
-                      >
-                        <option value="">Pilih Rincian Pesanan</option>
-                        {approvedOrders.map((d) => (
-                          <option key={d.id} value={d.id}>
-                            [{d.spare_part_order?.nomor_surat_order}]{" "}
-                            {d.spare_part.nama_suku_cadang} (Pesan:{" "}
-                            {d.jumlah_qty})
-                          </option>
-                        ))}
-                        {/* Insert option if editing but the order is no longer in "approvedOrders" (since it already has a shipment) */}
-                        {editingShipmentId &&
-                          !approvedOrders.find(
-                            (o) =>
-                              o.id.toString() ===
-                              formData.spare_part_order_detail_id,
-                          ) && (
-                            <option value={formData.spare_part_order_detail_id}>
-                              Detail Order Sedang Diedit (ID:{" "}
-                              {formData.spare_part_order_detail_id})
-                            </option>
-                          )}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Kuantitas Aktual Dikirim *
-                      </label>
-                      <input
-                        type="number"
-                        className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                        min="1"
-                        value={formData.quantity}
-                        onChange={(e) =>
-                          setFormData({ ...formData, quantity: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Harga Jual UPJ (Rp)
-                    </label>
-                    <input
-                      type="number"
-                      className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                      min="0"
-                      value={formData.harga_jual}
-                      onChange={(e) =>
-                        setFormData({ ...formData, harga_jual: e.target.value })
-                      }
-                      required
-                      placeholder="Cth: 65000"
-                    />
-                    <p className="text-xs text-gray-500 mt-1.5 italic">
-                      (Otomatis mengatur referensi jualan retail di sistem Suku
-                      Cadang)
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {editingShipmentId
-                        ? "Ubah Bukti Foto Kuitansi/Barang (Opsional)"
-                        : "Upload Foto Surat Jalan & Kondisi Barang *"}
-                    </label>
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-blue-50 cursor-pointer relative">
-                      <div className="space-y-1 text-center">
-                        <Camera className="mx-auto h-12 w-12 text-blue-400" />
-                        <div className="flex text-sm text-gray-600 justify-center">
-                          <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 p-1 px-2 border border-blue-200 shadow-sm">
-                            <span>Unggah File</span>
-                            <input
-                              type="file"
-                              className="sr-only"
-                              accept="image/*,application/pdf"
-                              onChange={(e) => {
-                                if (
-                                  e.target.files &&
-                                  e.target.files.length > 0
-                                ) {
-                                  setEvidenceFile(e.target.files[0]);
-                                }
-                              }}
-                              required={!editingShipmentId}
-                            />
-                          </label>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                          PNG, JPG, PDF up to 5MB
-                        </p>
-                        {evidenceFile && (
-                          <div className="mt-3 text-sm font-bold text-green-700 bg-green-100 py-1 px-3 rounded inline-block">
-                            ✓ Berkas Dipilih: {evidenceFile.name}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsFormOpen(false);
-                        setEditingShipmentId(null);
-                        setEvidenceFile(null);
-                      }}
-                      className="px-6 py-2.5 text-sm font-bold text-gray-700 bg-gray-100 border border-gray-200 rounded-md shadow-sm hover:bg-gray-200 transition-colors"
-                    >
-                      Batal
-                    </button>
-                    <button // button save
-                      type="submit"
-                      className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-colors flex gap-2 items-center"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting
-                        ? "Memproses Data..."
-                        : editingShipmentId
-                          ? "Update Data DO"
-                          : "Simpan & Terbitkan Pengiriman"}
-                    </button>
-                  </div>
-                </form>
-              )}
             </div>
-          </div>
-        )}
 
-        {/* MODAL DETAIL ORDER LOGISTIK & GAMBAR */}
-        {selectedShipmentDetail && (
-          <div
-            className="fixed inset-0 bg-[#0f2c4a]/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
-            onClick={() => {
-              setSelectedShipmentDetail(null);
-              setPreviewEvidenceUrl(null);
-            }}
-          >
-            <div
-              className="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">
-                    Detail Pengiriman Logistik
-                  </h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm font-semibold text-gray-600">
-                      ID: SHP-
-                      {selectedShipmentDetail.id.toString().padStart(4, "0")}
-                    </span>
-                    <span className="text-gray-300">|</span>
-                    <span className="text-xs text-gray-500">
-                      Dirilis: {formatDate(selectedShipmentDetail.created_at)}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  {statusBadge(
-                    selectedShipmentDetail.status,
-                    selectedShipmentDetail.shipment_type,
-                  )}
-                </div>
-              </div>
+            {/* Body List */}
+            <div className="flex-1 overflow-y-auto p-6 bg-gray-100">
+              <div className="space-y-4">
+                {verifyBatchOrder.shipments.map((shipment: any) => {
+                  const isUnverified =
+                    shipment.status === "menunggu_verifikasi";
+                  // Jika item sudah diverifikasi FO di sesi lampau, lock.
+                  if (!isUnverified) return null;
 
-              {/* Body */}
-              <div className="p-6 overflow-y-auto flex-1">
-                {/* Box Rincian Suku Cadang */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6 shadow-sm">
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
-                    Informasi Order Suku Cadang
-                  </h3>
+                  const decision = batchDecisions[shipment.id];
+                  const isRetur = decision?.status === "ditolak";
 
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                        Nomor Order
-                      </label>
-                      <div className="text-sm font-bold text-blue-700 bg-blue-50 py-1.5 px-3 rounded inline-block">
-                        {selectedShipmentDetail.spare_part_order_detail
-                          .spare_part_order.nomor_surat_order || "---"}
+                  return (
+                    <div
+                      key={shipment.id}
+                      className={`bg-white rounded-lg border-2 p-4 shadow-sm transition-all ${isRetur ? "border-red-400" : "border-gray-200"}`}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <span className="text-xs text-gray-500 tracking-wider font-semibold uppercase">
+                            {
+                              shipment.spare_part_order_detail.spare_part
+                                .kode_suku_cadang
+                            }
+                          </span>
+                          <h3 className="font-bold text-gray-800 text-lg leading-tight">
+                            {
+                              shipment.spare_part_order_detail.spare_part
+                                .nama_suku_cadang
+                            }
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1 font-medium">
+                            Qty Dikirim:{" "}
+                            <span className="bg-gray-100 px-2 rounded font-bold">
+                              {shipment.quantity}{" "}
+                              {
+                                shipment.spare_part_order_detail.spare_part
+                                  .satuan
+                              }
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="flex bg-gray-100 p-1 rounded-md shadow-inner gap-1 min-w-[240px]">
+                          <button
+                            onClick={() =>
+                              setBatchDecisions({
+                                ...batchDecisions,
+                                [shipment.id]: {
+                                  ...decision,
+                                  status: "disetujui",
+                                },
+                              })
+                            }
+                            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded transition ${
+                              !isRetur
+                                ? "bg-white shadow text-green-600"
+                                : "text-gray-500 hover:bg-gray-200"
+                            }`}
+                          >
+                            <Check className="w-4 h-4" /> Terima Baik
+                          </button>
+                          <button
+                            onClick={() =>
+                              setBatchDecisions({
+                                ...batchDecisions,
+                                [shipment.id]: {
+                                  ...decision,
+                                  status: "ditolak",
+                                },
+                              })
+                            }
+                            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded transition ${
+                              isRetur
+                                ? "bg-white shadow text-red-600"
+                                : "text-gray-500 hover:bg-gray-200"
+                            }`}
+                          >
+                            <XCircle className="w-4 h-4" /> Retur / Rusak
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                        Total Kuantitas Dokumen
-                      </label>
-                      <div className="text-sm font-bold text-gray-900">
-                        {selectedShipmentDetail.quantity}{" "}
-                        <span className="font-normal text-gray-500">
-                          {selectedShipmentDetail.spare_part_order_detail
-                            .spare_part.satuan || "Pcs"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="col-span-2">
-                      <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                        Nama Suku Cadang
-                      </label>
-                      <div className="text-base font-semibold text-gray-800">
-                        [
-                        {
-                          selectedShipmentDetail.spare_part_order_detail
-                            .spare_part.kode_suku_cadang
-                        }
-                        ] -{" "}
-                        {
-                          selectedShipmentDetail.spare_part_order_detail
-                            .spare_part.nama_suku_cadang
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Box Lampiran Faktur S3 */}
-                <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
-                    Lampiran Bukti Dokumen/Foto
-                  </h3>
-
-                  <div className="space-y-4">
-                    {/* Daftar Tombol Evidences */}
-                    <div className="flex flex-wrap gap-2">
-                      {selectedShipmentDetail.evidences &&
-                      selectedShipmentDetail.evidences.filter(
-                        (e: any) => e.evidence_type !== "damage_or_defect",
-                      ).length > 0 ? (
-                        selectedShipmentDetail.evidences
-                          .filter(
-                            (e: any) => e.evidence_type !== "damage_or_defect",
-                          )
-                          .map((ev: any, index: number) => (
-                            <div
-                              key={ev.id}
-                              className="flex gap-0.5 shadow-sm rounded overflow-hidden border border-gray-200"
-                            >
-                              <button
-                                onClick={() =>
-                                  previewEvidence(ev.id, ev.original_filename)
-                                }
-                                disabled={isPreviewLoading}
-                                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${previewEvidenceName === ev.original_filename ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"}`}
-                              >
-                                <Download size={14} /> Dokumen Lampiran #
-                                {index + 1}
-                              </button>
-                              <button
-                                onClick={() =>
-                                  downloadEvidence(ev.id, ev.original_filename)
-                                }
-                                title="Unduh Paksa ke Perangkat"
-                                className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 flex items-center justify-center border-l border-gray-200 transition-colors"
-                              >
-                                ↓
-                              </button>
-                            </div>
-                          ))
-                      ) : (
-                        <div className="text-sm text-gray-500 italic bg-gray-50 p-3 rounded w-full text-center border border-dashed border-gray-300">
-                          Tidak ada berkas bukti yang dilampirkan oleh Koperasi
-                          pada pengiriman ini.
+                      {/* Expendable Retur Form */}
+                      {isRetur && (
+                        <div className="mt-4 pt-4 border-t border-red-100 grid md:grid-cols-2 gap-4 animate-fadeIn">
+                          <div>
+                            <label className="block text-sm font-semibold text-red-800 mb-1">
+                              Alasan Retur / Kendala Fisik *
+                            </label>
+                            <textarea
+                              rows={3}
+                              placeholder="Misal: Kaca retak, baut kurang..."
+                              className="w-full border-red-200 rounded-md focus:ring-red-400 focus:border-red-400 text-sm bg-red-50/50 p-2"
+                              value={decision?.alasan || ""}
+                              onChange={(e) =>
+                                setBatchDecisions({
+                                  ...batchDecisions,
+                                  [shipment.id]: {
+                                    ...decision,
+                                    alasan: e.target.value,
+                                  },
+                                })
+                              }
+                            ></textarea>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-red-800 mb-1">
+                              Upload Bukti Foto Laporan *
+                            </label>
+                            <label className="flex flex-col items-center justify-center w-full h-[76px] border-2 border-red-200 border-dashed rounded-md cursor-pointer hover:bg-red-50 bg-white transition relative">
+                              <div className="flex flex-col items-center justify-center pt-2 pb-2">
+                                <Camera className="w-5 h-5 text-red-400 mb-1" />
+                                <p className="text-xs text-red-600 font-medium">
+                                  Format JPG/PNG
+                                </p>
+                              </div>
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    setBatchDecisions({
+                                      ...batchDecisions,
+                                      [shipment.id]: {
+                                        ...decision,
+                                        foto: e.target.files[0],
+                                      },
+                                    });
+                                  }
+                                }}
+                              />
+                              {decision?.foto && (
+                                <div className="absolute inset-0 bg-green-50 rounded flex items-center justify-center p-2 text-center text-xs font-bold text-green-700 border-2 border-green-200">
+                                  ✓ {decision.foto.name}
+                                </div>
+                              )}
+                            </label>
+                          </div>
                         </div>
                       )}
                     </div>
-
-                    {/* Render Area Gambar / PDF (muncul jika ada yg di-klik) */}
-                    {isPreviewLoading && (
-                      <div className="w-full h-32 flex items-center justify-center bg-gray-50 rounded border border-gray-100">
-                        <span className="text-sm text-gray-500 animate-pulse">
-                          Menarik data dari Cloud Storage S3...
-                        </span>
-                      </div>
-                    )}
-
-                    {!isPreviewLoading && previewEvidenceUrl && (
-                      <div className="mt-4 bg-gray-900 rounded-md p-2 flex justify-center items-center overflow-hidden">
-                        {previewEvidenceName?.toLowerCase().endsWith(".pdf") ? (
-                          <iframe
-                            src={previewEvidenceUrl}
-                            width="100%"
-                            height="400px"
-                            title="Bukti PDF"
-                            className="bg-white rounded"
-                          />
-                        ) : (
-                          <img
-                            src={previewEvidenceUrl}
-                            alt={previewEvidenceName || "Bukti Surat Jalan"}
-                            className="max-h-[500px] max-w-full object-contain rounded"
-                          />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                  );
+                })}
               </div>
+            </div>
 
-              {/* Footer */}
-              <div className="bg-white border-t border-gray-200 px-6 py-4 flex justify-end rounded-b-lg">
-                <button
-                  className="px-6 py-2.5 text-sm font-bold text-white bg-gray-800 hover:bg-gray-900 shadow-md rounded-md transition-all active:scale-95"
-                  onClick={() => {
-                    setSelectedShipmentDetail(null);
-                    setPreviewEvidenceUrl(null);
-                  }}
-                >
-                  Tutup
-                </button>
-              </div>
+            {/* Footer */}
+            <div className="p-4 border-t bg-gray-50 rounded-b-xl flex justify-end gap-3">
+              <button
+                onClick={() => setVerifyBatchOrder(null)}
+                className="px-5 py-2.5 rounded font-semibold text-gray-600 hover:bg-gray-200 transition"
+              >
+                Batalkan
+              </button>
+              <button
+                onClick={handleBatchSubmit}
+                disabled={isSubmitting}
+                className={`px-8 py-2.5 rounded font-bold text-white shadow-md transition ${isSubmitting ? "bg-indigo-400" : "bg-indigo-600 hover:bg-indigo-700"}`}
+              >
+                {isSubmitting
+                  ? "Memproses Pengiriman..."
+                  : "[ 🚀 Konfirmasi Penerimaan ]"}
+              </button>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* --- MODAL PRINT DOKUMEN --- */}
-      {viewDocumentOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 print:p-0 print:bg-white overflow-y-auto">
-          <div className="bg-white rounded shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:max-h-none print:overflow-visible relative">
-            <div className="sticky top-0 right-0 p-4 bg-gray-100 border-b flex justify-between items-center print:hidden z-10">
-              <h3 className="font-bold text-gray-700">Preview Dokumen A4</h3>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => window.print()}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-semibold"
-                >
-                  Cetak PDF (Ctrl+P)
-                </button>
-                <button
-                  onClick={() => setViewDocumentOrder(null)}
-                  className="text-gray-500 hover:text-red-500 px-3"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+        </div>
+      )}
+      {/* TIKET RETUR DETAIL MODAL */}
+      {viewDetailReturn && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col">
+            <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Detail Tiket Retur / Pengganti
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Tiket: {viewDetailReturn.header.nomor_tiket_retur}
+                </p>
               </div>
+              <button
+                onClick={() => setViewDetailReturn(null)}
+                className="text-gray-400 hover:text-red-500 transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
             </div>
-
-            <div className="p-8 print:p-0">
-              <PrintHeader
-                title="SURAT PENGAJUAN PESANAN SUKU CADANG"
-                subtitle={`Nomor: ${viewDocumentOrder.nomor_surat_order || "---"}`}
-                periodLabel=""
-              />
-
-              <div className="my-6">
-                <table className="w-full text-sm">
-                  <tbody>
-                    <tr>
-                      <td className="py-1 font-semibold w-1/4">
-                        Tanggal Pengajuan
-                      </td>
-                      <td className="py-1 w-3/4">
-                        :{" "}
-                        {formatDate(
-                          viewDocumentOrder.tanggal_pengajuan ||
-                            viewDocumentOrder.created_at,
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-1 font-semibold w-1/4">
-                        Diajukan Oleh
-                      </td>
-                      <td className="py-1 w-3/4">
-                        : {viewDocumentOrder.user?.nama_user || "Front Office"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-1 font-semibold w-1/4">
-                        Status Saat Ini
-                      </td>
-                      <td className="py-1 w-3/4">
-                        :{" "}
-                        {getStatusName(viewDocumentOrder.status).toUpperCase()}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mb-6">
-                <h4 className="font-bold mb-3 border-b-2 border-gray-800 inline-block">
-                  Daftar Barang (Item Details)
-                </h4>
-                <table className="w-full border-collapse border border-gray-800 text-sm">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border border-gray-800 px-3 py-2 text-center w-12">
-                        No.
-                      </th>
-                      <th className="border border-gray-800 px-3 py-2 text-left">
-                        Kode Suku Cadang
-                      </th>
-                      <th className="border border-gray-800 px-3 py-2 text-left">
-                        Nama Suku Cadang
-                      </th>
-                      <th className="border border-gray-800 px-3 py-2 text-center">
-                        Qty Request
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {viewDocumentOrder.spare_part_order_details?.map(
-                      (detail: any, idx: number) => (
-                        <tr key={detail.id}>
-                          <td className="border border-gray-800 px-3 py-2 text-center">
-                            {idx + 1}
-                          </td>
-                          <td className="border border-gray-800 px-3 py-2">
-                            {detail.spare_part?.kode_suku_cadang}
-                          </td>
-                          <td className="border border-gray-800 px-3 py-2">
-                            {detail.spare_part?.nama_suku_cadang}
-                          </td>
-                          <td className="border border-gray-800 px-3 py-2 text-center font-bold">
-                            {detail.jumlah_qty}
-                          </td>
-                        </tr>
-                      ),
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mt-12 w-full flex justify-end">
-                <div className="w-48 text-center text-sm">
-                  <p className="mb-16">Kepala Bengkel/Front Office</p>
-                  <p className="font-bold underline uppercase">
-                    {viewDocumentOrder.user?.nama_user || "F.O."}
+            <div className="flex-1 overflow-y-auto p-6 bg-white">
+              <div className="mb-6 grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-xs text-gray-500 font-semibold mb-1">
+                    Status Penanganan
                   </p>
+                  <span
+                    className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-sm ${
+                      viewDetailReturn.header.status === "selesai"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {viewDetailReturn.header.status === "selesai"
+                      ? "SELESAI DITANGANI"
+                      : "PROSES KOPERASI"}
+                  </span>
                 </div>
               </div>
+
+              <h3 className="font-bold text-gray-800 border-b pb-2 mb-4">
+                Rincian Barang Dikembalikan
+              </h3>
+              <table className="w-full text-sm border-collapse">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-3 text-left">Nama Barang</th>
+                    <th className="p-3 text-center">Qty Retur</th>
+                    <th className="p-3 text-left">Alasan Laporan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {viewDetailReturn.items.map((it: any) => (
+                    <tr key={it.id} className="border-b">
+                      <td className="p-3 font-semibold text-gray-700">
+                        {it.sparePartOrderDetail?.sparePart?.nama_suku_cadang ||
+                          "Suku Cadang"}
+                        <div className="text-xs text-gray-500 font-normal">
+                          {it.sparePartOrderDetail?.sparePart?.kode_suku_cadang}
+                        </div>
+                      </td>
+                      <td className="p-3 text-center font-bold text-red-600">
+                        {it.quantity}
+                      </td>
+                      <td className="p-3 text-gray-600 italic">
+                        "{it.reason}"
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-4 border-t bg-gray-50 rounded-b-xl flex justify-end">
+              <button
+                onClick={() => setViewDetailReturn(null)}
+                className="px-6 py-2.5 rounded font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 transition"
+              >
+                Tutup Detail
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default ShipmentList;
+}
