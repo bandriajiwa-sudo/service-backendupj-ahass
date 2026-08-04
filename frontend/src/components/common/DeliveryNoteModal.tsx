@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText,
   Download,
@@ -137,42 +137,82 @@ export default function DeliveryNoteModal({
                       </div>
                     </div>
 
-                    <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-start gap-3">
-                      <div className="p-2 bg-green-50 rounded-lg text-green-600">
-                        {statusFisik === "Berhasil" ||
-                        statusFisik === "Selesai" ? (
-                          <CheckCircle className="w-5 h-5" />
-                        ) : (
-                          <Clock className="w-5 h-5" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-0.5">
-                          Status Tiket
-                        </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Status */}
+                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`p-1.5 rounded-md ${statusFisik === "Berhasil" || statusFisik === "Selesai" ? "bg-green-50 text-green-600" : "bg-blue-50 text-blue-600"}`}
+                          >
+                            {statusFisik === "Berhasil" ||
+                            statusFisik === "Selesai" ? (
+                              <CheckCircle className="w-4 h-4" />
+                            ) : (
+                              <Clock className="w-4 h-4" />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                            Status
+                          </p>
+                        </div>
                         <p
-                          className={`font-bold ${statusFisik === "Berhasil" || statusFisik === "Selesai" ? "text-green-700" : "text-blue-700"}`}
+                          className={`font-bold text-sm ${statusFisik === "Berhasil" || statusFisik === "Selesai" ? "text-green-700" : "text-blue-700"}`}
                         >
                           {statusFisik}
                         </p>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> Tanggal
+                      {/* Pengaju */}
+                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 rounded-md bg-purple-50 text-purple-600">
+                            <User className="w-4 h-4" />
+                          </div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                            Pengaju
+                          </p>
+                        </div>
+                        <p
+                          className="font-bold text-gray-800 text-sm truncate"
+                          title={
+                            group.orderInfo?.user?.name ||
+                            group.order?.user?.name ||
+                            "Koperasi"
+                          }
+                        >
+                          {group.orderInfo?.user?.name ||
+                            group.order?.user?.name ||
+                            "Koperasi"}
                         </p>
+                      </div>
+
+                      {/* Tanggal */}
+                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 rounded-md bg-orange-50 text-orange-600">
+                            <Calendar className="w-4 h-4" />
+                          </div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                            Tanggal
+                          </p>
+                        </div>
                         <p className="font-semibold text-gray-800 text-sm">
                           {new Date(
                             group.created_at || group.shipments[0]?.created_at,
                           ).toLocaleDateString("id-ID")}
                         </p>
                       </div>
-                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-                        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <User className="w-3 h-3" /> Total Item
-                        </p>
+
+                      {/* Total Item */}
+                      <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 rounded-md bg-teal-50 text-teal-600">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                            Total Item
+                          </p>
+                        </div>
                         <p className="font-semibold text-gray-800 text-sm">
                           {group.totalQty} Units
                         </p>

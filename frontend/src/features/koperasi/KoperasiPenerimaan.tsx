@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { apiClient } from "../../lib/api";
 import Swal from "sweetalert2";
-import { Search, Plus, X, FileText, Camera, Download } from "lucide-react";
+import { Search, Plus, X, FileText, Camera } from "lucide-react";
 import styles from "../orders/ShipmentList.module.css";
 import PrintHeader from "../../components/common/PrintHeader";
 import KoperasiReturns from "./KoperasiReturns";
