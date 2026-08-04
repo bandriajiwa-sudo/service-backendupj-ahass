@@ -169,7 +169,7 @@ export default function KoperasiPenerimaan() {
       formData.append("file", evidenceFile);
 
       await apiClient.post("/spare-part-shipments/batch-evidences", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
       });
 
       Swal.fire({

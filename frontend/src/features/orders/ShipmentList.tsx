@@ -215,7 +215,10 @@ export default function ShipmentList() {
           fd.append("evidence_type", "damage_or_defect");
           fd.append("file", dec.foto);
           await apiClient.post(`/spare-part-shipments/${id}/evidences`, fd, {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Accept: "application/json",
+            },
           });
         }
       }
@@ -652,15 +655,15 @@ export default function ShipmentList() {
                       viewDetailReturn.header.status === "selesai"
                         ? "bg-green-100 text-green-700"
                         : viewDetailReturn.header.status === "dikirim_ulang"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-yellow-100 text-yellow-700"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
                     {viewDetailReturn.header.status === "selesai"
                       ? "SELESAI DITANGANI"
                       : viewDetailReturn.header.status === "dikirim_ulang"
-                      ? "DIKIRIM ULANG / CEK TAB 1"
-                      : "PROSES KOPERASI"}
+                        ? "DIKIRIM ULANG / CEK TAB 1"
+                        : "PROSES KOPERASI"}
                   </span>
                 </div>
               </div>

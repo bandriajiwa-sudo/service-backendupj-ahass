@@ -80,7 +80,7 @@ export default function KoperasiReturns() {
       fd.append("file", rplInvoiceFile);
 
       await apiClient.post("/spare-part-shipments/batch-evidences", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
       });
 
       Swal.fire({
