@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from react;
+import { useState, useEffect, useMemo } from "react";
 import { apiClient } from "../../lib/api";
 import Swal from "sweetalert2";
 import { Search, Camera, Check, X, XCircle } from "lucide-react";
@@ -105,7 +105,7 @@ export default function ShipmentList() {
     const list = shipments.filter((s) => s.shipment_type === "initial");
     const groups: Record<string, any> = {};
 
-    list.forEach((s) => {
+    list.forEach((s: any) => {
       const order = s.spare_part_order_detail?.spare_part_order;
       if (!order) return;
       const orderNo = order.nomor_surat_order;
@@ -167,9 +167,13 @@ export default function ShipmentList() {
     // Validation: If any "ditolak", it must have foto+alasan attached
     let invalid = false;
     const payloadItems: any[] = [];
-    const formData = new FormData();
 
-    Object.entries(batchDecisions).forEach(([shipmentId, decision]) => {
+    Object.entries(batchDecisions).forEach(([shipmentId, dec]) => {
+      const decision = dec as {
+        status: "disetujui" | "ditolak";
+        alasan?: string;
+        foto?: File | null;
+      };
       if (decision.status === "ditolak") {
         if (!decision.alasan || !decision.foto) {
           invalid = true;
@@ -179,7 +183,6 @@ export default function ShipmentList() {
           status: "ditolak",
           alasan: decision.alasan,
         });
-        formData.append(`foto_${shipmentId}`, decision.foto as Blob);
       } else {
         payloadItems.push({
           shipment_id: parseInt(shipmentId),
@@ -201,14 +204,12 @@ export default function ShipmentList() {
 
     setIsSubmitting(true);
     try {
-      // Send via JSON first, wait backend needs foto dynamically.
-      // Current backend batchVerification doesn't support file upload multipart directly matching shipment_id gracefully.
-      // Wait! The user says `batchVerification` takes Array. But if there's photo, we must upload independently or write a wrapper.
-      // In the current `SparePartShipmentController::batchVerification`, it expects Damage Evidence to ALREADY exist.
-      // So we must UPLOAD PHOTOS FIRST via /spare-part-shipments/{id}/evidences !
-
-      let uploaded = 0;
-      for (const [id, dec] of Object.entries(batchDecisions)) {
+      for (const [id, d] of Object.entries(batchDecisions)) {
+        const dec = d as {
+          status: "disetujui" | "ditolak";
+          alasan?: string;
+          foto?: File | null;
+        };
         if (dec.status === "ditolak" && dec.foto) {
           const fd = new FormData();
           fd.append("evidence_type", "damage_or_defect");
@@ -295,7 +296,7 @@ export default function ShipmentList() {
                 </tr>
               </thead>
               <tbody>
-                {groupedOrders.map((group, idx) => (
+                {groupedOrders.map((group: any, idx: number) => (
                   <tr key={idx} className="hover:bg-gray-50 transition-colors">
                     <td className="font-semibold text-gray-800">
                       {group.order.nomor_surat_order}
@@ -435,7 +436,7 @@ export default function ShipmentList() {
                   onClick={() => {
                     // Set all to disetujui shortcut
                     const updated = { ...batchDecisions };
-                    Object.keys(updated).forEach((k) => {
+                    Object.keys(updated).forEach((k: string) => {
                       updated[parseInt(k)].status = "disetujui";
                     });
                     setBatchDecisions(updated);
