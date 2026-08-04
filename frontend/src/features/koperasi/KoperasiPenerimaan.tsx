@@ -670,10 +670,7 @@ export default function KoperasiPenerimaan() {
                             className="border border-gray-200 rounded p-2 bg-gray-50 shadow-sm w-48"
                           >
                             <img
-                              src={`${
-                                import.meta.env.VITE_API_URL ||
-                                "http://localhost:8000"
-                              }/api/v1/shipment-evidences/${ev.id}/download`}
+                              src={`${apiClient.defaults.baseURL}/shipment-evidences/${ev.id}/download`}
                               alt={ev.original_filename}
                               className="w-full h-32 object-cover border border-gray-300 rounded mb-2"
                               onError={(e) => {
