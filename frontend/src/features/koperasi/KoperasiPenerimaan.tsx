@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Search, Plus, X, FileText, Camera, Download } from "lucide-react";
 import styles from "../orders/ShipmentList.module.css";
 import PrintHeader from "../../components/common/PrintHeader";
+import KoperasiReturns from "./KoperasiReturns";
 
 export default function KoperasiPenerimaan() {
   const [shipments, setShipments] = useState<any[]>([]);
@@ -702,6 +703,9 @@ export default function KoperasiPenerimaan() {
           </div>
         </div>
       )}
+
+      {/* Tab 2: Koperasi Returns UI */}
+      {activeTab === "returns" && <KoperasiReturns />}
     </div>
   );
 }
