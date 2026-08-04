@@ -508,49 +508,51 @@ const OrderList: React.FC = () => {
           </p>
         </div>
 
-        <div className={styles.toolbar}>
-          <div className={styles.filters}>
-            <div className="relative w-64 md:w-auto">
-              <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                className={`${styles.searchInput} pl-9`}
-                placeholder="Cari nomor surat atau pengaju..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <select
-              className={styles.selectInput}
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="semua">Semua Status</option>
-              <option value="menunggu">Menunggu / Pending</option>
-              <option value="disetujui">Disetujui</option>
-              <option value="ditolak">Ditolak</option>
-            </select>
-            <input
-              type="date"
-              className={styles.selectInput}
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-            />
-          </div>
-
-          <div className={styles.actionGroup}>
-            {user?.role === "front_office" && (
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors whitespace-nowrap"
-                onClick={() => setIsCartOpen(true)}
-              >
-                + Buat Order Baru
-              </button>
-            )}
-          </div>
-        </div>
-
         <div className={styles.tableCard}>
+          <div className="px-5 py-4 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white">
+            <div className={`${styles.toolbar} !mb-0`}>
+              <div className={styles.filters}>
+                <div className="relative w-64 md:w-auto">
+                  <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    className={`${styles.searchInput} pl-9`}
+                    placeholder="Cari nomor surat atau pengaju..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <select
+                  className={styles.selectInput}
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="semua">Semua Status</option>
+                  <option value="menunggu">Menunggu / Pending</option>
+                  <option value="disetujui">Disetujui</option>
+                  <option value="ditolak">Ditolak</option>
+                </select>
+                <input
+                  type="date"
+                  className={styles.selectInput}
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={styles.actionGroup}>
+              {user?.role === "front_office" && (
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-medium py-2 px-5 rounded-md transition-colors whitespace-nowrap flex items-center gap-2"
+                  onClick={() => setIsCartOpen(true)}
+                >
+                  <Plus className="w-4 h-4" /> Buat Order Baru
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
               <thead>
