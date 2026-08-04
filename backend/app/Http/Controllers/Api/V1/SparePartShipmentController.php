@@ -45,41 +45,59 @@ class SparePartShipmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'spare_part_order_detail_id' => 'required|exists:spare_part_order_details,id',
-            'quantity' => 'required|integer|min:1',
-            'harga_jual' => 'required|numeric|min:0',
+            'spare_part_order_id' => 'required|exists:spare_part_orders,id',
+            'items' => 'required|array|min:1',
+            'items.*.spare_part_order_detail_id' => 'required|exists:spare_part_order_details,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.harga_jual' => 'required|numeric|min:0',
         ]);
 
-        $orderDetail = SparePartOrderDetail::with('sparePartOrder')->findOrFail($validated['spare_part_order_detail_id']);
+        $order = \App\Models\SparePartOrder::findOrFail($validated['spare_part_order_id']);
 
-        if ($orderDetail->sparePartOrder->status->value !== OrderStatus::Disetujui->value) {
+        if ($order->status->value !== OrderStatus::Disetujui->value) {
             return response()->json([
                 'success' => false,
                 'message' => 'Pengiriman hanya bisa dibuat untuk Order yang Surat Headers-nya sudah disetujui Koperasi.',
             ], 422);
         }
 
-        // Prevent multiple initial shipments for the same order detail
-        if ($orderDetail->sparePartShipments()->where('shipment_type', 'initial')->exists()) {
+        $createdShipments = [];
+        DB::beginTransaction();
+        try {
+            foreach ($validated['items'] as $item) {
+                $orderDetail = SparePartOrderDetail::where('id', $item['spare_part_order_detail_id'])
+                    ->where('spare_part_order_id', $order->id)
+                    ->firstOrFail();
+
+                // Prevent multiple initial shipments for the same order detail
+                if ($orderDetail->sparePartShipments()->where('shipment_type', 'initial')->exists()) {
+                    continue; // Skip if already exists
+                }
+
+                $shipment = SparePartShipment::create([
+                    'spare_part_order_detail_id' => $orderDetail->id,
+                    'shipment_type' => 'initial',
+                    'quantity' => $item['quantity'],
+                    'harga_jual' => $item['harga_jual'],
+                    'status' => 'menunggu_verifikasi',
+                    'shipped_by' => auth()->id() ?? 1,
+                ]);
+
+                $createdShipments[] = $shipment;
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Pengiriman awal (Initial Shipment) untuk baris pesanan ini sudah dibuat sebelumnya.',
-            ], 422);
+                'message' => 'Gagal mencatat pengiriman: ' . $e->getMessage()
+            ], 500);
         }
-
-        $shipment = SparePartShipment::create([
-            'spare_part_order_detail_id' => $orderDetail->id,
-            'shipment_type' => 'initial',
-            'quantity' => $validated['quantity'],
-            'harga_jual' => $validated['harga_jual'],
-            'status' => 'menunggu_verifikasi',
-            'shipped_by' => auth()->id() ?? 1,
-        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Draft Pengiriman awal telah dicatat. Silakan lengkapi dengan Bukti (Evidence).',
-            'data' => $shipment,
+            'message' => 'Surat Jalan (DO) berhasil dicatat. Silakan lengkapi dengan Bukti (Evidence).',
+            'data' => $createdShipments,
         ], 201);
     }
 
@@ -375,5 +393,53 @@ class SparePartShipmentController extends Controller
                 'message' => 'SysDebug: ' . $e->getMessage() . ' | L:' . $e->getLine(),
             ], 500);
         }
+    public function uploadBatchEvidences(Request $request)
+    {
+        $request->validate([
+            'shipment_ids' => 'required|array|min:1',
+            'shipment_ids.*' => 'required|exists:spare_part_shipments,id',
+            'evidence_type' => ['required', Rule::in(['shipment_initial', 'damage_or_defect', 'shipment_replacement'])],
+            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ]);
+
+        $file = $request->file('file');
+        $path = $file->store('shipment_evidences', 's3');
+
+        $evidences = [];
+        $hash = hash_file('sha256', $file->getRealPath());
+        $mime = $file->getMimeType();
+        $size = $file->getSize();
+        $filename = $file->getClientOriginalName();
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->shipment_ids as $sid) {
+                $evidences[] = ShipmentEvidence::create([
+                    'spare_part_shipment_id' => $sid,
+                    'evidence_type' => $request->evidence_type,
+                    'storage_disk' => 's3',
+                    'storage_path' => $path,
+                    'base64_data' => null,
+                    'original_filename' => $filename,
+                    'mime_type' => $mime,
+                    'size_bytes' => $size,
+                    'sha256' => $hash,
+                    'uploaded_by' => auth()->id() ?? 1,
+                ]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengunggah secara batch: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berkas bukti pengiriman masal berhasil diunggah dengan aman.',
+            'data' => $evidences,
+        ]);
     }
 }

@@ -94,6 +94,7 @@ $apiRoutes = function () {
         // Shared Action Routes (Evidences can be uploaded by Koperasi for initial/replacements, and FO for damage)
         Route::middleware('role:front_office,koperasi')->group(function () {
             Route::post('/spare-part-shipments/{shipment}/evidences', [SparePartShipmentController::class, 'uploadEvidence']);
+            Route::post('/spare-part-shipments/batch-evidences', [SparePartShipmentController::class, 'uploadBatchEvidences']);
         });
 
         // Shared Transaction & Order Reads (FO & UPJ mostly)

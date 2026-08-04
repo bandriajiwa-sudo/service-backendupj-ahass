@@ -16,6 +16,7 @@ import { PersonnelList } from "../features/personnel/PersonnelList";
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
 import ShipmentList from "../features/orders/ShipmentList";
+import KoperasiPenerimaan from "../features/koperasi/KoperasiPenerimaan";
 import FODashboard from "../features/dashboard/FODashboard";
 import FOHistory from "../features/dashboard/FOHistory";
 import FOStockInfo from "../features/dashboard/FOStockInfo";
@@ -116,7 +117,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <KoperasiDashboard /> },
           { path: "orders", element: <KoperasiOrders /> },
-          { path: "riwayat-penerimaan", element: <ShipmentList /> },
+          { path: "riwayat-penerimaan", element: <KoperasiPenerimaan /> },
           {
             path: "returns",
             element: <Navigate to="/koperasi/riwayat-penerimaan" replace />,
