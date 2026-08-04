@@ -3,6 +3,8 @@ import { apiClient } from "../../lib/api";
 import Swal from "sweetalert2";
 import { Search, Camera, Check, X, XCircle } from "lucide-react";
 import styles from "./ShipmentList.module.css";
+import DeliveryNoteModal from "../../components/common/DeliveryNoteModal";
+import { FileText } from "lucide-react";
 
 interface OrderDetail {
   id: number;
@@ -67,6 +69,7 @@ export default function ShipmentList() {
 
   // Modal FO: Return Detail
   const [viewDetailReturn, setViewDetailReturn] = useState<any | null>(null);
+  const [viewDetailOrder, setViewDetailOrder] = useState<any | null>(null);
 
   useEffect(() => {
     fetchShipments();
@@ -334,8 +337,14 @@ export default function ShipmentList() {
                       >
                         <Check className="w-4 h-4" />
                         {group.statusFisik === "Tahap Verifikasi"
-                          ? "[ 👁️ Proses Penerimaan ]"
+                          ? "Proses Penerimaan"
                           : "Selesai"}
+                      </button>
+                      <button
+                        onClick={() => setViewDetailOrder(group)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded text-sm font-semibold transition-colors bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 ml-2"
+                      >
+                        <FileText className="w-4 h-4" /> Lihat Detail
                       </button>
                     </td>
                   </tr>
@@ -407,7 +416,7 @@ export default function ShipmentList() {
                         onClick={() => setViewDetailReturn(grp)}
                         className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded text-sm font-semibold transition"
                       >
-                        [ 👁️ Detail Retur ]
+                        Detail Retur
                       </button>
                     </td>
                   </tr>
@@ -710,6 +719,14 @@ export default function ShipmentList() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* View Detail Modal (Card + A4) */}
+      {viewDetailOrder && (
+        <DeliveryNoteModal
+          group={viewDetailOrder}
+          onClose={() => setViewDetailOrder(null)}
+        />
       )}
     </div>
   );

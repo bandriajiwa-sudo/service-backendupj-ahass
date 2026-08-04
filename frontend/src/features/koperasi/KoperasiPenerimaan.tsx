@@ -5,6 +5,7 @@ import { Search, Plus, X, FileText, Camera, Download } from "lucide-react";
 import styles from "../orders/ShipmentList.module.css";
 import PrintHeader from "../../components/common/PrintHeader";
 import KoperasiReturns from "./KoperasiReturns";
+import DeliveryNoteModal from "../../components/common/DeliveryNoteModal";
 
 export default function KoperasiPenerimaan() {
   const [shipments, setShipments] = useState<any[]>([]);
@@ -169,7 +170,10 @@ export default function KoperasiPenerimaan() {
       formData.append("file", evidenceFile);
 
       await apiClient.post("/spare-part-shipments/batch-evidences", formData, {
-        headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+        },
       });
 
       Swal.fire({
@@ -303,7 +307,7 @@ export default function KoperasiPenerimaan() {
                           className="text-blue-500 hover:text-blue-700 text-sm font-semibold inline-flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
                           onClick={() => setViewDetailOrder(group)}
                         >
-                          <FileText className="w-4 h-4" /> [ 👁️ Lihat Detail ]
+                          <FileText className="w-4 h-4" /> [ Lihat Detail ]
                         </button>
                       </td>
                     </tr>
@@ -514,191 +518,12 @@ export default function KoperasiPenerimaan() {
         </div>
       )}
 
-      {/* View Detail Modal (A4 Print Layout style) */}
+      {/* View Detail Modal (Card + A4) */}
       {viewDetailOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
-          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            <div className="p-4 border-b flex justify-between items-center bg-gray-50">
-              <h2 className="font-bold text-lg text-gray-800 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
-                Detail Faktur Surat Jalan (DO) -{" "}
-                {viewDetailOrder.orderInfo.nomor_surat_order}
-              </h2>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setTimeout(() => window.print(), 300);
-                  }}
-                  className="px-3 py-1.5 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded text-sm font-semibold flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" /> Cetak A4
-                </button>
-                <button
-                  onClick={() => setViewDetailOrder(null)}
-                  className="text-gray-500 hover:text-red-500"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-8 overflow-y-auto bg-gray-100">
-              <div
-                className="bg-white mx-auto p-10 shadow-lg print:shadow-none"
-                style={{ minHeight: "297mm", maxWidth: "210mm" }}
-              >
-                <div className="text-center border-b-2 border-black pb-4 mb-6">
-                  <h1 className="text-2xl font-bold uppercase tracking-wider">
-                    Laporan Penerimaan Suku Cadang
-                  </h1>
-                  <p className="text-gray-600">
-                    Surat Jalan DO Berbasis Referensi Order
-                  </p>
-                </div>
-
-                <div className="mb-6 grid grid-cols-2 text-sm text-gray-800">
-                  <div>
-                    <p>
-                      <span className="font-semibold inline-block w-32">
-                        No Referensi:
-                      </span>{" "}
-                      {viewDetailOrder.orderInfo.nomor_surat_order}
-                    </p>
-                    <p>
-                      <span className="font-semibold inline-block w-32">
-                        Status Verifikasi:
-                      </span>{" "}
-                      {viewDetailOrder.status === "disetujui"
-                        ? "Berhasil"
-                        : "Menunggu FO"}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p>
-                      <span className="font-semibold inline-block w-32">
-                        Tgl Dibuat:
-                      </span>{" "}
-                      {new Date(
-                        viewDetailOrder.created_at,
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-
-                <table className="w-full text-sm border-collapse mb-8">
-                  <thead>
-                    <tr className="bg-gray-100 border-y-2 border-black">
-                      <th className="py-2 px-3 text-left w-10">No</th>
-                      <th className="py-2 px-3 text-left">
-                        Kode & Nama Suku Cadang
-                      </th>
-                      <th className="py-2 px-3 text-center">Qty</th>
-                      <th className="py-2 px-3 text-right border-l border-gray-300">
-                        Harga (Satuan)
-                      </th>
-                      <th className="py-2 px-3 text-right">Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {viewDetailOrder.shipments.map((s: any, idx: number) => {
-                      const harga = parseFloat(s.harga_jual || "0");
-                      const total = harga * s.quantity;
-                      return (
-                        <tr key={s.id} className="border-b border-gray-200">
-                          <td className="py-2 px-3">{idx + 1}</td>
-                          <td className="py-2 px-3">
-                            <div className="font-medium text-gray-900">
-                              {
-                                s.spare_part_order_detail.spare_part
-                                  .nama_suku_cadang
-                              }
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {
-                                s.spare_part_order_detail.spare_part
-                                  .kode_suku_cadang
-                              }
-                            </div>
-                          </td>
-                          <td className="py-2 px-3 text-center">
-                            {s.quantity}{" "}
-                            {s.spare_part_order_detail.spare_part.satuan}
-                          </td>
-                          <td className="py-2 px-3 text-right border-l border-gray-300">
-                            Rp {harga.toLocaleString("id-ID")}
-                          </td>
-                          <td className="py-2 px-3 text-right font-semibold">
-                            Rp {total.toLocaleString("id-ID")}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t-2 border-black bg-gray-50 font-bold">
-                      <td colSpan={2} className="py-2 px-3 text-right">
-                        TOTAL
-                      </td>
-                      <td className="py-2 px-3 text-center">
-                        {viewDetailOrder.totalQty}
-                      </td>
-                      <td colSpan={2} className="py-2 px-3 text-right">
-                        Rp{" "}
-                        {viewDetailOrder.shipments
-                          .reduce(
-                            (acc: number, s: any) =>
-                              acc + s.quantity * parseFloat(s.harga_jual || 0),
-                            0,
-                          )
-                          .toLocaleString("id-ID")}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-
-                <div className="mt-8 page-break-inside-avoid">
-                  <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">
-                    Bukti Lampiran Faktur / Resi:
-                  </h4>
-                  <div className="flex flex-wrap gap-4">
-                    {viewDetailOrder.shipments.length > 0 &&
-                    viewDetailOrder.shipments[0].evidences?.length > 0 ? (
-                      viewDetailOrder.shipments[0].evidences.map(
-                        (ev: any, evIdx: number) => (
-                          <div
-                            key={evIdx}
-                            className="border border-gray-200 rounded p-2 bg-gray-50 shadow-sm w-48"
-                          >
-                            <img
-                              src={`${apiClient.defaults.baseURL}/shipment-evidences/${ev.id}/download`}
-                              alt={ev.original_filename}
-                              className="w-full h-32 object-cover border border-gray-300 rounded mb-2"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display =
-                                  "none";
-                              }}
-                            />
-                            <div
-                              className="text-xs text-center text-gray-600 truncate px-1"
-                              title={ev.original_filename}
-                            >
-                              {ev.original_filename}
-                            </div>
-                          </div>
-                        ),
-                      )
-                    ) : (
-                      <p className="text-gray-500 italic text-sm">
-                        Tidak ada lampiran fisik yang ditemukan untuk kelompok
-                        pengiriman ini.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeliveryNoteModal
+          group={viewDetailOrder}
+          onClose={() => setViewDetailOrder(null)}
+        />
       )}
 
       {/* Tab 2: Koperasi Returns UI */}

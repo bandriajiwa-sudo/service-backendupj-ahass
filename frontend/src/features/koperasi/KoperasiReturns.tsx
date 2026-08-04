@@ -185,7 +185,7 @@ export default function KoperasiReturns() {
                       }}
                       className="bg-indigo-50 text-indigo-700 font-semibold px-4 py-1.5 rounded hover:bg-indigo-100 transition shadow-sm border border-indigo-100 text-sm"
                     >
-                      [ 👁️ Detail Modal ]
+                      Detail Modal
                     </button>
                   </td>
                 </tr>
