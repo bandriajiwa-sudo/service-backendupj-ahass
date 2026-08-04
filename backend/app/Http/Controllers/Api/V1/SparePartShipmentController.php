@@ -393,6 +393,8 @@ class SparePartShipmentController extends Controller
                 'message' => 'SysDebug: ' . $e->getMessage() . ' | L:' . $e->getLine(),
             ], 500);
         }
+    }
+
     public function uploadBatchEvidences(Request $request)
     {
         $request->validate([
