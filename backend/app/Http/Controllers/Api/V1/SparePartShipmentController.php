@@ -6,7 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\ShipmentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ShipmentEvidence;
-use App\Models\SparePartOrder;
+use App\Models\SparePartOrderDetail;
 use App\Models\SparePartReturn;
 use App\Models\SparePartShipment;
 use App\Models\SparePartStock;
@@ -19,7 +19,7 @@ class SparePartShipmentController extends Controller
 {
     public function index(Request $request)
     {
-        $shipments = SparePartShipment::with(['sparePartOrder.sparePart', 'shippedBy', 'verifiedBy', 'evidences'])
+        $shipments = SparePartShipment::with(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder.user', 'shippedBy', 'verifiedBy', 'evidences'])
             ->orderBy('created_at', 'desc')
             ->paginate($request->query('per_page', 100)); // Batasi 100 max pagination sesuai PRD
 
@@ -38,37 +38,37 @@ class SparePartShipmentController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $shipment->load(['sparePartOrder.sparePart', 'evidences']),
+            'data' => $shipment->load(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder.user', 'evidences']),
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'spare_part_order_id' => 'required|exists:spare_part_orders,id',
+            'spare_part_order_detail_id' => 'required|exists:spare_part_order_details,id',
             'quantity' => 'required|integer|min:1',
             'harga_jual' => 'required|numeric|min:0',
         ]);
 
-        $order = SparePartOrder::findOrFail($validated['spare_part_order_id']);
+        $orderDetail = SparePartOrderDetail::with('sparePartOrder')->findOrFail($validated['spare_part_order_detail_id']);
 
-        if ($order->status->value !== OrderStatus::Disetujui->value) {
+        if ($orderDetail->sparePartOrder->status->value !== OrderStatus::Disetujui->value) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pengiriman hanya bisa dibuat untuk Order yang sudah disetujui Koperasi.',
+                'message' => 'Pengiriman hanya bisa dibuat untuk Order yang Surat Headers-nya sudah disetujui Koperasi.',
             ], 422);
         }
 
-        // Prevent multiple initial shipments for the same order
-        if ($order->sparePartShipments()->where('shipment_type', 'initial')->exists()) {
+        // Prevent multiple initial shipments for the same order detail
+        if ($orderDetail->sparePartShipments()->where('shipment_type', 'initial')->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pengiriman awal (Initial Shipment) untuk order ini sudah dibuat sebelumnya.',
+                'message' => 'Pengiriman awal (Initial Shipment) untuk baris pesanan ini sudah dibuat sebelumnya.',
             ], 422);
         }
 
         $shipment = SparePartShipment::create([
-            'spare_part_order_id' => $order->id,
+            'spare_part_order_detail_id' => $orderDetail->id,
             'shipment_type' => 'initial',
             'quantity' => $validated['quantity'],
             'harga_jual' => $validated['harga_jual'],
@@ -227,7 +227,7 @@ class SparePartShipmentController extends Controller
 
                 // Lemparkan komplain ini ke tabel SparePartReturns
                 SparePartReturn::create([
-                    'spare_part_order_id' => $lockedShipment->spare_part_order_id,
+                    'spare_part_order_detail_id' => $lockedShipment->spare_part_order_detail_id,
                     'spare_part_shipment_id' => $lockedShipment->id,
                     'quantity' => $lockedShipment->quantity,
                     'reason' => $request->rejection_note,
@@ -245,7 +245,7 @@ class SparePartShipmentController extends Controller
 
                 // Phase 5: Otomatisasi Penutupan Tiket Retur 
                 if ($lockedShipment->shipment_type === 'replacement') {
-                    SparePartReturn::where('spare_part_order_id', $lockedShipment->spare_part_order_id)
+                    SparePartReturn::where('spare_part_order_detail_id', $lockedShipment->spare_part_order_detail_id)
                         ->where('status', 'dikirim_ulang')
                         ->update([
                             'status' => 'selesai',
@@ -255,7 +255,7 @@ class SparePartShipmentController extends Controller
                 }
 
                 // Row Lock Penjumlahan Inventori (P0 Idempotent)
-                $stock = SparePartStock::where('spare_part_id', $lockedShipment->sparePartOrder->spare_part_id)
+                $stock = SparePartStock::where('spare_part_id', $lockedShipment->sparePartOrderDetail->spare_part_id)
                     ->lockForUpdate()->first();
 
                 if ($stock) {

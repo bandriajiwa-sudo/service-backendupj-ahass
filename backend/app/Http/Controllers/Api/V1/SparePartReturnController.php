@@ -12,7 +12,7 @@ class SparePartReturnController extends Controller
 {
     public function index(Request $request)
     {
-        $returns = SparePartReturn::with(['sparePartOrder.sparePart', 'sparePartShipment.evidences', 'createdBy', 'resolvedBy'])
+        $returns = SparePartReturn::with(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder', 'sparePartShipment.evidences', 'createdBy', 'resolvedBy'])
             ->orderBy('created_at', 'desc')
             ->paginate($request->query('per_page', 100));
 
@@ -31,7 +31,7 @@ class SparePartReturnController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $return->load(['sparePartOrder.sparePart', 'evidences', 'sparePartShipment.evidences']),
+            'data' => $return->load(['sparePartOrderDetail.sparePart', 'sparePartOrderDetail.sparePartOrder', 'evidences', 'sparePartShipment.evidences']),
         ]);
     }
 
@@ -58,10 +58,9 @@ class SparePartReturnController extends Controller
 
             // Membangun entitas Shipment kedua (Replacement)
             $replacementShipment = SparePartShipment::create([
-                'spare_part_order_id' => $lockedReturn->spare_part_order_id,
+                'spare_part_order_detail_id' => $lockedReturn->spare_part_order_detail_id,
                 'shipment_type' => 'replacement',
                 'quantity' => $lockedReturn->quantity,
-                'harga_beli' => $lockedReturn->sparePartShipment->harga_beli,
                 'harga_jual' => $lockedReturn->sparePartShipment->harga_jual,
                 'status' => 'menunggu_verifikasi',
                 'shipped_by' => auth()->id() ?? 1,

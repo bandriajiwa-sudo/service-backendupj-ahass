@@ -15,7 +15,7 @@ class ActivePriceService
         $shipment = SparePartShipment::where('status', 'disetujui')
             ->whereNotNull('verified_at')
             ->whereNotNull('harga_jual')
-            ->whereHas('sparePartOrder', function ($q) use ($sparePartId) {
+            ->whereHas('sparePartOrderDetail', function ($q) use ($sparePartId) {
                 $q->where('spare_part_id', $sparePartId);
             })
             ->orderByDesc('verified_at')
@@ -36,9 +36,9 @@ class ActivePriceService
             return $prices;
         }
 
-        $shipments = SparePartShipment::select('spare_part_orders.spare_part_id', 'spare_part_shipments.harga_jual')
-            ->join('spare_part_orders', 'spare_part_shipments.spare_part_order_id', '=', 'spare_part_orders.id')
-            ->whereIn('spare_part_orders.spare_part_id', $sparePartIds)
+        $shipments = SparePartShipment::select('spare_part_order_details.spare_part_id', 'spare_part_shipments.harga_jual')
+            ->join('spare_part_order_details', 'spare_part_shipments.spare_part_order_detail_id', '=', 'spare_part_order_details.id')
+            ->whereIn('spare_part_order_details.spare_part_id', $sparePartIds)
             ->where('spare_part_shipments.status', 'disetujui')
             ->whereNotNull('spare_part_shipments.verified_at')
             ->whereNotNull('spare_part_shipments.harga_jual')

@@ -2,27 +2,34 @@ import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
-import { Search, Download, Camera } from "lucide-react";
+import { Search, Download, Camera, FileText, X } from "lucide-react";
+import PrintHeader from "../../components/common/PrintHeader";
 import styles from "./ShipmentList.module.css";
 import KoperasiReturns from "../koperasi/KoperasiReturns";
-
-interface SparePart {
-  id: number;
-  nama_suku_cadang: string;
-}
 
 interface User {
   nama_user: string;
 }
 
+interface OrderDetail {
+  id: number;
+  jumlah_qty: number;
+  spare_part: {
+    kode_suku_cadang: string;
+    nama_suku_cadang: string;
+    satuan?: string;
+  };
+  spare_part_shipments: Shipment[];
+  spare_part_order: Order;
+}
+
 interface Order {
   id: number;
-  jumlah: number;
+  nomor_surat_order: string;
   status: string;
   created_at: string;
-  spare_part: SparePart;
   user: User;
-  spare_part_shipments: Shipment[];
+  spare_part_order_details: OrderDetail[];
 }
 
 interface ShipmentEvidence {
@@ -39,14 +46,24 @@ interface Shipment {
   created_at: string;
   verified_at: string | null;
   shipment_type: string;
-  spare_part_order: Order;
+  spare_part_order_detail: {
+    id: number;
+    jumlah_qty: number;
+    spare_part: {
+      kode_suku_cadang: string;
+      nama_suku_cadang: string;
+      satuan?: string;
+    };
+    spare_part_order: Order;
+  };
   evidences?: ShipmentEvidence[];
 }
 
 const ShipmentList: React.FC = () => {
   const { user } = useAuth();
   const [shipments, setShipments] = useState<Shipment[]>([]);
-  const [approvedOrders, setApprovedOrders] = useState<Order[]>([]);
+  const [approvedOrders, setApprovedOrders] = useState<OrderDetail[]>([]);
+  const [viewDocumentOrder, setViewDocumentOrder] = useState<any | null>(null);
 
   // Filter State
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,7 +80,7 @@ const ShipmentList: React.FC = () => {
   // Creation State (For Koperasi)
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState({
-    spare_part_order_id: "",
+    spare_part_order_detail_id: "",
     quantity: "1",
     harga_jual: "",
   });
@@ -106,15 +123,26 @@ const ShipmentList: React.FC = () => {
   const fetchApprovedOrders = async () => {
     try {
       const res = await apiClient.get("/spare-part-orders");
-      // Filter out orders that are NOT approved or ALREADY have an INITIAL shipment
-      const filtered = res.data.data.filter((o: any) => {
-        if (o.status !== "disetujui") return false;
-        const hasInitialShipment = o.spare_part_shipments?.some(
-          (s: Shipment) => s.shipment_type === "initial",
-        );
-        return !hasInitialShipment;
+      // Filter out approved orders and extract their unfulfilled details
+      const filtered = res.data.data.filter(
+        (o: any) => o.status === "disetujui",
+      );
+      const details: any[] = [];
+
+      filtered.forEach((order: any) => {
+        (order.spare_part_order_details || []).forEach((detail: any) => {
+          const hasInitialShipment = detail.spare_part_shipments?.some(
+            (s: any) => s.shipment_type === "initial",
+          );
+          if (!hasInitialShipment) {
+            details.push({
+              ...detail,
+              spare_part_order: order,
+            });
+          }
+        });
       });
-      setApprovedOrders(filtered);
+      setApprovedOrders(details);
     } catch (err) {
       console.error(err);
     }
@@ -123,7 +151,8 @@ const ShipmentList: React.FC = () => {
   const handleEditClick = (shipment: any) => {
     setEditingShipmentId(shipment.id);
     setFormData({
-      spare_part_order_id: shipment.spare_part_order_id.toString(),
+      spare_part_order_detail_id:
+        shipment.spare_part_order_detail_id.toString(),
       quantity: shipment.quantity.toString(),
       harga_jual: shipment.harga_jual ? shipment.harga_jual.toString() : "",
     });
@@ -134,7 +163,7 @@ const ShipmentList: React.FC = () => {
   const handleCreateShipment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
-      !formData.spare_part_order_id ||
+      !formData.spare_part_order_detail_id ||
       !formData.quantity ||
       !formData.harga_jual
     ) {
@@ -214,7 +243,7 @@ const ShipmentList: React.FC = () => {
       setIsFormOpen(false);
       setEditingShipmentId(null);
       setFormData({
-        spare_part_order_id: "",
+        spare_part_order_detail_id: "",
         quantity: "1",
         harga_jual: "",
       });
@@ -422,12 +451,24 @@ const ShipmentList: React.FC = () => {
     }).format(new Date(ds));
   };
 
+  const getStatusName = (status: string) => {
+    const s: { [key: string]: string } = {
+      menunggu: "Menunggu Persetujuan",
+      diproses: "Sedang Diproses",
+      disetujui: "Disetujui Gudang",
+      ditolak: "Ditolak / Dibatalkan",
+    };
+    return s[status] || status;
+  };
+
   const displayedShipments = shipments.filter((r) => {
     // 1. Search (Nama suku cadang or pembuat order)
     const suku = (
-      r.spare_part_order?.spare_part?.nama_suku_cadang || ""
+      r.spare_part_order_detail?.spare_part?.nama_suku_cadang || ""
     ).toLowerCase();
-    const sub = (r.spare_part_order?.user?.nama_user || "").toLowerCase();
+    const sub = (
+      r.spare_part_order_detail?.spare_part_order?.user?.nama_user || ""
+    ).toLowerCase();
     const s = searchTerm.toLowerCase();
     if (searchTerm && !suku.includes(s) && !sub.includes(s)) return false;
 
@@ -574,7 +615,7 @@ const ShipmentList: React.FC = () => {
                   onClick={() => {
                     setEditingShipmentId(null);
                     setFormData({
-                      spare_part_order_id: "",
+                      spare_part_order_detail_id: "",
                       quantity: "1",
                       harga_jual: "",
                     });
@@ -618,14 +659,15 @@ const ShipmentList: React.FC = () => {
                     </td>
                     <td className={styles.tableCell}>
                       <span className="font-medium text-gray-800">
-                        ORD-
-                        {shipment.spare_part_order.id
-                          .toString()
-                          .padStart(4, "0")}
+                        {shipment.spare_part_order_detail.spare_part_order
+                          .nomor_surat_order || "---"}
                       </span>
                       <br />
                       <span className="text-sm text-gray-600">
-                        {shipment.spare_part_order.spare_part.nama_suku_cadang}
+                        {
+                          shipment.spare_part_order_detail.spare_part
+                            .nama_suku_cadang
+                        }
                       </span>
                     </td>
                     <td className={styles.tableCell}>
@@ -644,7 +686,7 @@ const ShipmentList: React.FC = () => {
                     <td className={styles.tableCell}>
                       <button
                         onClick={() => openDetailModal(shipment)}
-                        className="inline-flex flex-col items-center justify-center bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded transition-colors text-xs font-semibold shadow-sm w-full max-w-[120px]"
+                        className="inline-flex flex-col items-center justify-center bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded transition-colors text-xs font-semibold shadow-sm w-full max-w-[120px] mb-2"
                       >
                         <span className="mb-0.5">Lihat Detail</span>
                         {shipment.evidences && shipment.evidences.length > 0 ? (
@@ -656,6 +698,19 @@ const ShipmentList: React.FC = () => {
                             Kosong
                           </span>
                         )}
+                      </button>
+
+                      <button
+                        title="Lihat / Cetak DO A4"
+                        className="inline-flex items-center justify-center w-full max-w-[120px] py-1.5 bg-gray-50 border border-gray-200 text-gray-700 font-medium text-xs rounded hover:bg-gray-100 transition-colors"
+                        onClick={() =>
+                          setViewDocumentOrder(
+                            shipment.spare_part_order_detail.spare_part_order,
+                          )
+                        }
+                      >
+                        <FileText className="w-3.5 h-3.5 mr-1 text-gray-500" />
+                        View A4
                       </button>
                     </td>
                     <td className={styles.tableCell}>
@@ -755,32 +810,34 @@ const ShipmentList: React.FC = () => {
                       </label>
                       <select
                         className="w-full px-4 py-2 border border-blue-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow disabled:bg-gray-100 disabled:text-gray-500"
-                        value={formData.spare_part_order_id}
+                        value={formData.spare_part_order_detail_id}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            spare_part_order_id: e.target.value,
+                            spare_part_order_detail_id: e.target.value,
                           })
                         }
                         required
                         disabled={!!editingShipmentId}
                       >
-                        <option value="">Pilih Pesanan</option>
-                        {approvedOrders.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            #{o.id} - {o.spare_part.nama_suku_cadang} (Pesan:{" "}
-                            {o.jumlah})
+                        <option value="">Pilih Rincian Pesanan</option>
+                        {approvedOrders.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            [{d.spare_part_order?.nomor_surat_order}]{" "}
+                            {d.spare_part.nama_suku_cadang} (Pesan:{" "}
+                            {d.jumlah_qty})
                           </option>
                         ))}
                         {/* Insert option if editing but the order is no longer in "approvedOrders" (since it already has a shipment) */}
                         {editingShipmentId &&
                           !approvedOrders.find(
                             (o) =>
-                              o.id.toString() === formData.spare_part_order_id,
+                              o.id.toString() ===
+                              formData.spare_part_order_detail_id,
                           ) && (
-                            <option value={formData.spare_part_order_id}>
-                              Order Sedang Diedit (ID:{" "}
-                              {formData.spare_part_order_id})
+                            <option value={formData.spare_part_order_detail_id}>
+                              Detail Order Sedang Diedit (ID:{" "}
+                              {formData.spare_part_order_detail_id})
                             </option>
                           )}
                       </select>
@@ -945,10 +1002,8 @@ const ShipmentList: React.FC = () => {
                         Nomor Order
                       </label>
                       <div className="text-sm font-bold text-blue-700 bg-blue-50 py-1.5 px-3 rounded inline-block">
-                        ORD-
-                        {selectedShipmentDetail.spare_part_order.id
-                          .toString()
-                          .padStart(4, "0")}
+                        {selectedShipmentDetail.spare_part_order_detail
+                          .spare_part_order.nomor_surat_order || "---"}
                       </div>
                     </div>
                     <div>
@@ -958,8 +1013,8 @@ const ShipmentList: React.FC = () => {
                       <div className="text-sm font-bold text-gray-900">
                         {selectedShipmentDetail.quantity}{" "}
                         <span className="font-normal text-gray-500">
-                          {selectedShipmentDetail.spare_part_order.spare_part
-                            .satuan || "Pcs"}
+                          {selectedShipmentDetail.spare_part_order_detail
+                            .spare_part.satuan || "Pcs"}
                         </span>
                       </div>
                     </div>
@@ -970,13 +1025,13 @@ const ShipmentList: React.FC = () => {
                       <div className="text-base font-semibold text-gray-800">
                         [
                         {
-                          selectedShipmentDetail.spare_part_order.spare_part
-                            .kode_suku_cadang
+                          selectedShipmentDetail.spare_part_order_detail
+                            .spare_part.kode_suku_cadang
                         }
                         ] -{" "}
                         {
-                          selectedShipmentDetail.spare_part_order.spare_part
-                            .nama_suku_cadang
+                          selectedShipmentDetail.spare_part_order_detail
+                            .spare_part.nama_suku_cadang
                         }
                       </div>
                     </div>
@@ -1082,6 +1137,128 @@ const ShipmentList: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* --- MODAL PRINT DOKUMEN --- */}
+      {viewDocumentOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 print:p-0 print:bg-white overflow-y-auto">
+          <div className="bg-white rounded shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:max-h-none print:overflow-visible relative">
+            <div className="sticky top-0 right-0 p-4 bg-gray-100 border-b flex justify-between items-center print:hidden z-10">
+              <h3 className="font-bold text-gray-700">Preview Dokumen A4</h3>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => window.print()}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-semibold"
+                >
+                  Cetak PDF (Ctrl+P)
+                </button>
+                <button
+                  onClick={() => setViewDocumentOrder(null)}
+                  className="text-gray-500 hover:text-red-500 px-3"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-8 print:p-0">
+              <PrintHeader
+                title="SURAT PENGAJUAN PESANAN SUKU CADANG"
+                subtitle={`Nomor: ${viewDocumentOrder.nomor_surat_order || "---"}`}
+                periodLabel=""
+              />
+
+              <div className="my-6">
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr>
+                      <td className="py-1 font-semibold w-1/4">
+                        Tanggal Pengajuan
+                      </td>
+                      <td className="py-1 w-3/4">
+                        :{" "}
+                        {formatDate(
+                          viewDocumentOrder.tanggal_pengajuan ||
+                            viewDocumentOrder.created_at,
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 font-semibold w-1/4">
+                        Diajukan Oleh
+                      </td>
+                      <td className="py-1 w-3/4">
+                        : {viewDocumentOrder.user?.nama_user || "Front Office"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 font-semibold w-1/4">
+                        Status Saat Ini
+                      </td>
+                      <td className="py-1 w-3/4">
+                        :{" "}
+                        {getStatusName(viewDocumentOrder.status).toUpperCase()}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="font-bold mb-3 border-b-2 border-gray-800 inline-block">
+                  Daftar Barang (Item Details)
+                </h4>
+                <table className="w-full border-collapse border border-gray-800 text-sm">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="border border-gray-800 px-3 py-2 text-center w-12">
+                        No.
+                      </th>
+                      <th className="border border-gray-800 px-3 py-2 text-left">
+                        Kode Suku Cadang
+                      </th>
+                      <th className="border border-gray-800 px-3 py-2 text-left">
+                        Nama Suku Cadang
+                      </th>
+                      <th className="border border-gray-800 px-3 py-2 text-center">
+                        Qty Request
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {viewDocumentOrder.spare_part_order_details?.map(
+                      (detail: any, idx: number) => (
+                        <tr key={detail.id}>
+                          <td className="border border-gray-800 px-3 py-2 text-center">
+                            {idx + 1}
+                          </td>
+                          <td className="border border-gray-800 px-3 py-2">
+                            {detail.spare_part?.kode_suku_cadang}
+                          </td>
+                          <td className="border border-gray-800 px-3 py-2">
+                            {detail.spare_part?.nama_suku_cadang}
+                          </td>
+                          <td className="border border-gray-800 px-3 py-2 text-center font-bold">
+                            {detail.jumlah_qty}
+                          </td>
+                        </tr>
+                      ),
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-12 w-full flex justify-end">
+                <div className="w-48 text-center text-sm">
+                  <p className="mb-16">Kepala Bengkel/Front Office</p>
+                  <p className="font-bold underline uppercase">
+                    {viewDocumentOrder.user?.nama_user || "F.O."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

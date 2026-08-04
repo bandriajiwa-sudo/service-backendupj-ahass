@@ -140,4 +140,59 @@ class SparePartController extends Controller
             'message' => 'Suku cadang berhasil dihapus',
         ]);
     }
+
+    public function updatePrice(Request $request, SparePart $sparePart)
+    {
+        // 1. Validate the price constraint
+        $validated = $request->validate([
+            'harga_jual' => 'required|numeric|min:0',
+        ]);
+
+        $newPrice = $validated['harga_jual'];
+
+        DB::beginTransaction();
+        try {
+            // 2. Find the latest verified shipment to attach the price log/update
+            $latestShipment = \App\Models\SparePartShipment::where('status', 'disetujui')
+                ->whereNotNull('verified_at')
+                ->whereNotNull('harga_jual')
+                ->whereHas('sparePartOrderDetail', function ($q) use ($sparePart) {
+                    $q->where('spare_part_id', $sparePart->id);
+                })
+                ->orderByDesc('verified_at')
+                ->orderByDesc('id')
+                ->first();
+
+            if (!$latestShipment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ditemukan history penerimaan/shipment untuk suku cadang ini. Harga jual tidak dapat diedit.',
+                ], 400);
+            }
+
+            // 3. Log the old price
+            \App\Models\SparePartPriceLog::create([
+                'spare_part_shipment_id' => $latestShipment->id,
+                'harga_jual' => $latestShipment->harga_jual,
+            ]);
+
+            // 4. Set the active newest price on the target shipment
+            $latestShipment->update([
+                'harga_jual' => $newPrice,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Harga jual suku cadang berhasil diupdate',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengedit harga: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

@@ -14,9 +14,9 @@ class SparePartReturn extends Model
         'resolved_at' => 'datetime',
     ];
 
-    public function sparePartOrder(): BelongsTo
+    public function sparePartOrderDetail(): BelongsTo
     {
-        return $this->belongsTo(SparePartOrder::class);
+        return $this->belongsTo(SparePartOrderDetail::class);
     }
 
     public function sparePartShipment(): BelongsTo

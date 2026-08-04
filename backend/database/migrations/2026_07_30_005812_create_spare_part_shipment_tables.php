@@ -13,7 +13,7 @@ return new class extends Migration {
         // 1. Shipment Table
         Schema::create('spare_part_shipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('spare_part_order_id')->constrained('spare_part_orders')->onDelete('cascade');
+            $table->foreignId('spare_part_order_detail_id')->constrained('spare_part_order_details')->onDelete('cascade');
             $table->enum('shipment_type', ['initial', 'replacement'])->default('initial');
             $table->unsignedInteger('quantity');
 
@@ -35,13 +35,13 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['status', 'spare_part_order_id']);
+            $table->index(['status', 'spare_part_order_detail_id']);
         });
 
         // 2. Returns Table
         Schema::create('spare_part_returns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('spare_part_order_id')->constrained('spare_part_orders')->onDelete('cascade');
+            $table->foreignId('spare_part_order_detail_id')->constrained('spare_part_order_details')->onDelete('cascade');
             $table->foreignId('spare_part_shipment_id')->unique()->constrained('spare_part_shipments')->onDelete('cascade');
 
             $table->unsignedInteger('quantity');
@@ -55,7 +55,7 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            $table->index(['status', 'spare_part_order_id']);
+            $table->index(['status', 'spare_part_order_detail_id'], 'returns_status_detail_id_index');
         });
 
         // 3. Evidences Table

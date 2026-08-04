@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\SparePartOrder;
+use App\Models\SparePartOrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class SparePartOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = SparePartOrder::with(['user', 'sparePart', 'sparePartShipments'])->orderBy('created_at', 'desc')->paginate($request->query('per_page', 1000));
+        $orders = SparePartOrder::with(['user', 'sparePartOrderDetails.sparePart', 'sparePartOrderDetails.sparePartShipments'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->query('per_page', 1000));
 
         return response()->json([
             'success' => true,
@@ -29,31 +33,41 @@ class SparePartOrderController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $sparePartOrder->load(['user', 'sparePart', 'sparePartShipments']),
+            'data' => $sparePartOrder->load(['user', 'sparePartOrderDetails.sparePart', 'sparePartOrderDetails.sparePartShipments']),
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'spare_part_id' => 'required|exists:spare_parts,id',
-            'jumlah' => 'required|integer|min:1',
+            'items' => 'required|array|min:1',
+            'items.*.spare_part_id' => 'required|exists:spare_parts,id',
+            'items.*.jumlah' => 'required|integer|min:1',
             'catatan' => 'nullable|string',
         ]);
 
+        $nomorSurat = 'ORD/' . date('Ymd') . '/' . strtoupper(Str::random(4));
+
         $order = SparePartOrder::create([
             'user_id' => $request->user()->user->id,
-            'spare_part_id' => $validated['spare_part_id'],
-            'jumlah' => $validated['jumlah'],
+            'nomor_surat_order' => $nomorSurat,
+            'tanggal_pengajuan' => now()->toDateString(),
             'status' => OrderStatus::Menunggu,
-            'tanggal' => now()->toDateString(),
             'catatan_fo' => $validated['catatan'] ?? null,
         ]);
 
+        foreach ($validated['items'] as $item) {
+            SparePartOrderDetail::create([
+                'spare_part_order_id' => $order->id,
+                'spare_part_id' => $item['spare_part_id'],
+                'jumlah_qty' => $item['jumlah']
+            ]);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Order logistik berhasil dibuat, menunggu persetujuan Koperasi.',
-            'data' => $order,
+            'message' => 'Surat Order logistik berhasil dibuat, menunggu persetujuan Koperasi.',
+            'data' => $order->load('sparePartOrderDetails'),
         ], 201);
     }
 
@@ -122,30 +136,22 @@ class SparePartOrderController extends Controller
         if ($order->status->value !== OrderStatus::Menunggu->value) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order yang sudah diproses tidak bisa diedit.',
+                'message' => 'Order yang sudah direspon tidak bisa diedit.',
             ], 422);
         }
 
         $validated = $request->validate([
-            'spare_part_id' => 'sometimes|exists:spare_parts,id',
-            'jumlah' => 'sometimes|integer|min:1',
             'catatan' => 'nullable|string',
         ]);
 
-        $updateData = [];
-        if (isset($validated['spare_part_id']))
-            $updateData['spare_part_id'] = $validated['spare_part_id'];
-        if (isset($validated['jumlah']))
-            $updateData['jumlah'] = $validated['jumlah'];
-        if (array_key_exists('catatan', $validated))
-            $updateData['catatan_fo'] = $validated['catatan'];
-
-        $order->update($updateData);
+        if (array_key_exists('catatan', $validated)) {
+            $order->update(['catatan_fo' => $validated['catatan']]);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Order berhasil diperbarui.',
-            'data' => $order->fresh(['user', 'sparePart']),
+            'message' => 'Surat Order berhasil diperbarui.',
+            'data' => $order->load('sparePartOrderDetails'),
         ]);
     }
 

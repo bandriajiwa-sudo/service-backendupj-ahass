@@ -81,6 +81,7 @@ $apiRoutes = function () {
 
         // Koperasi Focus
         Route::middleware('role:koperasi')->group(function () {
+            Route::post('/spare-parts/{spare_part}/update-price', [SparePartController::class, 'updatePrice']);
             Route::patch('/spare-part-orders/{order}/decision', [SparePartOrderController::class, 'decision']);
             Route::patch('/spare-part-orders/{order}/estimate', [SparePartOrderController::class, 'estimate']);
             Route::post('/spare-part-shipments', [SparePartShipmentController::class, 'store']);

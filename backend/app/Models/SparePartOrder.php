@@ -15,8 +15,8 @@ class SparePartOrder extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'jumlah' => 'integer',
         'status' => OrderStatus::class,
+        'tanggal_pengajuan' => 'date',
         'tanggal' => 'date',
         'tanggal_awal' => 'date',
         'tanggal_akhir' => 'date',
@@ -28,18 +28,8 @@ class SparePartOrder extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function sparePart(): BelongsTo
+    public function sparePartOrderDetails(): HasMany
     {
-        return $this->belongsTo(SparePart::class);
-    }
-
-    public function sparePartShipments(): HasMany
-    {
-        return $this->hasMany(SparePartShipment::class);
-    }
-
-    public function sparePartReturns(): HasMany
-    {
-        return $this->hasMany(SparePartReturn::class);
+        return $this->hasMany(SparePartOrderDetail::class);
     }
 }
