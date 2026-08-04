@@ -217,7 +217,6 @@ export default function ShipmentList() {
           await apiClient.post(`/spare-part-shipments/${id}/evidences`, fd, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          uploaded++;
         }
       }
 
