@@ -432,7 +432,9 @@ class SparePartShipmentController extends Controller
 
         $file = $request->file('file');
         $disk = config('filesystems.default');
-        $path = $file->store('shipment_evidences', $disk);
+
+        $basePath = $file->store('shipment_evidences', $disk);
+        $extension = $file->getClientOriginalExtension() ?: 'png';
 
         $evidences = [];
         $hash = hash_file('sha256', $file->getRealPath());
@@ -442,12 +444,20 @@ class SparePartShipmentController extends Controller
 
         DB::beginTransaction();
         try {
-            foreach ($request->shipment_ids as $sid) {
+            foreach ($request->shipment_ids as $index => $sid) {
+                $uniquePath = $basePath;
+
+                // Salin secara aman (copy file buffer) ke URL path yang distingsi untuk mengakomodasi Unique Constraint DB!
+                if ($index > 0) {
+                    $uniquePath = 'shipment_evidences/' . uniqid('batch_' . $sid . '_') . '.' . $extension;
+                    Storage::disk($disk)->copy($basePath, $uniquePath);
+                }
+
                 $evidences[] = ShipmentEvidence::create([
                     'spare_part_shipment_id' => $sid,
                     'evidence_type' => $request->evidence_type,
                     'storage_disk' => $disk,
-                    'storage_path' => $path,
+                    'storage_path' => $uniquePath,
                     'base64_data' => null,
                     'original_filename' => $filename,
                     'mime_type' => $mime,
