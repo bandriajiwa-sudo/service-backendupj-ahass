@@ -92,6 +92,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         icon: Package,
         label: "Penerimaan Suku Cadang",
       });
+      menu.push({
+        path: "master-suku-cadang",
+        icon: Package,
+        label: "Master Suku Cadang",
+      });
     } else if (role === "kepala_upj") {
       menu.push({
         path: "laporan-jasa",

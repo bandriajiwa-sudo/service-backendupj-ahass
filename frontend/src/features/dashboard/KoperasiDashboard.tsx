@@ -6,8 +6,6 @@ import {
   XCircle,
   TrendingUp,
   TrendingDown,
-  Edit,
-  Save,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
@@ -34,11 +32,6 @@ const KoperasiDashboard: React.FC = () => {
   const [chartFilter, setChartFilter] = useState("Mingguan");
   const [chartData, setChartData] = useState<any[]>([]);
 
-  // Master Data Table states
-  const [spareParts, setSpareParts] = useState<any[]>([]);
-  const [editPriceId, setEditPriceId] = useState<number | null>(null);
-  const [editPriceValue, setEditPriceValue] = useState("");
-
   const formatRupiah = (number: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -49,45 +42,7 @@ const KoperasiDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    fetchSpareParts();
   }, []);
-
-  const fetchSpareParts = async () => {
-    try {
-      const res = await apiClient.get("/spare-parts");
-      setSpareParts(res.data.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleUpdatePrice = async (partId: number) => {
-    if (!editPriceValue || parseInt(editPriceValue) < 0) {
-      Swal.fire({ icon: "error", title: "Error", text: "Harga tidak valid" });
-      return;
-    }
-
-    try {
-      await apiClient.post(`/spare-parts/${partId}/update-price`, {
-        harga_jual: parseInt(editPriceValue),
-      });
-      Swal.fire({
-        icon: "success",
-        title: "Berhasil",
-        text: "Harga jual berhasil diupdate",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-      setEditPriceId(null);
-      fetchSpareParts();
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: err.response?.data?.message || "Kesalahan server",
-      });
-    }
-  };
 
   const getWeekOfMonth = (date: Date) => {
     const firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -492,116 +447,6 @@ const KoperasiDashboard: React.FC = () => {
               />
             </BarChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg border border-gray-200 w-full mb-6 animate-fade-in-up animation-delay-600 transition-all duration-300 hover:shadow-lg">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">
-          Direktori Data Master Suku Cadang (Kelola Harga Aktif)
-        </h3>
-        <p className="text-sm text-gray-500 mb-4">
-          Menampilkan direktori inventori dan mengizinkan modifikasi paksa harga
-          jual (menyimpan riwayat otomatis). Harga di bawah ini ditentukan dari
-          transaksi penerimaan stok (Shipment) terbaru di Gudang.
-        </p>
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="w-full text-left border-collapse min-w-[750px]">
-            <thead>
-              <tr className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-200">
-                <th className="py-3 px-4 w-24">Kode</th>
-                <th className="py-3 px-4">Nama Suku Cadang</th>
-                <th className="py-3 px-4 w-32 border-l border-gray-200 bg-blue-50/50">
-                  Harga Aktif
-                </th>
-                <th className="py-3 px-4 w-28 text-center text-xs">
-                  Stok Gudang
-                </th>
-                <th className="py-3 px-4 w-24 text-center">Aksi Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {spareParts.length > 0 ? (
-                spareParts.map((part: any) => (
-                  <tr
-                    key={part.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-2.5 px-4 font-mono text-sm text-gray-600">
-                      [{part.kode_suku_cadang}]
-                    </td>
-                    <td className="py-2.5 px-4 font-medium text-gray-800">
-                      {part.nama_suku_cadang}{" "}
-                      <span className="text-xs text-gray-400 font-normal ml-1">
-                        / {part.category?.nama_kategori}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-4 border-l border-gray-100">
-                      {editPriceId === part.id ? (
-                        <input
-                          type="number"
-                          className="w-full px-2 py-1 text-sm border border-blue-400 rounded outline-none ring-2 ring-blue-100"
-                          value={editPriceValue}
-                          onChange={(e) => setEditPriceValue(e.target.value)}
-                          placeholder="Rp..."
-                        />
-                      ) : (
-                        <span className="font-semibold text-blue-700">
-                          {part.harga_aktif
-                            ? formatRupiah(part.harga_aktif)
-                            : "---"}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-4 text-center">
-                      <span
-                        className={`px-2 py-1 text-xs font-bold rounded-full ${part.stock?.stok_sekarang <= part.stock?.stok_minimum ? "bg-red-100 text-red-600" : "bg-green-100 text-green-700"}`}
-                      >
-                        {part.stock?.stok_sekarang || 0} {part.satuan || "Pcs"}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-4 flex justify-center items-center">
-                      {editPriceId === part.id ? (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => setEditPriceId(null)}
-                            className="text-gray-400 hover:text-gray-600 text-xs px-2 py-1 rounded border"
-                          >
-                            Batal
-                          </button>
-                          <button
-                            onClick={() => handleUpdatePrice(part.id)}
-                            className="text-white bg-blue-600 hover:bg-blue-700 text-xs px-2 py-1 rounded flex gap-1"
-                          >
-                            <Save size={14} /> Simpan
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setEditPriceId(part.id);
-                            setEditPriceValue(part.harga_aktif || "");
-                          }}
-                          className="text-blue-500 hover:text-blue-700 p-1 rounded-md transition-colors"
-                          title="Koreksi manual log harga jual"
-                        >
-                          <Edit size={16} />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="py-6 text-center text-gray-500 text-sm"
-                  >
-                    Belum ada modul suku cadang
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
