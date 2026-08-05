@@ -208,7 +208,7 @@ const OrderList: React.FC = () => {
         spare_part_id: item.part.id,
         jumlah: item.qty,
       })),
-      catatan_umum: cartNotes,
+      catatan: cartNotes,
     };
 
     try {
