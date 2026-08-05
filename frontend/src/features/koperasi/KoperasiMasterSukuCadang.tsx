@@ -58,82 +58,82 @@ const KoperasiMasterSukuCadang: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200 w-full mb-6 animate-fade-in-up transition-all duration-300 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-800 mb-4">
-        Direktori Data Master Suku Cadang (Kelola Harga Aktif)
-      </h3>
-      <p className="text-sm text-gray-500 mb-4">
-        Menampilkan direktori inventori dan mengizinkan modifikasi paksa harga
-        jual (menyimpan riwayat otomatis). Harga di bawah ini ditentukan dari
-        transaksi penerimaan stok (Shipment) terbaru di Gudang.
-      </p>
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-left border-collapse min-w-[750px]">
-          <thead>
-            <tr className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-200">
-              <th className="py-3 px-4 w-24">Kode</th>
-              <th className="py-3 px-4">Nama Suku Cadang</th>
-              <th className="py-3 px-4 w-32 border-l border-gray-200 bg-blue-50/50">
-                Harga Aktif
-              </th>
-              <th className="py-3 px-4 w-28 text-center text-xs">
-                Stok Gudang
-              </th>
-              <th className="py-3 px-4 w-24 text-center">Aksi Edit</th>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col animate-fade-in-up">
+      <div className="p-4 border-b border-gray-200 bg-white">
+        <h3 className="text-lg font-bold text-gray-800">
+          Direktori Data Master Suku Cadang (Kelola Harga Aktif)
+        </h3>
+        <p className="text-sm text-gray-500 mt-1">
+          Menampilkan direktori inventori dan mengizinkan modifikasi paksa harga
+          jual (menyimpan riwayat otomatis). Harga di bawah ini ditentukan dari
+          transaksi penerimaan stok (Shipment) terbaru di Gudang.
+        </p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-gray-500 bg-gray-50 uppercase border-b border-gray-200">
+            <tr>
+              <th className="px-6 py-4 font-medium">Kode</th>
+              <th className="px-6 py-4 font-medium">Nama Suku Cadang</th>
+              <th className="px-6 py-4 font-medium">Harga Aktif</th>
+              <th className="px-6 py-4 font-medium text-center">Stok Gudang</th>
+              <th className="px-6 py-4 font-medium text-center">Aksi Edit</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100 bg-white">
             {spareParts.length > 0 ? (
               spareParts.map((part: any) => (
                 <tr
                   key={part.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="hover:bg-gray-50 transition-colors duration-150"
                 >
-                  <td className="py-2.5 px-4 font-mono text-sm text-gray-600">
+                  <td className="px-6 py-4 font-mono text-xs text-gray-500 font-medium">
                     [{part.kode_suku_cadang}]
                   </td>
-                  <td className="py-2.5 px-4 font-medium text-gray-800">
-                    {part.nama_suku_cadang}{" "}
+                  <td className="px-6 py-4">
+                    <span className="font-medium text-gray-900">
+                      {part.nama_suku_cadang}
+                    </span>
                     <span className="text-xs text-gray-400 font-normal ml-1">
                       / {part.category?.nama_kategori}
                     </span>
                   </td>
-                  <td className="py-2.5 px-4 border-l border-gray-100">
+                  <td className="px-6 py-4">
                     {editPriceId === part.id ? (
                       <input
                         type="number"
-                        className="w-full px-2 py-1 text-sm border border-blue-400 rounded outline-none ring-2 ring-blue-100"
+                        className="w-full px-3 py-1.5 text-sm border border-blue-400 rounded-lg outline-none ring-2 ring-blue-100"
                         value={editPriceValue}
                         onChange={(e) => setEditPriceValue(e.target.value)}
                         placeholder="Rp..."
                       />
                     ) : (
-                      <span className="font-semibold text-blue-700">
+                      <span className="font-semibold text-blue-600">
                         {part.harga_aktif
                           ? formatRupiah(part.harga_aktif)
                           : "---"}
                       </span>
                     )}
                   </td>
-                  <td className="py-2.5 px-4 text-center">
+                  <td className="px-6 py-4 text-center">
                     <span
-                      className={`px-2 py-1 text-xs font-bold rounded-full ${part.stock?.stok_sekarang <= part.stock?.stok_minimum ? "bg-red-100 text-red-600" : "bg-green-100 text-green-700"}`}
+                      className={`inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold rounded-full ${part.stock?.stok_sekarang <= part.stock?.stok_minimum ? "bg-red-50 text-red-700 ring-1 ring-red-600/20" : "bg-green-50 text-green-700 ring-1 ring-green-600/20"}`}
                     >
                       {part.stock?.stok_sekarang || 0} {part.satuan || "Pcs"}
                     </span>
                   </td>
-                  <td className="py-2.5 px-4 flex justify-center items-center">
+                  <td className="px-6 py-4 text-center">
                     {editPriceId === part.id ? (
-                      <div className="flex gap-2">
+                      <div className="flex justify-center gap-2">
                         <button
                           onClick={() => setEditPriceId(null)}
-                          className="text-gray-400 hover:text-gray-600 text-xs px-2 py-1 rounded border"
+                          className="text-gray-500 hover:text-gray-700 text-xs px-3 py-1.5 rounded-lg border border-gray-300 bg-white transition-colors"
                         >
                           Batal
                         </button>
                         <button
                           onClick={() => handleUpdatePrice(part.id)}
-                          className="text-white bg-blue-600 hover:bg-blue-700 text-xs px-2 py-1 rounded flex gap-1"
+                          className="text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors font-medium"
                         >
                           <Save size={14} /> Simpan
                         </button>
@@ -144,10 +144,10 @@ const KoperasiMasterSukuCadang: React.FC = () => {
                           setEditPriceId(part.id);
                           setEditPriceValue(part.harga_aktif || "");
                         }}
-                        className="text-blue-500 hover:text-blue-700 p-1 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium border border-blue-100"
                         title="Koreksi manual log harga jual"
                       >
-                        <Edit size={16} />
+                        <Edit size={14} /> Edit
                       </button>
                     )}
                   </td>
@@ -155,10 +155,7 @@ const KoperasiMasterSukuCadang: React.FC = () => {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={5}
-                  className="py-6 text-center text-gray-500 text-sm"
-                >
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
                   Belum ada modul suku cadang
                 </td>
               </tr>
