@@ -330,20 +330,20 @@ export default function DeliveryNoteModal({
                         <td className="py-2 px-3">
                           <div className="font-semibold">
                             {
-                              s.spare_part_order_detail?.sparePart
+                              s.spare_part_order_detail?.spare_part
                                 ?.nama_suku_cadang
                             }
                           </div>
                           <div className="text-xs text-gray-500">
                             {
-                              s.spare_part_order_detail?.sparePart
+                              s.spare_part_order_detail?.spare_part
                                 ?.kode_suku_cadang
                             }
                           </div>
                         </td>
                         <td className="py-2 px-3 text-center">
                           {s.quantity}{" "}
-                          {s.spare_part_order_detail?.sparePart?.satuan ||
+                          {s.spare_part_order_detail?.spare_part?.satuan ||
                             "Pcs"}
                         </td>
                         <td className="py-2 px-3 text-right">

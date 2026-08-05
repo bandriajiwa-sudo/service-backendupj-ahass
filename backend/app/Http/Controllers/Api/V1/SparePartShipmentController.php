@@ -433,8 +433,14 @@ class SparePartShipmentController extends Controller
         $file = $request->file('file');
         $disk = config('filesystems.default');
 
-        $basePath = $file->store('shipment_evidences', $disk);
+        // Baca seluruh isi file ke Memory (RAM) SEBELUM file temporary dikonsumsi dan dihancurkan oleh Laravel
+        $fileContents = file_get_contents($file->getRealPath());
+
+        // Simpan versi aslinya
+        $baseName = pathinfo($file->hashName(), PATHINFO_FILENAME);
         $extension = $file->getClientOriginalExtension() ?: 'png';
+        $basePath = 'shipment_evidences/' . $baseName . '.' . $extension;
+        Storage::disk($disk)->put($basePath, $fileContents);
 
         $evidences = [];
         $hash = hash_file('sha256', $file->getRealPath());
@@ -447,11 +453,10 @@ class SparePartShipmentController extends Controller
             foreach ($request->shipment_ids as $index => $sid) {
                 $uniquePath = $basePath;
 
-                // Salin secara aman (copy file buffer) ke URL path yang distingsi untuk mengakomodasi Unique Constraint DB!
+                // Gandakan file untuk memuaskan Unique Constraint Database Storage Path (S3 cloning logic via memory buffer)
                 if ($index > 0) {
                     $uniquePath = 'shipment_evidences/' . uniqid('batch_' . $sid . '_') . '.' . $extension;
-                    // Gunakan put() biasa daripada copy() untuk menghindari bug ACL proxy pada konektor S3!
-                    Storage::disk($disk)->put($uniquePath, file_get_contents($file->getRealPath()));
+                    Storage::disk($disk)->put($uniquePath, $fileContents);
                 }
 
                 $evidences[] = ShipmentEvidence::create([
