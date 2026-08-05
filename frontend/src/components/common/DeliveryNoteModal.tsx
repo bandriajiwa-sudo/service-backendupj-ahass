@@ -90,7 +90,7 @@ export default function DeliveryNoteModal({
         }`}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50/80">
+        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50/80 print:hidden">
           <h2 className="font-bold text-lg text-gray-800 flex items-center gap-2">
             <FileText className="w-5 h-5 text-indigo-600" />
             Detail Surat Jalan -{" "}
