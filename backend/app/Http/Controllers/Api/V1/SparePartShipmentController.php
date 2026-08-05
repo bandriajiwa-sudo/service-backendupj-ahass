@@ -164,10 +164,18 @@ class SparePartShipmentController extends Controller
         // 1. Storage S3 AWS / Supabase Cloud or Local
         if ($evidence->storage_path) {
             $disk = $evidence->storage_disk ?? 'public';
+
+            // Fallback gracefully: if it was recorded as 'public' but not found locally, try the default S3 config
+            if ($disk === 'public' && !Storage::disk('public')->exists($evidence->storage_path)) {
+                $disk = config('filesystems.default');
+            }
+
             if (!Storage::disk($disk)->exists($evidence->storage_path)) {
                 return response()->json(['success' => false, 'message' => "Berkas {$disk} cloud hilang atau bucket tidak terdaftar."], 404);
             }
-            return Storage::disk($disk)->download($evidence->storage_path, $evidence->original_filename);
+
+            // Gunakan response() untuk kompatibilitas lebih baik dengan Supabase S3 stream ketimbang download() paksa
+            return Storage::disk($disk)->response($evidence->storage_path);
         }
 
         // 2. Storage Legacy (Base64 Injection)
