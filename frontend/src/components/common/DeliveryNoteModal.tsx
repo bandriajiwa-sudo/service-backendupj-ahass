@@ -71,7 +71,7 @@ export default function DeliveryNoteModal({
   };
 
   const calculateTotalSales = () => {
-    return group.shipments.reduce(
+    return uniqueShipments.reduce(
       (acc: number, s: any) =>
         acc + s.quantity * parseFloat(s.harga_jual || "0"),
       0,
@@ -81,6 +81,23 @@ export default function DeliveryNoteModal({
   const statusFisik =
     group.statusFisik ||
     (group.status === "disetujui" ? "Berhasil" : "Menunggu FO");
+
+  // Dedup shipments so replacement batches don't artificially duplicate items/prices.
+  // Group by spare_part_order_detail_id, the latter item (replacement) overwrites the original,
+  // keeping the quantity exactly proportional to the original purchase order amount.
+  const uniqueShipments = Array.from(
+    new Map(
+      group.shipments.map((s: any) => [
+        s.spare_part_order_detail?.id || s.id,
+        s,
+      ]),
+    ).values(),
+  );
+
+  const realTotalQty = uniqueShipments.reduce(
+    (acc: number, s: any) => acc + (s.quantity || 0),
+    0,
+  );
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[60] p-4 sm:p-6 backdrop-blur-sm">
@@ -248,7 +265,7 @@ export default function DeliveryNoteModal({
                           </p>
                         </div>
                         <p className="font-semibold text-gray-800 text-sm">
-                          {group.totalQty} Units
+                          {realTotalQty} Units
                         </p>
                       </div>
                     </div>
@@ -319,7 +336,7 @@ export default function DeliveryNoteModal({
                   </tr>
                 </thead>
                 <tbody>
-                  {group.shipments.map((s: any, idx: number) => {
+                  {uniqueShipments.map((s: any, idx: number) => {
                     const harga = parseFloat(s.harga_jual || "0");
                     const total = harga * s.quantity;
                     return (
@@ -357,7 +374,7 @@ export default function DeliveryNoteModal({
                     <td colSpan={2} className="py-2 px-3 text-right">
                       TOTAL
                     </td>
-                    <td className="py-2 px-3 text-center">{group.totalQty}</td>
+                    <td className="py-2 px-3 text-center">{realTotalQty}</td>
                     <td colSpan={2} className="py-2 px-3 text-right">
                       Rp {calculateTotalSales().toLocaleString("id-ID")}
                     </td>

@@ -123,7 +123,6 @@ export default function ShipmentList() {
         };
       }
       groups[orderNo].shipments.push(s);
-      groups[orderNo].totalQty += s.quantity;
       groups[orderNo].types.add(
         s.spare_part_order_detail.spare_part.kode_suku_cadang,
       );
@@ -140,7 +139,23 @@ export default function ShipmentList() {
     });
 
     return Object.values(groups)
-      .filter((g) => {
+      .map((g: any) => {
+        // Deduplicate shipments by detail ID so replacement overlaps do not double the totalQty metric.
+        const unique = Array.from(
+          new Map(
+            g.shipments.map((s: any) => [
+              s.spare_part_order_detail?.id || s.id,
+              s,
+            ]),
+          ).values(),
+        );
+        g.totalQty = unique.reduce(
+          (acc: number, s: any) => acc + (s.quantity || 0),
+          0,
+        );
+        return g;
+      })
+      .filter((g: any) => {
         if (!searchTerm) return true;
         return g.order.nomor_surat_order
           .toLowerCase()
