@@ -1,0 +1,9 @@
+[UNLOADABLE_DEPENDENCY] [0mCould not load src/features/koperasi/KoperasiMasterSukuCadang.tsx
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/app/router.tsx:22:38 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m22 │[0m [38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mK[0m[38;5;249mo[0m[38;5;249mp[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249ma[0m[38;5;249ms[0m[38;5;249mi[0m[38;5;249mM[0m[38;5;249ma[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mS[0m[38;5;249mu[0m[38;5;249mk[0m[38;5;249mu[0m[38;5;249mC[0m[38;5;249ma[0m[38;5;249md[0m[38;5;249ma[0m[38;5;249mn[0m[38;5;249mg[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m"../features/koperasi/KoperasiMasterSukuCadang"[38;5;249m;[0m
+ [38;5;240m   │[0m                                      ───────────────────────┬───────────────────────  
+ [38;5;240m   │[0m                                                             ╰───────────────────────── stream did not contain valid UTF-8
+[38;5;246m────╯[0m
+[31m
+    at aggregateBindingErrorsIntoJsError (file:///D:/Inventory-Service-Imformation-System/frontend/node_modules/rolldown/dist/shared/error-BuvQYXu
