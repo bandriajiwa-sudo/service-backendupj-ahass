@@ -136,12 +136,13 @@ class SparePartShipmentController extends Controller
         $file = $request->file('file');
 
         // Simpan ke Object Storage AWS S3 (Atau layer kloningan S3 Supabase)
-        $path = $file->store('shipment_evidences', 'public');
+        $disk = config('filesystems.default');
+        $path = $file->store('shipment_evidences', $disk);
 
         $evidence = ShipmentEvidence::create([
             'spare_part_shipment_id' => $shipment->id,
             'evidence_type' => $request->evidence_type,
-            'storage_disk' => 'public',
+            'storage_disk' => $disk,
             'storage_path' => $path,
             'base64_data' => null,
             'original_filename' => $file->getClientOriginalName(),
@@ -160,12 +161,13 @@ class SparePartShipmentController extends Controller
 
     public function downloadEvidence(ShipmentEvidence $evidence)
     {
-        // 1. Storage S3 AWS / Supabase Cloud
-        if ($evidence->storage_disk === 'public' && $evidence->storage_path) {
-            if (!Storage::disk('public')->exists($evidence->storage_path)) {
-                return response()->json(['success' => false, 'message' => 'Berkas S3 cloud hilang atau bucket tidak terdaftar.'], 404);
+        // 1. Storage S3 AWS / Supabase Cloud or Local
+        if ($evidence->storage_path) {
+            $disk = $evidence->storage_disk ?? 'public';
+            if (!Storage::disk($disk)->exists($evidence->storage_path)) {
+                return response()->json(['success' => false, 'message' => "Berkas {$disk} cloud hilang atau bucket tidak terdaftar."], 404);
             }
-            return Storage::disk('public')->download($evidence->storage_path, $evidence->original_filename);
+            return Storage::disk($disk)->download($evidence->storage_path, $evidence->original_filename);
         }
 
         // 2. Storage Legacy (Base64 Injection)
@@ -405,7 +407,9 @@ class SparePartShipmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('shipment_evidences', 'public');
+        // Store to the default disk (which should be S3 for Supabase)
+        $disk = config('filesystems.default');
+        $path = $file->store('shipment_evidences', $disk);
 
         $evidences = [];
         $hash = hash_file('sha256', $file->getRealPath());
@@ -419,7 +423,7 @@ class SparePartShipmentController extends Controller
                 $evidences[] = ShipmentEvidence::create([
                     'spare_part_shipment_id' => $sid,
                     'evidence_type' => $request->evidence_type,
-                    'storage_disk' => 'public',
+                    'storage_disk' => $disk,
                     'storage_path' => $path,
                     'base64_data' => null,
                     'original_filename' => $filename,
