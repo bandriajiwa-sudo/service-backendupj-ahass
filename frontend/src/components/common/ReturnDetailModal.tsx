@@ -20,8 +20,8 @@ export default function ReturnDetailModal({
       // Find the first evidence in the return items that is damage_or_defect
       let targetEv: any = null;
       for (const item of group.items) {
-        if (item.sparePartShipment?.evidences?.length > 0) {
-          const ev = item.sparePartShipment.evidences.find(
+        if (item.spare_part_shipment?.evidences?.length > 0) {
+          const ev = item.spare_part_shipment.evidences.find(
             (e: any) => e.evidence_type === "damage_or_defect",
           );
           if (ev) {
@@ -184,7 +184,7 @@ export default function ReturnDetailModal({
                       >
                         <div className="flex justify-between items-start mb-1">
                           <span className="font-bold text-gray-700 text-sm">
-                            {it.sparePartOrderDetail?.sparePart
+                            {it.spare_part_order_detail?.spare_part
                               ?.nama_suku_cadang || "Suku Cadang"}
                           </span>
                           <span className="text-sm font-bold text-red-600 px-2 py-0.5 bg-red-100 rounded">
@@ -192,7 +192,10 @@ export default function ReturnDetailModal({
                           </span>
                         </div>
                         <p className="text-xs text-gray-500">
-                          {it.sparePartOrderDetail?.sparePart?.kode_suku_cadang}
+                          {
+                            it.spare_part_order_detail?.spare_part
+                              ?.kode_suku_cadang
+                          }
                         </p>
                         <p className="text-xs mt-2 italic text-gray-600 border-t pt-1">
                           Kendala: "{it.reason}"
