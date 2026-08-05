@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  X,
-  FileText,
-  CheckCircle,
-  Clock,
-  Image as ImageIcon,
-  Calendar,
-} from "lucide-react";
+import { FileText, Clock, Image as ImageIcon, Calendar } from "lucide-react";
 import { apiClient } from "../../lib/api";
-
-type ViewStep = "card" | "a4";
 
 interface ReturnDetailModalProps {
   group: any; // Using the complex structure of viewDetailReturn (grp.header, grp.items)
