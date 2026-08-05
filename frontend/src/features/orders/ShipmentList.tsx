@@ -258,33 +258,41 @@ export default function ShipmentList() {
         </p>
       </div>
 
-      <div className={styles.tabsContainer}>
+      {/* Beautiful Tab Switching Card */}
+      <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-2 sm:w-max">
         <button
-          className={`${styles.tab} ${activeFOTab === "initial" ? styles.activeTab : ""}`}
+          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex-1 sm:flex-none text-center ${
+            activeFOTab === "initial"
+              ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
           onClick={() => setActiveFOTab("initial")}
         >
-          Tab 1: Penerimaan PO Baru
+          Penerimaan PO Baru
         </button>
         <button
-          className={`${styles.tab} ${activeFOTab === "returns" ? styles.activeTab : ""}`}
+          className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex-1 sm:flex-none text-center ${
+            activeFOTab === "returns"
+              ? "bg-red-500 text-white shadow-md shadow-red-200"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
           onClick={() => setActiveFOTab("returns")}
         >
-          Tab 2: Barang Retur (Tiket RPL)
+          Barang Retur (Tiket RPL)
         </button>
       </div>
 
-      <div className={styles.toolbar}>
-        <div className={styles.filters}>
-          <div className="relative w-64 md:w-auto">
-            <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              className={`${styles.searchInput} pl-9`}
-              placeholder="Cari referensi atau tiket..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+      {/* Styled Search Card Toolbar */}
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex items-center justify-between">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors bg-gray-50"
+            placeholder="Cari referensi order atau tiket retur..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
 
@@ -295,6 +303,7 @@ export default function ShipmentList() {
               <thead>
                 <tr>
                   <th>Order Reference</th>
+                  <th>Tanggal PO</th>
                   <th>Ringkasan Barang</th>
                   <th>Total Kirim</th>
                   <th>Status Fisik</th>
@@ -306,6 +315,15 @@ export default function ShipmentList() {
                   <tr key={idx} className="hover:bg-gray-50 transition-colors">
                     <td className="font-semibold text-gray-800">
                       {group.order.nomor_surat_order}
+                    </td>
+                    <td className="text-sm text-gray-600">
+                      {new Date(
+                        group.order.tanggal_pengajuan,
+                      ).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="text-sm text-gray-600">
                       {group.types.size} Jenis Suku Cadang
@@ -352,8 +370,8 @@ export default function ShipmentList() {
                 ))}
                 {groupedOrders.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="text-center p-8 text-gray-500">
-                      Tidak ada pengiriman batch ditemukan.
+                    <td colSpan={6} className="text-center p-8 text-gray-500">
+                      Tidak ada pengiriman dalam proses verifikasi.
                     </td>
                   </tr>
                 )}

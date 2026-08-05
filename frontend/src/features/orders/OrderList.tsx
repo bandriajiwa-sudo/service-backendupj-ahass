@@ -488,10 +488,32 @@ const OrderList: React.FC = () => {
 
               <div className="hidden print:flex justify-end w-full mt-12 pt-8 break-inside-avoid">
                 <div style={{ width: "220px", textAlign: "center" }}>
-                  <p className="mb-1 text-black font-medium text-sm">Yogyakarta, {new Date(viewDocumentOrder.tanggal_pengajuan || new Date()).toLocaleDateString("id-ID", { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                  <p className="text-black font-medium text-sm" style={{ marginBottom: "80px" }}>Resepsionis Front Office,</p>
-                  <div style={{ borderBottom: "1.5px solid black", width: "100%", margin: "0 auto 4px" }} />
-                  <p className="text-black font-bold text-sm m-0 p-0 uppercase">{viewDocumentOrder.user?.nama_user || "Petugas FO"}</p>
+                  <p className="mb-1 text-black font-medium text-sm">
+                    Yogyakarta,{" "}
+                    {new Date(
+                      viewDocumentOrder.tanggal_pengajuan || new Date(),
+                    ).toLocaleDateString("id-ID", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <p
+                    className="text-black font-medium text-sm"
+                    style={{ marginBottom: "80px" }}
+                  >
+                    Resepsionis Front Office,
+                  </p>
+                  <div
+                    style={{
+                      borderBottom: "1.5px solid black",
+                      width: "100%",
+                      margin: "0 auto 4px",
+                    }}
+                  />
+                  <p className="text-black font-bold text-sm m-0 p-0 uppercase">
+                    {viewDocumentOrder.user?.nama_user || "Petugas FO"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -508,51 +530,53 @@ const OrderList: React.FC = () => {
           </p>
         </div>
 
-        <div className={styles.tableCard}>
-          <div className="px-5 py-4 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white">
-            <div className={`${styles.toolbar} !mb-0`}>
-              <div className={styles.filters}>
-                <div className="relative w-64 md:w-auto">
-                  <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    className={`${styles.searchInput} pl-9`}
-                    placeholder="Cari nomor surat atau pengaju..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <select
-                  className={styles.selectInput}
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="semua">Semua Status</option>
-                  <option value="menunggu">Menunggu / Pending</option>
-                  <option value="disetujui">Disetujui</option>
-                  <option value="ditolak">Ditolak</option>
-                </select>
-                <input
-                  type="date"
-                  className={styles.selectInput}
-                  value={filterDate}
-                  onChange={(e) => setFilterDate(e.target.value)}
-                />
-              </div>
+        {/* Enhanced Filter Dashboard Overlay */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row justify-between gap-4 items-center">
+          <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+            {/* Search */}
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-gray-50 transition-colors"
+                placeholder="Cari nomor surat atau pengaju..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-
-            <div className={styles.actionGroup}>
-              {user?.role === "front_office" && (
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-medium py-2 px-5 rounded-md transition-colors whitespace-nowrap flex items-center gap-2"
-                  onClick={() => setIsCartOpen(true)}
-                >
-                  <Plus className="w-4 h-4" /> Buat Order Baru
-                </button>
-              )}
-            </div>
+            {/* Status */}
+            <select
+              className="w-full md:w-48 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="semua">Semua Status</option>
+              <option value="menunggu">Menunggu / Pending</option>
+              <option value="disetujui">Disetujui</option>
+              <option value="ditolak">Ditolak</option>
+            </select>
+            {/* Date */}
+            <input
+              type="date"
+              className="w-full md:w-48 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+            />
           </div>
 
+          <div className="w-full md:w-auto shrink-0 flex justify-end">
+            {user?.role === "front_office" && (
+              <button
+                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200 font-medium py-2.5 px-6 rounded-lg transition-all duration-200 whitespace-nowrap flex items-center gap-2"
+                onClick={() => setIsCartOpen(true)}
+              >
+                <Plus className="w-4 h-4" /> Buat Order Baru
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.tableCard}>
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
               <thead>
@@ -597,7 +621,9 @@ const OrderList: React.FC = () => {
                         <td>
                           <NotesBadge
                             catatanFo={order.catatan_fo}
-                            catatanKoperasi={order.catatan_koperasi || order.tanggal_awal}
+                            catatanKoperasi={
+                              order.catatan_koperasi || order.tanggal_awal
+                            }
                             onClick={() => setNotesModalOrder(order)}
                           />
                         </td>
@@ -666,7 +692,9 @@ const OrderList: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-gray-50 p-4 border rounded-md mb-6 items-end">
               <div className="col-span-1">
-                <label className="text-xs font-bold text-gray-700">Filter Kategori</label>
+                <label className="text-xs font-bold text-gray-700">
+                  Filter Kategori
+                </label>
                 <select
                   className="w-full text-sm p-2 border border-gray-300 rounded mt-1"
                   value={modalFilterCategory}
@@ -674,7 +702,9 @@ const OrderList: React.FC = () => {
                 >
                   <option value="">Semua</option>
                   {modalCategories.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </div>
