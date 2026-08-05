@@ -6,6 +6,7 @@ import {
   Calendar,
   CheckCircle,
   Clock,
+  Image as ImageIcon,
 } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import PrintHeader from "./PrintHeader";
