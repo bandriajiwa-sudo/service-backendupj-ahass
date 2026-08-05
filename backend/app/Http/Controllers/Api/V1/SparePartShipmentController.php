@@ -136,13 +136,12 @@ class SparePartShipmentController extends Controller
         $file = $request->file('file');
 
         // Simpan ke Object Storage AWS S3 (Atau layer kloningan S3 Supabase)
-        $disk = config('filesystems.default');
-        $path = $file->store('shipment_evidences', $disk);
+        $path = $file->store('shipment_evidences', 'public');
 
         $evidence = ShipmentEvidence::create([
             'spare_part_shipment_id' => $shipment->id,
             'evidence_type' => $request->evidence_type,
-            'storage_disk' => $disk,
+            'storage_disk' => 'public',
             'storage_path' => $path,
             'base64_data' => null,
             'original_filename' => $file->getClientOriginalName(),
@@ -161,38 +160,12 @@ class SparePartShipmentController extends Controller
 
     public function downloadEvidence(ShipmentEvidence $evidence)
     {
-        // 1. Storage S3 AWS / Supabase Cloud or Local
-        if ($evidence->storage_path) {
-            $disk = $evidence->storage_disk ?? 'public';
-
-            // Fallback gracefully: if it was recorded as 'public' but not found locally, try the default S3 config
-            try {
-                if ($disk === 'public') {
-                    // Cek ketersediaan lokal secara aman
-                    $localExists = false;
-                    try {
-                        $localExists = Storage::disk('public')->exists($evidence->storage_path);
-                    } catch (\Exception $e) {
-                    }
-
-                    if (!$localExists) {
-                        $disk = config('filesystems.default'); // Pindahkan ke S3
-                    }
-                }
-
-                // Ambil stream dari disk tujuan
-                $fileContent = Storage::disk($disk)->get($evidence->storage_path);
-                if (!$fileContent) {
-                    return response()->json(['success' => false, 'message' => "Berkas {$disk} cloud kosong atau hilang."], 404);
-                }
-
-                return response($fileContent)
-                    ->header('Content-Type', $evidence->mime_type ?? 'application/octet-stream')
-                    ->header('Content-Disposition', 'inline; filename="' . $evidence->original_filename . '"');
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("S3 Download Error: " . $e->getMessage());
-                return response()->json(['success' => false, 'message' => "S3 Fetch failed: " . $e->getMessage()], 500);
+        // 1. Storage S3 AWS / Supabase Cloud
+        if ($evidence->storage_disk === 'public' && $evidence->storage_path) {
+            if (!Storage::disk('public')->exists($evidence->storage_path)) {
+                return response()->json(['success' => false, 'message' => 'Berkas S3 cloud hilang atau bucket tidak terdaftar.'], 404);
             }
+            return Storage::disk('public')->download($evidence->storage_path, $evidence->original_filename);
         }
 
         // 2. Storage Legacy (Base64 Injection)
@@ -432,9 +405,7 @@ class SparePartShipmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        // Store to the default disk (which should be S3 for Supabase)
-        $disk = config('filesystems.default');
-        $path = $file->store('shipment_evidences', $disk);
+        $path = $file->store('shipment_evidences', 'public');
 
         $evidences = [];
         $hash = hash_file('sha256', $file->getRealPath());
@@ -448,7 +419,7 @@ class SparePartShipmentController extends Controller
                 $evidences[] = ShipmentEvidence::create([
                     'spare_part_shipment_id' => $sid,
                     'evidence_type' => $request->evidence_type,
-                    'storage_disk' => $disk,
+                    'storage_disk' => 'public',
                     'storage_path' => $path,
                     'base64_data' => null,
                     'original_filename' => $filename,
