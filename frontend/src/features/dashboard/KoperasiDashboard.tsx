@@ -7,7 +7,6 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
 import {
   BarChart,
@@ -31,14 +30,6 @@ const KoperasiDashboard: React.FC = () => {
 
   const [chartFilter, setChartFilter] = useState("Mingguan");
   const [chartData, setChartData] = useState<any[]>([]);
-
-  const formatRupiah = (number: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(number);
-  };
 
   useEffect(() => {
     fetchData();
