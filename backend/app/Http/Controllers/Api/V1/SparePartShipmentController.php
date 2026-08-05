@@ -450,7 +450,8 @@ class SparePartShipmentController extends Controller
                 // Salin secara aman (copy file buffer) ke URL path yang distingsi untuk mengakomodasi Unique Constraint DB!
                 if ($index > 0) {
                     $uniquePath = 'shipment_evidences/' . uniqid('batch_' . $sid . '_') . '.' . $extension;
-                    Storage::disk($disk)->copy($basePath, $uniquePath);
+                    // Gunakan put() biasa daripada copy() untuk menghindari bug ACL proxy pada konektor S3!
+                    Storage::disk($disk)->put($uniquePath, file_get_contents($file->getRealPath()));
                 }
 
                 $evidences[] = ShipmentEvidence::create([
