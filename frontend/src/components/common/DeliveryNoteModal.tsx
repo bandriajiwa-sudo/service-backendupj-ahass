@@ -23,20 +23,45 @@ export default function DeliveryNoteModal({
 }: DeliveryNoteModalProps) {
   const [step, setStep] = useState<ViewStep>("card");
   const [evidenceUrl, setEvidenceUrl] = useState<string | null>(null);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
 
   useEffect(() => {
-    // If there's an evidence file attached to the first shipment
-    if (
-      group?.shipments?.length > 0 &&
-      group.shipments[0].evidences?.length > 0
-    ) {
-      const ev = group.shipments[0].evidences[0];
-      setEvidenceUrl(
-        `${apiClient.defaults.baseURL}/shipment-evidences/${ev.id}/download`,
-      );
-    } else {
-      setEvidenceUrl(null);
-    }
+    let objectUrl: string | null = null;
+
+    const loadEvidence = async () => {
+      if (
+        group?.shipments?.length > 0 &&
+        group.shipments[0].evidences?.length > 0
+      ) {
+        setIsLoadingImage(true);
+        try {
+          const ev = group.shipments[0].evidences[0];
+          const response = await apiClient.get(
+            `/shipment-evidences/${ev.id}/download`,
+            {
+              responseType: "blob",
+            },
+          );
+          objectUrl = URL.createObjectURL(response.data);
+          setEvidenceUrl(objectUrl);
+        } catch (error) {
+          console.error("Gagal memuat gambar (diperlukan Auth):", error);
+          setEvidenceUrl(null);
+        } finally {
+          setIsLoadingImage(false);
+        }
+      } else {
+        setEvidenceUrl(null);
+      }
+    };
+
+    loadEvidence();
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [group]);
 
   const handlePrint = () => {
@@ -91,7 +116,17 @@ export default function DeliveryNoteModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full min-h-[400px]">
               {/* Left Column: Image Viewer prominent display */}
               <div className="bg-gray-100 rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center relative group min-h-[300px]">
-                {evidenceUrl ? (
+                {isLoadingImage ? (
+                  <div className="flex flex-col items-center justify-center text-gray-400 p-8 text-center animate-pulse">
+                    <Clock className="w-10 h-10 mb-3 text-indigo-300 animate-spin-slow" />
+                    <p className="font-medium text-gray-500">
+                      Memuat Foto Bukti...
+                    </p>
+                    <p className="text-xs mt-1 text-gray-400">
+                      Mengambil data secara aman
+                    </p>
+                  </div>
+                ) : evidenceUrl ? (
                   <img
                     src={evidenceUrl}
                     alt="Bukti Pengiriman"
