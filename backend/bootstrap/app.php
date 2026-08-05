@@ -29,10 +29,17 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
-                // Biarkan validasi, autentikasi, dan error HTTP (404/403) tertangani bawaan Laravel
+                // Tangani Unauthenticated secara spesifik untuk memblokir fallback redirect Laravel
+                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unauthenticated.'
+                    ], 401);
+                }
+
+                // Biarkan validasi, dan error HTTP (404/403) tertangani bawaan Laravel
                 if (
                     $e instanceof \Illuminate\Validation\ValidationException ||
-                    $e instanceof \Illuminate\Auth\AuthenticationException ||
                     $e instanceof \Symfony\Component\HttpKernel\Exception\HttpException
                 ) {
                     return null;
