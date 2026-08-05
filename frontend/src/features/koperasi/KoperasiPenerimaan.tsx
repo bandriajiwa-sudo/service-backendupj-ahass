@@ -217,50 +217,55 @@ export default function KoperasiPenerimaan() {
           </p>
         </div>
 
-        {/* Tab Navigation */}
-        <div className={styles.tabsContainer}>
+        {/* Beautiful Tab Switching Card */}
+        <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-2 sm:w-max">
           <button
-            className={`${styles.tab} ${activeTab === "initial" ? styles.activeTab : ""}`}
+            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex-1 sm:flex-none text-center ${
+              activeTab === "initial"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
             onClick={() => setActiveTab("initial")}
           >
-            Tab 1: Penerimaan PO Baru
+            Penerimaan PO Baru
           </button>
           <button
-            className={`${styles.tab} ${activeTab === "returns" ? styles.activeTab : ""}`}
+            className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex-1 sm:flex-none text-center ${
+              activeTab === "returns"
+                ? "bg-red-500 text-white shadow-md shadow-red-200"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
             onClick={() => setActiveTab("returns")}
           >
-            Tab 2: Barang Retur / Pengganti (RPL)
+            Barang Retur / Pengganti (RPL)
           </button>
         </div>
 
+        {/* Grouped Table */}
         {activeTab === "initial" && (
-          <div className={styles.toolbar}>
-            <div className={styles.filters}>
-              <div className="relative w-64 md:w-auto">
-                <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+          <div className={styles.tableCard}>
+            {/* Integrated Search & Actions Toolbar */}
+            <div className="p-4 border-b border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  className={`${styles.searchInput} pl-9`}
+                  className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors bg-gray-50"
                   placeholder="Pencarian Ref Order..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+              <div className="w-full sm:w-auto flex shrink-0">
+                <button
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200 font-medium py-2 px-5 rounded-lg transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 w-full"
+                  onClick={handleOpenForm}
+                >
+                  <Plus className="w-4 h-4" /> Surat Jalan Baru
+                </button>
+              </div>
             </div>
-            <div className={styles.actionGroup}>
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-medium py-2 px-5 rounded-md transition-colors whitespace-nowrap flex items-center gap-2"
-                onClick={handleOpenForm}
-              >
-                <Plus className="w-4 h-4" /> Surat Jalan Baru
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* Grouped Table */}
-        {activeTab === "initial" && (
-          <div className={styles.tableCard}>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead>

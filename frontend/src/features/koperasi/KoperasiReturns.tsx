@@ -80,7 +80,10 @@ export default function KoperasiReturns() {
       fd.append("file", rplInvoiceFile);
 
       await apiClient.post("/spare-part-shipments/batch-evidences", fd, {
-        headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+        },
       });
 
       Swal.fire({
@@ -111,15 +114,15 @@ export default function KoperasiReturns() {
     <div className={styles.container}>
       {/* TIKET RETUR GRID */}
       <div className={styles.tableCard}>
-        <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-          <h3 className="font-bold text-gray-800">
+        <div className="p-4 border-b border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h3 className="font-bold text-gray-800 self-start sm:self-auto">
             Daftar Tiket Retur / Pengganti (FO)
           </h3>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              className={`${styles.searchInput} pl-9`}
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors bg-gray-50"
               placeholder="Cari No Tiket Retur..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
