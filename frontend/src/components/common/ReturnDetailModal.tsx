@@ -12,29 +12,52 @@ export default function ReturnDetailModal({
   onClose,
 }: ReturnDetailModalProps) {
   const [evidenceUrl, setEvidenceUrl] = useState<string | null>(null);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
 
   useEffect(() => {
-    // Find the first evidence in the return items that is damage_or_defect
-    let targetEv: any = null;
-    for (const item of group.items) {
-      if (item.sparePartShipment?.evidences?.length > 0) {
-        const ev = item.sparePartShipment.evidences.find(
-          (e: any) => e.evidence_type === "damage_or_defect",
-        );
-        if (ev) {
-          targetEv = ev;
-          break;
+    let objectUrl: string | null = null;
+    const fetchEvidence = async () => {
+      // Find the first evidence in the return items that is damage_or_defect
+      let targetEv: any = null;
+      for (const item of group.items) {
+        if (item.sparePartShipment?.evidences?.length > 0) {
+          const ev = item.sparePartShipment.evidences.find(
+            (e: any) => e.evidence_type === "damage_or_defect",
+          );
+          if (ev) {
+            targetEv = ev;
+            break;
+          }
         }
       }
-    }
 
-    if (targetEv) {
-      setEvidenceUrl(
-        `${apiClient.defaults.baseURL}/shipment-evidences/${targetEv.id}/download`,
-      );
-    } else {
-      setEvidenceUrl(null);
-    }
+      if (targetEv) {
+        setIsLoadingImage(true);
+        try {
+          const response = await apiClient.get(
+            `/shipment-evidences/${targetEv.id}/download`,
+            {
+              responseType: "blob",
+            },
+          );
+          objectUrl = URL.createObjectURL(response.data);
+          setEvidenceUrl(objectUrl);
+        } catch (error) {
+          console.error("Gagal memuat gambar dari S3:", error);
+          setEvidenceUrl(null);
+        } finally {
+          setIsLoadingImage(false);
+        }
+      } else {
+        setEvidenceUrl(null);
+      }
+    };
+
+    fetchEvidence();
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [group]);
 
   const totalItemDiretur = group.items.reduce(
@@ -62,7 +85,17 @@ export default function ReturnDetailModal({
                 Pratinjau Bukti / Kerusakan
               </div>
               <div className="flex-1 flex items-center justify-center relative bg-white">
-                {evidenceUrl ? (
+                {isLoadingImage ? (
+                  <div className="flex flex-col items-center justify-center text-gray-400 p-8 text-center animate-pulse">
+                    <Clock className="w-10 h-10 mb-3 text-red-300 animate-spin" />
+                    <p className="font-medium text-gray-500">
+                      Memuat Foto Bukti...
+                    </p>
+                    <p className="text-xs mt-1 text-gray-400">
+                      Mengambil data secara aman dari cloud
+                    </p>
+                  </div>
+                ) : evidenceUrl ? (
                   <img
                     src={evidenceUrl}
                     alt="Bukti Retur"
