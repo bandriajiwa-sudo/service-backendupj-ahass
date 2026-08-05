@@ -1,0 +1,10 @@
+
+D:\Inventory-Service-Imformation-System\frontend\src\components\common\DeliveryNoteModal.tsx
+   17:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   75:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  339:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 5 problems (5 errors, 0 warnings)
+

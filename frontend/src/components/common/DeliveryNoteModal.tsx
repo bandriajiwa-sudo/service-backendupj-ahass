@@ -85,7 +85,7 @@ export default function DeliveryNoteModal({
   // Dedup shipments so replacement batches don't artificially duplicate items/prices.
   // Group by spare_part_order_detail_id, the latter item (replacement) overwrites the original,
   // keeping the quantity exactly proportional to the original purchase order amount.
-  const uniqueShipments = Array.from(
+  const uniqueShipments: any[] = Array.from(
     new Map(
       group.shipments.map((s: any) => [
         s.spare_part_order_detail?.id || s.id,
@@ -94,10 +94,10 @@ export default function DeliveryNoteModal({
     ).values(),
   );
 
-  const realTotalQty = uniqueShipments.reduce(
+  const realTotalQty: number = uniqueShipments.reduce(
     (acc: number, s: any) => acc + (s.quantity || 0),
     0,
-  );
+  ) as number;
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[60] p-4 sm:p-6 backdrop-blur-sm">
