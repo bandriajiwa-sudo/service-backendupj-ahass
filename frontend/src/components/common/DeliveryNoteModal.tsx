@@ -46,7 +46,7 @@ export default function DeliveryNoteModal({
           objectUrl = URL.createObjectURL(response.data);
           setEvidenceUrl(objectUrl);
         } catch (error) {
-          console.error("Gagal memuat gambar (diperlukan Auth):", error);
+          console.error("Gagal memuat gambar (File hilang / S3 404):", error);
           setEvidenceUrl(null);
         } finally {
           setIsLoadingImage(false);

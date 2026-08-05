@@ -43,7 +43,7 @@ export default function ReturnDetailModal({
           objectUrl = URL.createObjectURL(response.data);
           setEvidenceUrl(objectUrl);
         } catch (error) {
-          console.error("Gagal memuat gambar dari S3:", error);
+          console.error("Gagal memuat gambar dari S3 (404):", error);
           setEvidenceUrl(null);
         } finally {
           setIsLoadingImage(false);
