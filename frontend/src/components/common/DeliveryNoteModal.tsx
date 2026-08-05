@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import {
+  X,
   FileText,
   Download,
   User,
@@ -9,6 +10,7 @@ import {
   Clock,
 } from "lucide-react";
 import { apiClient } from "../../lib/api";
+import PrintHeader from "./PrintHeader";
 
 type ViewStep = "card" | "a4";
 
@@ -268,15 +270,12 @@ export default function DeliveryNoteModal({
             // ============================
             // STEP 2: FORMAL A4 LAYOUT
             // ============================
-            <div className="print-area bg-white text-black p-4 md:p-8 max-w-[21cm] mx-auto min-h-[14cm] shadow-[0_0_15px_rgba(0,0,0,0.1)] mb-4">
-              <div className="text-center mb-8 border-b-2 border-black pb-4">
-                <h3 className="font-bold text-2xl uppercase tracking-wider mb-1">
-                  Laporan Penerimaan Suku Cadang
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Surat Jalan DO Berbasis Referensi Order
-                </p>
-              </div>
+            <div className="flex-1 overflow-y-auto p-12 bg-white print:p-0 print:overflow-visible">
+              <PrintHeader
+                title="Laporan Penerimaan Suku Cadang"
+                subtitle="Surat Jalan DO Berbasis Referensi Order"
+                periodLabel=""
+              />
 
               <div className="flex justify-between items-start mb-8 text-sm">
                 <div>
@@ -366,19 +365,6 @@ export default function DeliveryNoteModal({
                   </tr>
                 </tbody>
               </table>
-
-              {evidenceUrl && (
-                <div className="mt-8 page-break-inside-avoid print:hidden">
-                  <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">
-                    Lampiran Foto
-                  </h4>
-                  <img
-                    src={evidenceUrl}
-                    alt="Evidence"
-                    className="max-w-xs object-cover border border-gray-200 rounded p-1"
-                  />
-                </div>
-              )}
             </div>
           )}
         </div>
