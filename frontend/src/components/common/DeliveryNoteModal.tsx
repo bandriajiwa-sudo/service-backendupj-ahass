@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import {
-  X,
   FileText,
   Download,
   User,
   Calendar,
-  Image as ImageIcon,
   CheckCircle,
   Clock,
 } from "lucide-react";
