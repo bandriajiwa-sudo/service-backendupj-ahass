@@ -166,16 +166,33 @@ class SparePartShipmentController extends Controller
             $disk = $evidence->storage_disk ?? 'public';
 
             // Fallback gracefully: if it was recorded as 'public' but not found locally, try the default S3 config
-            if ($disk === 'public' && !Storage::disk('public')->exists($evidence->storage_path)) {
-                $disk = config('filesystems.default');
-            }
+            try {
+                if ($disk === 'public') {
+                    // Cek ketersediaan lokal secara aman
+                    $localExists = false;
+                    try {
+                        $localExists = Storage::disk('public')->exists($evidence->storage_path);
+                    } catch (\Exception $e) {
+                    }
 
-            if (!Storage::disk($disk)->exists($evidence->storage_path)) {
-                return response()->json(['success' => false, 'message' => "Berkas {$disk} cloud hilang atau bucket tidak terdaftar."], 404);
-            }
+                    if (!$localExists) {
+                        $disk = config('filesystems.default'); // Pindahkan ke S3
+                    }
+                }
 
-            // Gunakan response() untuk kompatibilitas lebih baik dengan Supabase S3 stream ketimbang download() paksa
-            return Storage::disk($disk)->response($evidence->storage_path);
+                // Ambil stream dari disk tujuan
+                $fileContent = Storage::disk($disk)->get($evidence->storage_path);
+                if (!$fileContent) {
+                    return response()->json(['success' => false, 'message' => "Berkas {$disk} cloud kosong atau hilang."], 404);
+                }
+
+                return response($fileContent)
+                    ->header('Content-Type', $evidence->mime_type ?? 'application/octet-stream')
+                    ->header('Content-Disposition', 'inline; filename="' . $evidence->original_filename . '"');
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("S3 Download Error: " . $e->getMessage());
+                return response()->json(['success' => false, 'message' => "S3 Fetch failed: " . $e->getMessage()], 500);
+            }
         }
 
         // 2. Storage Legacy (Base64 Injection)
