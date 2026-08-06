@@ -89,6 +89,7 @@ $apiRoutes = function () {
             Route::put('/spare-part-shipments/{shipment}', [SparePartShipmentController::class, 'update']);
             Route::post('/spare-part-shipments/{shipment}/submit', [SparePartShipmentController::class, 'submit']);
             Route::post('/spare-part-returns/{return}/replacement-shipment', [SparePartReturnController::class, 'createReplacement']);
+            Route::patch('/spare-part-returns/{return}/reject', [SparePartReturnController::class, 'reject']);
         });
 
         // Shared Action Routes (Evidences can be uploaded by Koperasi for initial/replacements, and FO for damage)

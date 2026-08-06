@@ -104,4 +104,53 @@ class SparePartReturnController extends Controller
             ], 500);
         }
     }
+
+    public function reject(Request $request, SparePartReturnHeader $return)
+    {
+        $request->validate([
+            'catatan_koperasi' => 'required|string|max:1000'
+        ]);
+
+        if ($return->status !== 'menunggu_pengiriman_ulang') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tiket retur tidak pada status yang dapat ditolak.',
+            ], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $lockedHeader = SparePartReturnHeader::where('id', $return->id)->lockForUpdate()->first();
+
+            if ($lockedHeader->status !== 'menunggu_pengiriman_ulang') {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Retur tersebut telah terlayani atau ditolak oleh entitas lain.',
+                ], 409);
+            }
+
+            // Mutasi status Retur menjadi dibatalkan
+            $lockedHeader->status = 'dibatalkan';
+            $lockedHeader->catatan_koperasi = $request->catatan_koperasi;
+            $lockedHeader->resolved_by = auth()->id() ?? 1;
+            $lockedHeader->resolved_at = now();
+            $lockedHeader->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tiket retur berhasil ditolak.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error("Reject Return Encountered Flaw: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat mencoba menolak tiket retur.',
+            ], 500);
+        }
+    }
 }

@@ -15,6 +15,10 @@ export default function KoperasiReturns() {
   const [rplInvoiceFile, setRplInvoiceFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Rejection State
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+
   // Evidence Preview State
   const [previewEvidenceUrl, setPreviewEvidenceUrl] = useState<string | null>(
     null,
@@ -52,6 +56,33 @@ export default function KoperasiReturns() {
       setPreviewEvidenceUrl(null);
     } finally {
       setIsPreviewLoading(false);
+    }
+  };
+
+  const handleRejectTicket = async () => {
+    if (!rejectReason.trim()) {
+      Swal.fire({ icon: "warning", text: "Mohon isi alasan penolakan" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await apiClient.patch(`/spare-part-returns/${selectedTicket.id}/reject`, {
+        catatan_koperasi: rejectReason,
+      });
+      Swal.fire({ icon: "success", text: "Tiket retur berhasil ditolak" });
+      setSelectedTicket(null);
+      setShowRejectForm(false);
+      setRejectReason("");
+      fetchReturns();
+    } catch (err: any) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        text: err.response?.data?.message || "Gagal menolak tiket retur",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -210,21 +241,25 @@ export default function KoperasiReturns() {
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
             {/* Header */}
-            <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+            <div className="flex justify-between items-center mb-6 border-b pb-4 px-6 pt-6">
               <div>
-                <h2 className="text-xl font-bold text-gray-800">
+                <h3 className="font-bold text-gray-800 text-xl">
                   Penanganan Retur (RPL)
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Tiket:{" "}
-                  <span className="font-semibold">
-                    {selectedTicket.nomor_tiket_retur}
-                  </span>
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">
+                  Tiket: {selectedTicket.nomor_tiket_retur}
                 </p>
               </div>
               <button
-                onClick={() => setSelectedTicket(null)}
-                className="text-gray-400 hover:text-red-500 transition hover:bg-red-50 p-2 rounded-full"
+                onClick={() => {
+                  setSelectedTicket(null);
+                  setPreviewEvidenceUrl(null);
+                  setShowRplForm(false);
+                  setRplInvoiceFile(null);
+                  setShowRejectForm(false);
+                  setRejectReason("");
+                }}
+                className="text-gray-400 hover:text-gray-700 transition"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -342,7 +377,7 @@ export default function KoperasiReturns() {
                       Aksi Penggantian (RPL)
                     </h3>
 
-                    {!showRplForm ? (
+                    {!showRplForm && !showRejectForm ? (
                       <div className="flex flex-col gap-3">
                         <button
                           onClick={() => setShowRplForm(true)}
@@ -351,11 +386,14 @@ export default function KoperasiReturns() {
                           <Check className="w-5 h-5" /> [ ✅ Setujui & Kirim RPL
                           ]
                         </button>
-                        <button className="w-full bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-600 font-bold py-3 rounded transition flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => setShowRejectForm(true)}
+                          className="w-full bg-gray-100 hover:bg-red-100 hover:text-red-700 text-gray-600 font-bold py-3 rounded transition flex items-center justify-center gap-2"
+                        >
                           <X className="w-5 h-5" /> Tolak & Batalkan Tiket
                         </button>
                       </div>
-                    ) : (
+                    ) : showRplForm ? (
                       <div className="animate-fadeIn">
                         <p className="text-sm text-gray-600 mb-4 bg-yellow-50 p-3 rounded border border-yellow-200">
                           Sistem akan secara kolektif membangkitkan data Surat
@@ -398,16 +436,52 @@ export default function KoperasiReturns() {
                               setRplInvoiceFile(null);
                             }}
                             className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded transition"
-                            disabled={isSubmitting}
                           >
-                            Batal
+                            Kembali
                           </button>
                           <button
                             onClick={handleApproveAndSendRPL}
-                            disabled={isSubmitting}
-                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded shadow transition"
+                            disabled={isSubmitting || !rplInvoiceFile}
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-semibold py-2 rounded shadow transition"
                           >
-                            {isSubmitting ? "Memproses..." : "Selesaikan RPL"}
+                            {isSubmitting ? "Memproses..." : "Submit RPL Baru"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="animate-fadeIn">
+                        <p className="text-sm text-gray-600 mb-4 bg-red-50 p-3 rounded border border-red-200">
+                          Operasi ini akan membatalkan tiket retur secara
+                          permanen. Mohon berikan alasan penolakan.
+                        </p>
+
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Catatan Penolakan (Koperasi) *
+                        </label>
+                        <textarea
+                          className="w-full bg-gray-50 border rounded-md px-3 py-2 text-sm text-gray-600 mb-4 focus:ring-2 focus:ring-red-200 focus:border-red-400"
+                          rows={3}
+                          value={rejectReason}
+                          onChange={(e) => setRejectReason(e.target.value)}
+                          placeholder="Mengapa retur ini tidak valid?"
+                        />
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setShowRejectForm(false);
+                              setRejectReason("");
+                            }}
+                            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded transition"
+                          >
+                            Kembali
+                          </button>
+                          <button
+                            onClick={handleRejectTicket}
+                            disabled={isSubmitting || !rejectReason.trim()}
+                            className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold py-2 rounded shadow transition"
+                          >
+                            {isSubmitting ? "Memproses..." : "Konfirmasi Tolak"}
                           </button>
                         </div>
                       </div>
