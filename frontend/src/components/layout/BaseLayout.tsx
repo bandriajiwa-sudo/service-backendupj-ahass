@@ -10,6 +10,7 @@ import {
   Users,
   Inbox,
   LogOut,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./BaseLayout.module.css";
@@ -96,6 +97,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         path: "master-suku-cadang",
         icon: Package,
         label: "Master Suku Cadang",
+      });
+      menu.push({
+        path: "log-harga",
+        icon: Clock,
+        label: "Log Harga",
       });
     } else if (role === "kepala_upj") {
       menu.push({

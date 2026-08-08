@@ -1,0 +1,120 @@
+--- SECTION 0 : SKRIPSI ---
+SKRIPSI
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+(Studi Kasus: UPJ Otomotif dan AHASS BLPT DIY)
+Disusun sebagai salah satu syarat kelulusan pada Program Studi Sistem Informasi Program Sarjana Fakultas Sains dan Teknologi UNRIYO
+Disusun oleh:
+IMAN MUKHLISIN
+NIM: 22230020
+PROGRAM STUDI SISTEM INFORMASI PROGRAM SARJANA
+FAKULTAS SAINS DAN TEKNOLOGI
+UNIVERSITAS RESPATI YOGYAKARTA
+2026
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+(Studi Kasus: UPJ Otomotif dan AHASS BLPT DIY)
+Disusun oleh:
+IMAN MUKHLISIN
+NIM: 22230020
+Ketua Program Studi Sistem Informasi – Program Sarjana Tanggal:	Agustus 2026
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 0506106501
+UNIVERSITAS RESPATI YOGYAKARTA
+Fakultas Sains dan Teknologi
+Program Studi Sistem Informasi – Program Sarjana Skripsi Sarjana Komputer
+Semester Genap TA 2025/2026
+HALAMAN PERSIAPAN PENDADARAN
+Pernyataan Kesiapan Skripsi untuk Ujian Pendadaran Saya Iman Mukhlisin
+Dengan ini menyatakan bahwa Skripsi yang berjudul:
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+Adalah benar-benar karya saya dan belum pernah diajukan sebagai karya ilmiah, sebagian atau seluruhnya, atas nama saya atau pihak lain:
+Iman Mukhlisin
+ NIM: 22230020
+Disetujui oleh Pembimbing
+Saya setuju Skripsi tersebut diajukan untuk Ujian Pendadaran Disetujui Oleh:
+Mengetahui,
+Ketua Program Studi Sistem Informasi – Program Sarjana
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 050610650...
+
+--- SECTION 1 : BAB I ---
+BAB I
+PENDAHULUAN
+1.1. Latar Belakang
+Pemanfaatan teknologi informasi mendorong lembaga dan organisasi untuk mengelola data transaksi secara lebih terstruktur, cepat, dan akurat. Proses pencatatan yang belum terintegrasi dapat menimbulkan keterlambatan pengolahan data, ketidakakuratan pencatatan, serta kesulitan dalam penyusunan laporan operasional. Delviani Kurniawati Djami et al., (2021) menjelaskan bahwa pengelolaan transaksi pembelian, penjualan, jasa servis, dan laporan yang masih dilakukan secara konvensional menyebabkan proses pencatatan menjadi kurang cepat dan kurang akurat. Oleh karena itu, penerapan sistem informasi yang sesuai diperlukan untuk mendukung produktivitas dan kualitas pengelolaan data operasional organisasi.
+Balai Latihan Pendidikan Teknik (BLPT) Daerah Istimewa Yogyakarta merupakan lembaga yang menyelenggarakan pendidikan dan pelatihan kompetensi di bidang teknik untuk meningkatkan keterampilan yang sesuai dengan kebutuhan dunia usaha dan industri. BLPT DIY juga menyelenggarakan layanan melalui Unit Produksi dan Jasa (UPJ) Otomotif dan AHASS yang memberikan pelayanan perawatan serta perbaikan kendaraan bermotor kepada masyarakat. Pelaksanaan layanan tersebut memerlukan pengelolaan data transaksi jasa, penjualan suku cadang, dan persediaan yang tertib agar kegiatan operasional dapat dipantau secara akurat dan transparan (Muhammad Fajrul Fatahillah, 2025).
+Proses operasional di UPJ Otomotif dan AHASS BLPT DIY masih mengandalkan Microsoft Excel dalam pen...
+
+--- SECTION 2 : BAB I PENDAHULUAN ---
+BAB I PENDAHULUAN...
+
+--- SECTION 3 : Bab ini memuat latar belakang, perumusan masalah, tujuan dan manfaat penelitian, batasan masalah, metodologi penelitian, unit penelitian, metode pengumpulan data, serta sistematika penulisan. ---
+Bab ini memuat latar belakang, perumusan masalah, tujuan dan manfaat penelitian, batasan masalah, metodologi penelitian, unit penelitian, metode pengumpulan data, serta sistematika penulisan....
+
+--- SECTION 4 : BAB II LANDASAN TEORI ---
+BAB II LANDASAN TEORI...
+
+--- SECTION 5 : Bab ini diawali dengan tinjauan pustaka yang membahas penelitian terdahulu serta posisi penelitian. Selanjutnya, landasan teori memuat konsep sistem informasi, penjualan suku cadang, jasa servis, manajemen persediaan, metode pengembangan sistem, pemodelan proses, basis data, teknologi yang digunakan, dan pengujian sistem. ---
+Bab ini diawali dengan tinjauan pustaka yang membahas penelitian terdahulu serta posisi penelitian. Selanjutnya, landasan teori memuat konsep sistem informasi, penjualan suku cadang, jasa servis, manajemen persediaan, metode pengembangan sistem, pemodelan proses, basis data, teknologi yang digunakan, dan pengujian sistem....
+
+--- SECTION 6 : BAB III ANALISA DAN PERANCANGAN SISTEM ---
+BAB III ANALISA DAN PERANCANGAN SISTEM...
+
+--- SECTION 7 : Bab ini membahas tinjauan umum UPJ Otomotif dan AHASS BLPT DIY, sistem yang sedang berjalan, sistem baru yang diusulkan, analisis kebutuhan, perancangan proses menggunakan Data Flow Diagram (DFD), perancangan basis data menggunakan Entity Relationship Diagram (ERD) dan relasi tabel, serta UI/UX. ---
+Bab ini membahas tinjauan umum UPJ Otomotif dan AHASS BLPT DIY, sistem yang sedang berjalan, sistem baru yang diusulkan, analisis kebutuhan, perancangan proses menggunakan Data Flow Diagram (DFD), perancangan basis data menggunakan Entity Relationship Diagram (ERD) dan relasi tabel, serta UI/UX....
+
+--- SECTION 8 : BAB IV IMPLEMENTASI DAN PENGUJIAN SISTEM ---
+BAB IV IMPLEMENTASI DAN PENGUJIAN SISTEM...
+
+--- SECTION 9 : Bab ini menyajikan implementasi sistem dalam bentuk tampilan aplikasi beserta penjelasan fungsi setiap modul. Bab ini juga memuat hasil pengujian menggunakan metode black-box testing untuk memastikan fungsi sistem telah sesuai dengan kebutuhan operasional. ---
+Bab ini menyajikan implementasi sistem dalam bentuk tampilan aplikasi beserta penjelasan fungsi setiap modul. Bab ini juga memuat hasil pengujian menggunakan metode black-box testing untuk memastikan fungsi sistem telah sesuai dengan kebutuhan operasional....
+
+--- SECTION 10 : BAB V PENUTUP ---
+BAB V PENUTUP...
+
+--- SECTION 11 : Bab ini memuat kesimpulan yang menjawab perumusan masalah serta saran yang dapat digunakan sebagai pertimbangan dalam pengembangan sistem selanjutnya. ---
+Bab ini memuat kesimpulan yang menjawab perumusan masalah serta saran yang dapat digunakan sebagai pertimbangan dalam pengembangan sistem selanjutnya....
+
+--- SECTION 12 : BAB II ---
+BAB II
+LANDASAN TEORI
+2.1. Tinjauan Pustaka
+Tinjauan pustaka merupakan bagian penelitian yang digunakan untuk menelaah hasil penelitian terdahulu yang relevan dengan sistem informasi bengkel, penjualan suku cadang, jasa servis, persediaan, dan pelaporan berbasis Web. Penelaahan dilakukan untuk mengetahui pendekatan yang telah digunakan, membandingkan fungsi sistem, serta menentukan posisi dan pembeda penelitian yang dilaksanakan pada UPJ Otomotif dan AHASS BLPT DIY.
+Berdasarkan Delviani Kurniawati Djami et al., (2021) dikembangkan sistem informasi penjualan suku cadang dan jasa servis motor untuk menggantikan pencatatan konvensional. Sistem tersebut dibangun menggunakan model Waterfall, Visual Basic.Net, dan MySQL serta diuji menggunakan metode black-box. Selanjutnya, Fitri Yunita, Bayu Rianto, (2022) membahas sistem informasi bengkel berbasis Web yang mengelola data pelanggan, transaksi servis, penjualan suku cadang, serta pembuatan laporan pada Kakella Motor.
+Berdasarkan Rahmawati et al., (2023) dirancang sistem penjualan suku cadang berbasis Web yang dilengkapi fungsi pembelian, transfer stok, diskon, retur, dan keluhan pelanggan. Masturoh, (2024) mengembangkan sistem home service dan penjualan suku cadang menggunakan model Waterfall untuk mengelola permintaan layanan, transaksi, persediaan, serta laporan secara terintegrasi.
+Berdasarkan Citra Wuladari & Fersellia, (2025) diimplementasikan sistem informasi manajemen bengkel berbasis Web untuk meningkatkan efisiensi pencata...
+
+--- SECTION 13 : BAB III ---
+BAB III
+ANALISA DAN PERANCANGAN
+3.1. Tinjauan Umum
+Tinjauan umum memberikan gambaran mengenai objek penelitian yang digunakan sebagai tempat pengumpulan data dan penerapan sistem, yaitu Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta, khususnya Unit Produksi dan Jasa Otomotif dan AHASS. Uraian pada bagian ini meliputi kedudukan, tugas, visi dan misi, struktur organisasi, serta denah lokasi yang berkaitan dengan pelaksanaan layanan otomotif.
+Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta merupakan lembaga teknis yang menyelenggarakan pendidikan dan pelatihan bidang keteknikan. Selain menjalankan layanan pendidikan dan pelatihan, BLPT DIY juga mengelola Unit Produksi dan Jasa sebagai sarana penerapan kompetensi sekaligus pelayanan kepada masyarakat. Salah satu unit tersebut adalah UPJ Otomotif dan AHASS yang memberikan pelayanan perawatan, perbaikan, serta penyediaan suku cadang kendaraan bermotor.
+3.1.1. Kedudukan
+Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta berkedudukan sebagai Unit Pelaksana Teknis Daerah di bawah Dinas Pendidikan, Pemuda, dan Olahraga Daerah Istimewa Yogyakarta. Kedudukan tersebut menempatkan BLPT DIY sebagai lembaga teknis yang melaksanakan program pendidikan, pelatihan, sertifikasi, serta pelayanan bidang keteknikan untuk mendukung peningkatan kompetensi sumber daya manusia.
+BLPT DIY beralamat di Jalan Kyai Mojo Nomor 70, Bener, Kemantren Tegalrejo, Kota Yogyakarta, Daerah Istimewa Yogyakarta. UPJ Otomotif dan AHASS be...
+
+--- SECTION 14 : BAB IV ---
+BAB IV
+IMPLEMENTASI DAN PENGUJIAN SISTEM
+4.1. Implementasi Sistem
+Implementasi sistem dilakukan dengan menerjemahkan desain sistem ke dalam bentuk aplikasi berbasis web menggunakan bahasa pemrograman, framework, serta basis data yang telah ditentukan. Setiap fitur yang diimplementasikan disesuaikan dengan kebutuhan masing-masing peran pengguna sehingga sistem dapat berjalan sesuai alur bisnis yang telah ditetapkan untuk UPJ Otomotif dan AHASS BLPT DIY.
+4.1.1. Form Login
+Dashboard Login
+Halaman login digunakan sebagai gerbang masuk ke dalam sistem. Pada halaman ini, pengguna diminta memasukkan username dan password yang telah terdaftar untuk dapat mengakses sistem sesuai dengan hak akses masing-masing role.
+4.1. 2 Bagian Admin
+Dashboard Admin
+Halaman Dashboard Admin menampilkan ringkasan informasi terkait seluruh aktivitas dan master data yang dikelola oleh admin di dalam sistem.
+Dashboard Master Kategori Suku Cadang
+Halaman ini digunakan oleh admin untuk mengelola pengkategorian jenis suku cadang yang tersedia di UPJ, memudahkan dalam proses pencarian dan klasifikasi barang.
+Dashboard Data Personil
+Halaman Data Personil berfungsi untuk menyimpan dan mengelola data identitas pegawai atau karyawan yang bekerja di lingkungan UPJ.
+Dashboard Data Pengguna
+Halaman ini digunakan admin untuk mengatur hak akses akun pengguna (Manajemen User), meliputi penambahan, pengubahan password, dan penetapan role.
+Dashboard Data Mekanik
+Halaman Data Mekanik digunakan khusus untuk menyimpan data ...
+
+--- SECTION 15 : BAB V PENUTUP ---
+BAB V PENUTUP
+Kesimpulan
+Saran...
+

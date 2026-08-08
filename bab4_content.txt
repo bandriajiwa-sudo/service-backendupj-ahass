@@ -1,0 +1,67 @@
+BAB IV
+IMPLEMENTASI DAN PENGUJIAN SISTEM
+4.1. Implementasi Sistem
+Implementasi sistem dilakukan dengan menerjemahkan desain sistem ke dalam bentuk aplikasi berbasis web menggunakan bahasa pemrograman, framework, serta basis data yang telah ditentukan. Setiap fitur yang diimplementasikan disesuaikan dengan kebutuhan masing-masing peran pengguna sehingga sistem dapat berjalan sesuai alur bisnis yang telah ditetapkan untuk UPJ Otomotif dan AHASS BLPT DIY.
+4.1.1. Form Login
+Dashboard Login
+Halaman login digunakan sebagai gerbang masuk ke dalam sistem. Pada halaman ini, pengguna diminta memasukkan username dan password yang telah terdaftar untuk dapat mengakses sistem sesuai dengan hak akses masing-masing role.
+4.1. 2 Bagian Admin
+Dashboard Admin
+Halaman Dashboard Admin menampilkan ringkasan informasi terkait seluruh aktivitas dan master data yang dikelola oleh admin di dalam sistem.
+Dashboard Master Kategori Suku Cadang
+Halaman ini digunakan oleh admin untuk mengelola pengkategorian jenis suku cadang yang tersedia di UPJ, memudahkan dalam proses pencarian dan klasifikasi barang.
+Dashboard Data Personil
+Halaman Data Personil berfungsi untuk menyimpan dan mengelola data identitas pegawai atau karyawan yang bekerja di lingkungan UPJ.
+Dashboard Data Pengguna
+Halaman ini digunakan admin untuk mengatur hak akses akun pengguna (Manajemen User), meliputi penambahan, pengubahan password, dan penetapan role.
+Dashboard Data Mekanik
+Halaman Data Mekanik digunakan khusus untuk menyimpan data mekanik yang akan menangani proses service kendaraan pelanggan.
+Dashboard Master Suku Cadang
+Halaman ini menampilkan seluruh basis data suku cadang yang tersedia di sistem, lengkap dengan informasi stok, satuan, dan deskripsi suku cadang.
+4.1.2. Bagian Front Office
+Dashboard Front Office
+Halaman utama bagi peran Front Office yang menyajikan informasi ringkas terkait status pelayanan, transaksi, dan notifikasi stok suku cadang.
+Dashboard Transaksi
+Halaman ini berfungsi sebagai antarmuka kasir/pelayanan untuk memproses pendaftaran service, memasukkan data keluhan, dan mencatat transaksi pelanggan.
+Dashboard Daftar Transaksi
+Halaman ini menampilkan rekam jejak dari seluruh transaksi service maupun penjualan suku cadang yang sedang berjalan maupun telah selesai.
+Gambar 4. 10 Tampilan Dashboard Daftar Transaksi
+Nota Transaksi
+Menampilkan antarmuka cetak bukti transaksi pembayaran (Nota) kepada pelanggan atas jasa service dan suku cadang yang dibeli.
+Dashboard Informasi Stok
+Halaman ini digunakan untuk memantau sisa ketersediaan stok fisik suku cadang secara real-time.
+Dashboard Order Suku Cadang
+Halaman krusial bagi Front Office untuk mengajukan pesanan suku cadang ke Koperasi. Sistem secara otomatis memfilter dan hanya menampilkan suku cadang yang stoknya berada di bawah batas minimum. Pengguna dapat menambahkan suku cadang ke dalam keranjang sebelum diproses menjadi satu nomor Surat Order.
+Dashboard Penerimaan Stok
+Halaman ini digunakan untuk mencatat dan mengonfirmasi penerimaan fisik suku cadang yang dikirim oleh Koperasi berdasarkan pesanan sebelumnya.
+Laporan Surat Jalan
+Menampilkan informasi dan dokumen pengiriman (Surat Jalan) yang menyertai datangnya stok suku cadang.
+Dashboard Return Suku Cadang
+Digunakan untuk memproses pengembalian (return) suku cadang ke Koperasi apabila terdapat kecacatan atau ketidaksesuaian spesifikasi barang.
+Bagian Koperasi
+Dashboard Koperasi
+Menyajikan visualisasi data ringkas mengenai aktivitas operasional bagian Koperasi, termasuk order masuk dan status stok.
+Dashboard Order Suku Cadang
+Halaman ini menampilkan daftar Order yang diajukan oleh Front Office. Dilengkapi dengan tombol View untuk melihat detail Surat Order agar pihak Koperasi dapat melakukan validasi item yang diminta.
+Laporan Order Suku Cadang
+Halaman untuk merekap dan memantau seluruh riwayat pesanan suku cadang dari Front Office untuk keperluan arsip dan pelaporan.
+Dashboard Penerimaan Suku Cadang
+Digunakan oleh Koperasi untuk mencatat masuknya suku cadang dari Supplier eksternal sebelum didistribusikan.
+Dashboard Return Suku Cadang
+Halaman untuk memproses konfirmasi pengembalian barang (return) dari Front Office ke pihak Koperasi.
+Dashboard Master Suku Cadang
+Halaman ini diakses oleh pihak Koperasi untuk melakukan manajemen harga jual suku cadang, memastikan data harga tetap mutakhir sesuai kebijakan Koperasi.
+4.1.4. Bagian Kepala UPJ
+Dashboard Kepala UPJ
+Halaman eksekutif yang ditujukan bagi pimpinan untuk memantau performa, pendapatan, dan efisiensi operasional UPJ secara keseluruhan.
+Dashboard Laporan Jasa Service
+Menampilkan statistik grafis maupun ringkasan data mengenai layanan jasa service yang telah diberikan kepada pelanggan.
+Laporan Jasa Service
+Menampilkan daftar mendetail dan terperinci terkait histori pengerjaan jasa service untuk di-review oleh Kepala UPJ.
+Dashboard Laporan Suku Cadang
+Menyajikan rekapitulasi data penjualan dan pergerakan persediaan suku cadang.
+Laporan Penjualan Suku Cadang
+Halaman ini menampilkan rincian total omzet atau penjualan suku cadang dalam periode waktu tertentu, yang juga dapat diekspor atau dicetak sebagai laporan resmi.
+Pengujian Black Box
+Pengujian sistem pada penelitian ini dilakukan menggunakan pendekatan Black Box Testing. Pendekatan ini menitikberatkan pada pengujian fungsi sistem dari sisi pengguna, tanpa berfokus pada struktur kode program yang ada di dalamnya. Pengujian dilakukan dengan memberikan sejumlah input pada fitur-fitur sistem, kemudian mengamati keluaran yang dihasilkan untuk melihat kesesuaiannya dengan kebutuhan yang telah dirancang.
+Tabel 4. 1. Hasil Pengujian Black Box

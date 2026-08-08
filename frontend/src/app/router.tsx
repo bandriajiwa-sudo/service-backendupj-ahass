@@ -24,6 +24,7 @@ import NotaPrint from "../features/print/NotaPrint";
 import KoperasiDashboard from "../features/dashboard/KoperasiDashboard";
 import KoperasiOrders from "../features/koperasi/KoperasiOrders";
 import KoperasiMasterSukuCadang from "../features/koperasi/KoperasiMasterSukuCadang";
+import KoperasiLogHarga from "../features/koperasi/KoperasiLogHarga";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
 import LaporanJasa from "../features/upj/LaporanJasa";
 import LaporanSukuCadang from "../features/upj/LaporanSukuCadang";
@@ -120,6 +121,7 @@ export const router = createBrowserRouter([
           { path: "orders", element: <KoperasiOrders /> },
           { path: "riwayat-penerimaan", element: <KoperasiPenerimaan /> },
           { path: "master-suku-cadang", element: <KoperasiMasterSukuCadang /> },
+          { path: "log-harga", element: <KoperasiLogHarga /> },
           {
             path: "returns",
             element: <Navigate to="/koperasi/riwayat-penerimaan" replace />,

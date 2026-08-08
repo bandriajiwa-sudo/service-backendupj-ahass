@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\StockController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\SparePartPriceLogController;
 use Illuminate\Support\Facades\Route;
 
 $apiRoutes = function () {
@@ -90,6 +91,8 @@ $apiRoutes = function () {
             Route::post('/spare-part-shipments/{shipment}/submit', [SparePartShipmentController::class, 'submit']);
             Route::post('/spare-part-returns/{return}/replacement-shipment', [SparePartReturnController::class, 'createReplacement']);
             Route::patch('/spare-part-returns/{return}/reject', [SparePartReturnController::class, 'reject']);
+
+            Route::get('/spare-part-price-logs', [SparePartPriceLogController::class, 'index']);
         });
 
         // Shared Action Routes (Evidences can be uploaded by Koperasi for initial/replacements, and FO for damage)

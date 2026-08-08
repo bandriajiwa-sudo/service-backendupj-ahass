@@ -1,0 +1,590 @@
+SKRIPSI
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+(Studi Kasus: UPJ Otomotif dan AHASS BLPT DIY)
+Disusun sebagai salah satu syarat kelulusan pada Program Studi Sistem Informasi Program Sarjana Fakultas Sains dan Teknologi UNRIYO
+Disusun oleh:
+IMAN MUKHLISIN
+NIM: 22230020
+PROGRAM STUDI SISTEM INFORMASI PROGRAM SARJANA
+FAKULTAS SAINS DAN TEKNOLOGI
+UNIVERSITAS RESPATI YOGYAKARTA
+2026
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+(Studi Kasus: UPJ Otomotif dan AHASS BLPT DIY)
+Disusun oleh:
+IMAN MUKHLISIN
+NIM: 22230020
+Ketua Program Studi Sistem Informasi – Program Sarjana Tanggal:	Agustus 2026
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 0506106501
+UNIVERSITAS RESPATI YOGYAKARTA
+Fakultas Sains dan Teknologi
+Program Studi Sistem Informasi – Program Sarjana Skripsi Sarjana Komputer
+Semester Genap TA 2025/2026
+HALAMAN PERSIAPAN PENDADARAN
+Pernyataan Kesiapan Skripsi untuk Ujian Pendadaran Saya Iman Mukhlisin
+Dengan ini menyatakan bahwa Skripsi yang berjudul:
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+Adalah benar-benar karya saya dan belum pernah diajukan sebagai karya ilmiah, sebagian atau seluruhnya, atas nama saya atau pihak lain:
+Iman Mukhlisin
+ NIM: 22230020
+Disetujui oleh Pembimbing
+Saya setuju Skripsi tersebut diajukan untuk Ujian Pendadaran Disetujui Oleh:
+Mengetahui,
+Ketua Program Studi Sistem Informasi – Program Sarjana
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 0506106501
+PENGESAHAN SKRIPSI
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+Oleh: 
+ImanMukhlisin  NIM: 22230020
+Mengetahui,
+UNIVERSITAS RESPATI YOGYAKARTA
+Fakultas Sains dan Teknologi
+Program Studi Sistem Informasi – Program Sarjana Skripsi Sarjana Komputer
+Semester Genap TA 2025/2026 Pernyataan kesiapan Skripsi untuk Ujian Pendadaran
+SURAT PERNYATAAN KEASLIAN PENELITIAN UNTUK SKRIPSI
+Yang bertanda tangan di bawah ini saya:
+Dengan ini menyatakan bahwa Skripsi yanag berjudul:
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+adalah benar hasil penelitian dari saya dan belum pernah diajukan sebagai karya ilmiah, sebagian atau seluruhnya, atas nama saya atau pihak lain. Apabila di kemudian hari terbukti bahwa penelitian saya adalah hasil penelitian pihak lain, saya bersedia menerima sanksi yang akan dibebankan kepada saya, yaitu pembatalan gelar sarjana, dan membuat penelitian baru. Demikian pernyataan ini saya buat dalam keadaan sehat dan tanpa tekanan pihak manapun.
+Yogyakarta,	Agustus 2026
+Iman Mukhlisin
+NIM: 22230020
+PERSETUJUAN DEMO PROGRAM
+Program telah disetujui dan didemokan sesuai judul Skripsi di atas dihadapan Dosen Pembimbing Fakultas Sains dan Teknologi Universitas Respati Yogyakarta, Program Studi Sistem Informasi pada tanggal 6 Agustus 2026
+Untuk selanjutnya akan dilaksanakan proses ujian pendadaran setelah memenuhi persyaratan akademik yang berlaku.
+Mengetahui,
+Ketua Program Studi Sistem Informasi – Program Sarjana
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 0506106501
+TANDA LULUS UJIAN SIDANG SKRIPSI
+Pada hari ,  Agustus 2026 telah dilaksanakan ujian
+Skripsi/Pendadaran oleh Program Studi Sistem Informasi Fakultas Sains dan Teknologi Universitas Respati Yogyakarta
+Mengetahui,
+Ketua Program Studi Sistem Informasi – Program Sarjana
+Ir. Ajie Wibowo Soejono, M.Kom.
+NIDN: 0506106501
+UNIVERSITAS RESPATI YOGYAKARTA
+Fakultas Sains dan Teknologi
+Program Studi Sistem Informasi – Program Sarjana Skripsi Sarjana Komputer
+Semester Genap TA 2025/2026
+IMPLEMENTASI SISTEM INFORMASI PENJUALAN SUKU CADANG DAN JASA SERVICE BERBASIS WEB
+(Studi Kasus: UPJ Otomotif dan AHASS BLPT DIY)
+Oleh: Khosaroh1, Erizal, S.Si., M.Kom.2, Ir. Ajie Wibowo Soejono, M.Kom.3 CI – 166 Hal/ 17 Tabel/ 66 Gambar/ 4 Lampiran/ 27 Pustaka
+ABSTRAK
+Pelaksanaan pelatihan tenaga pengajar di Badan Koordinasi TKA-TPA Rayon Depok, Sleman yang merupakan lembaga pembina TKA-TPA masih dilakukan secara manual, terutama dalam pengelolaan jadwal, kehadiran, dan penilaian peserta. Kondisi ini menyebabkan data pelatihan belum terdokumentasi secara sistematis sehingga menyulitkan proses evaluasi dan penyusunan laporan. Oleh karena itu, penelitian ini bertujuan mengimplementasikan Sistem Informasi Pelatihan Tenaga Pengajar Berbasis Web untuk mendukung pengelolaan pelatihan yang lebih tertata dan terdokumentasi.
+Sistem dikembangkan menggunakan metode System Development Life Cycle (SDLC) model Waterfall. Pada tahap Construction, sistem dibangun menggunakan bahasa pemrograman PHP dengan framework Laravel serta database MySQL. Selanjutnya, pengujian dilakukan menggunakan metode black box untuk memastikan sistem berjalan sesuai kebutuhan.
+Sistem yang dihasilkan mampu mengakomodasi pengelolaan pelatihan, meliputi pengelolaan jadwal, data peserta dan pemateri, pencatatan kehadiran, serta penilaian hasil pelatihan, sehingga persoalan terkait pencatatan dan dokumentasi data dapat teratasi.
+Kata kunci: Pelatihan tenaga pengajar, Badko TKA-TPA, Evaluasi pelatihan.
+1 Mahasiswa Program Studi Sistem Informasi
+2 Pembimbing I
+3 Pembimbing II
+RESPATI UNIVERSITY OF YOGYAKARTA
+Faculty of Science and Technology
+Information Systems Study Program – Undergraduate Program Bachelor’s Thesis in Computer Science
+Even Semester Academic Year 2025/2026
+IMPLEMENTATION OF A WEB-BASED TEACHING STAFF TRAINING INFORMATION SYSTEM AT THE TKA-TPA COORDINATING BOARD OF DEPOK DISTRICT, SLEMAN
+By: Khosaroh¹, Erizal, S.Si., M.Kom.², Ir. Ajie Wibowo Soejono, M.Kom.³ CI – 166 Pages / 17 Tables / 66 Figures / 4 Appendices / 27 References
+ABSTRACT
+The implementation of teacher training at the TKA-TPA Coordination Board (Badan Koordinasi TKA-TPA) in the Depok Rayon, Sleman—an institution dedicated to the development of TKA-TPA educators—is currently conducted manually, particularly regarding schedule management, attendance tracking, and participant assessment. This condition results in unsystematic data documentation, which hinders the evaluation process and report generation. Consequently, this research aims to implement a Web-Based Teacher Training Information System to facilitate more organized and well-documented training management.
+The system was developed using the System Development Life Cycle (SDLC) Waterfall model. During the construction phase, the system was built using the PHP programming language with the Laravel framework. Subsequently, black-box testing was conducted to ensure the system functions according to the predefined requirements.
+The developed system is capable of accommodating training management, including the management of schedules, participant and instructor data, attendance tracking, and assessment of training outcomes, thereby resolving issues related to data recording and documentation.
+Keywords : teacher training, Badko TKA-TPA, training evaluation
+1 Undergraduate Student of Information Systems Study Program
+2 Supervisor I
+3 Supervisor II
+MOTO DAN PERSEMBAHAN
+“So many doors will open when you realize that it is okay to start over”
+Skripsi ini saya persembahkan kepada:
+Allah SWT, atas segala rahmat, kemudahan, dan pertolongan-Nya sehingga saya dapat menyelesaikan skripsi ini dengan baik.
+Kedua orang tua tercinta, yang senantiasa memberikan doa, dukungan, kasih sayang, serta pengorbanan tanpa henti dalam setiap langkah perjalanan pendidikan saya.
+Bapak dan Ibu dosen pembimbing, yang telah meluangkan waktu, tenaga, serta pemikiran dalam memberikan arahan, bimbingan, dan ilmu sehingga skripsi ini dapat terselesaikan dengan baik.
+Teman-teman seperjuangan, yang selalu memberikan semangat, bantuan, dan kebersamaan selama proses perkuliahan hingga penyusunan skripsi ini.
+KATA PENGANTAR
+Puji syukur dipanjatkan ke hadirat Allah SWT atas segala rahmat dan karunia-Nya sehingga dapat diselesaikan skripsi yang berjudul “Implementasi Sistem Informasi Pelatihan Tenaga Pengajar Berbasis Web di Badan Koordinasi TKA-TPA Rayon Depok, Sleman” sebagai salah satu syarat untuk memperoleh gelar Sarjana Komputer pada Program Studi Sistem Informasi Universitas Respati Yogyakarta.
+Dalam penyusunan skripsi ini diperoleh banyak bantuan, bimbingan, serta dukungan dari berbagai pihak. Oleh karena itu, disampaikan ucapan terima kasih kepada:
+Bapak Sugeng Winardi, S.Kom., M.T. selaku Dekan Fakultas Sains dan Teknologi Universitas Respati Yogyakarta sekaligus Penguji Utama dalam Sidang Pendadaran Skripsi pada penelitian ini.
+Bapak Ir. Ajie W. Soejono, M.Kom. selaku Ketua Program Studi Sistem Informasi Universitas Respati Yogyakarta sekaligus Dosen Pembimbing II yang telah memberikan saran dan dukungan dalam penyelesaian skripsi.
+Bapak Erizal, S.Si., M.Kom. selaku Dosen Pembimbing I yang telah memberikan arahan dan bimbingan selama penyusunan skripsi.
+Bapak Erizal, S.Si., M.Kom. selaku Dosen Pembimbing I yang telah memberikan arahan dan bimbingan selama penyusunan skripsi.
+Seluruh Bapak/Ibu Dosen Program Studi Sistem Informasi Universitas Respati Yogyakarta atas ilmu yang telah diberikan selama masa perkuliahan.
+Pihak Badan Koordinasi TKA-TPA Rayon Depok, Sleman yang telah memberikan izin penelitian serta membantu penulis dalam memperoleh data dan informasi yang dibutuhkan.
+Kedua orang tua serta keluarga atas doa, dukungan, dan motivasi yang tiada henti.
+Teman-teman yang telah memberikan semangat serta bantuan selama proses penyusunan skripsi.
+Skripsi ini disusun dengan masih jauh dari sempurna. Oleh karena itu, diharapkan kritik dan saran yang membangun demi penyempurnaan karya ini. Semoga skripsi ini dapat memberikan manfaat bagi pembaca dan menjadi kontribusi bagi pengembangan ilmu di bidang sistem informasi.
+Yogyakarta,   Agustus 2026
+Hormat saya,
+Iman Mukhlisin
+NIM: 19230019
+DAFTAR ISI
+DAFTAR TABEL
+DAFTAR GAMBAR
+DAFTAR LAMPIRAN
+BAB I
+PENDAHULUAN
+1.1. Latar Belakang
+Pemanfaatan teknologi informasi mendorong lembaga dan organisasi untuk mengelola data transaksi secara lebih terstruktur, cepat, dan akurat. Proses pencatatan yang belum terintegrasi dapat menimbulkan keterlambatan pengolahan data, ketidakakuratan pencatatan, serta kesulitan dalam penyusunan laporan operasional. Delviani Kurniawati Djami et al., (2021) menjelaskan bahwa pengelolaan transaksi pembelian, penjualan, jasa servis, dan laporan yang masih dilakukan secara konvensional menyebabkan proses pencatatan menjadi kurang cepat dan kurang akurat. Oleh karena itu, penerapan sistem informasi yang sesuai diperlukan untuk mendukung produktivitas dan kualitas pengelolaan data operasional organisasi.
+Balai Latihan Pendidikan Teknik (BLPT) Daerah Istimewa Yogyakarta merupakan lembaga yang menyelenggarakan pendidikan dan pelatihan kompetensi di bidang teknik untuk meningkatkan keterampilan yang sesuai dengan kebutuhan dunia usaha dan industri. BLPT DIY juga menyelenggarakan layanan melalui Unit Produksi dan Jasa (UPJ) Otomotif dan AHASS yang memberikan pelayanan perawatan serta perbaikan kendaraan bermotor kepada masyarakat. Pelaksanaan layanan tersebut memerlukan pengelolaan data transaksi jasa, penjualan suku cadang, dan persediaan yang tertib agar kegiatan operasional dapat dipantau secara akurat dan transparan (Muhammad Fajrul Fatahillah, 2025).
+Proses operasional di UPJ Otomotif dan AHASS BLPT DIY masih mengandalkan Microsoft Excel dalam pencatatan transaksi dan pengelolaan persediaan suku cadang. Kondisi tersebut menimbulkan beban kerja karena data harus dicatat serta direkap kembali pada beberapa proses. Koperasi berperan sebagai pihak yang menyediakan dan melakukan pembelian suku cadang untuk kebutuhan operasional. Namun, data pembelian dan penerimaan suku cadang tersebut belum terintegrasi dengan data transaksi, sehingga pergerakan stok masuk, stok keluar, dan sisa persediaan belum dapat dipantau secara langsung dan akurat.
+Pencatatan layanan jasa servis dan penjualan suku cadang juga belum dikelola dalam satu sistem terintegrasi. Belum tersedianya mekanisme pemotongan stok secara otomatis setiap kali terjadi penjualan atau penggunaan suku cadang pada layanan servis dapat menimbulkan selisih antara stok fisik dan catatan persediaan. Selain itu, rekapitulasi transaksi harian dan riwayat layanan yang ditangani oleh mekanik masih memerlukan pengolahan ulang, sehingga laporan operasional yang disampaikan kepada Kepala UPJ belum dapat disajikan secara cepat dan optimal.
+Berdasarkan permasalahan tersebut, diperlukan Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Berbasis Web pada UPJ Otomotif dan AHASS BLPT DIY. Sistem yang dikembangkan diharapkan mampu mengintegrasikan pencatatan transaksi jasa servis, penjualan suku cadang, pembelian atau penerimaan stok dari Koperasi, pemantauan stok minimum, serta penyusunan laporan operasional. Penerapan sistem tersebut diharapkan dapat memperlancar proses kerja, meminimalkan kesalahan pencatatan persediaan, dan menyediakan informasi yang lebih akurat bagi Kepala UPJ.
+1.2. Perumusan Masalah
+Berdasarkan latar belakang masalah pada UPJ Otomotif dan AHASS BLPT DIY, rumusan masalah dalam penelitian ini adalah “Bagaimana mengimplementasikan Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Berbasis Web?”
+1.3. Tujuan dan Manfaat Penelitian
+Bagian ini menguraikan tujuan yang hendak dicapai serta manfaat yang diharapkan dari implementasi Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Berbasis Web pada UPJ Otomotif dan AHASS BLPT DIY.
+1.3.1. Tujuan Penelitian
+Tujuan penelitian ini adalah membangun dan mengimplementasikan Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Berbasis Web guna mendukung efisiensi pencatatan transaksi operasional di UPJ Otomotif dan AHASS BLPT DIY. Tujuan khusus penelitian ini meliputi:
+Mengembangkan sistem pengelolaan persediaan suku cadang yang mencatat stok masuk dan stok keluar, melakukan pengurangan stok secara otomatis, serta memberikan peringatan ketika jumlah persediaan mencapai batas minimum.
+Mengintegrasikan pencatatan transaksi jasa servis dan penjualan suku cadang dalam satu sistem terpusat, termasuk pencatatan riwayat layanan serta jumlah pekerjaan yang ditangani oleh setiap mekanik.
+Menyediakan rekapitulasi laporan operasional berupa laporan transaksi jasa, penjualan suku cadang, persediaan, dan riwayat layanan yang terstruktur serta dapat diakses secara langsung oleh Kepala UPJ untuk mendukung pemantauan kegiatan bengkel.
+1.3.2. Manfaat Penelitian
+Penelitian ini diharapkan memberikan manfaat praktis dan akademis bagi pihak-pihak yang berkaitan dengan pengembangan serta penerapan sistem, yaitu sebagai berikut:
+Bagi UPJ Otomotif dan AHASS BLPT DIY
+Penerapan sistem diharapkan dapat mempermudah pencatatan transaksi jasa servis dan penjualan suku cadang, mengendalikan pergerakan persediaan secara lebih akurat, serta mempercepat penyusunan laporan operasional. Rekapitulasi riwayat layanan dan jumlah pekerjaan mekanik juga dapat digunakan oleh Kepala UPJ untuk memantau aktivitas layanan tanpa menghitung komisi maupun gaji mekanik.
+Bagi Program Studi Sistem Informasi
+Hasil penelitian diharapkan dapat menambah referensi akademik dan kajian praktis mengenai implementasi sistem informasi berbasis Web pada unit layanan jasa otomotif, khususnya yang mengintegrasikan transaksi, persediaan suku cadang, dan laporan operasional.
+Bagi Mahasiswa
+Penelitian ini menjadi sarana untuk menerapkan pengetahuan mengenai identifikasi kebutuhan, analisis dan perancangan sistem, pengelolaan basis data dan pengujian perangkat lunak. Proses penelitian juga melatih kemampuan dalam menerjemahkan permasalahan operasional menjadi solusi teknologi yang terstruktur.
+1.4. Batasan Masalah
+Agar penelitian dapat dilaksanakan secara terarah dan sesuai dengan tujuan yang telah ditetapkan, ruang lingkup penelitian dibatasi sebagai berikut:
+Ruang lingkup implementasi sistem terbatas pada Unit Produksi dan Jasa (UPJ) Otomotif dan AHASS BLPT DIY.
+Sistem difokuskan pada proses operasional utama yang meliputi pencatatan transaksi jasa servis, penjualan suku cadang, pembelian atau penerimaan suku cadang, pemotongan stok secara otomatis, pemantauan batas minimum stok, serta penyusunan laporan operasional.
+Pemantauan produktivitas mekanik dibatasi pada rekapitulasi jumlah dan riwayat layanan jasa yang ditangani oleh setiap mekanik, tanpa mencakup penilaian kinerja kompleks, perhitungan komisi, atau penggajian.
+Keterlibatan Koperasi dalam sistem dibatasi pada pencatatan order, pembelian, dan penerimaan suku cadang yang berkaitan dengan persediaan UPJ Otomotif dan AHASS BLPT DIY. Sistem tidak mengelola keanggotaan, administrasi internal, maupun keuangan Koperasi.
+Sistem tidak mencakup modul keuangan tingkat lanjut, seperti perhitungan Harga Pokok Penjualan (HPP), persentase margin keuntungan, perhitungan laba rugi, maupun pembagian komisi atau gaji mekanik.
+1.5. Metodologi Penelitian
+Metodologi penelitian merupakan rangkaian tahapan sistematis yang digunakan untuk memperoleh data, menganalisis permasalahan, dan merumuskan kebutuhan sistem. Pada penelitian ini, metodologi mencakup penetapan unit penelitian serta metode pengumpulan data. 
+1.5.1. Unit Penelitian
+Pengumpulan data penelitian dilakukan pada unit yang berada di lingkungan instansi pemerintah, yaitu:
+1.5.2. Metode Pengumpulan Data
+Metode pengumpulan data digunakan untuk memperoleh informasi mengenai proses operasional yang sedang berjalan, kendala yang dihadapi, serta kebutuhan sistem. Metode yang digunakan dalam penelitian ini meliputi:
+Metode Observasi
+Observasi dilakukan secara langsung di UPJ Otomotif dan AHASS BLPT DIY untuk mengamati alur transaksi jasa servis, penjualan suku cadang, pengelolaan persediaan, serta proses penyusunan laporan operasional.
+Metode Wawancara
+Wawancara dilakukan dengan responden terkait untuk memperoleh informasi mengenai proses kerja, kendala pencatatan, kebutuhan pengguna, dan fungsi yang diperlukan dalam sistem yang dikembangkan.
+Metode Kearsipan
+Kearsipan dilakukan dengan menelaah dokumen transaksi, catatan persediaan, nota, dan laporan operasional yang telah digunakan sebagai bahan analisis serta acuan dalam merancang sistem baru.
+Metode Kepustakaan
+Studi kepustakaan dilakukan dengan mempelajari buku, jurnal ilmiah, dan sumber daring yang relevan dengan sistem informasi penjualan suku cadang, layanan jasa otomotif, persediaan, pengembangan sistem, serta pengujian perangkat lunak.
+1.6. Sistematika Penulisan
+Sistematika penulisan disusun untuk memberikan gambaran mengenai alur pembahasan penelitian dari tahap pendahuluan sampai dengan penutup. Laporan skripsi ini terdiri atas lima bab sebagai berikut:
+BAB I PENDAHULUAN
+Bab ini memuat latar belakang, perumusan masalah, tujuan dan manfaat penelitian, batasan masalah, metodologi penelitian, unit penelitian, metode pengumpulan data, serta sistematika penulisan.
+BAB II LANDASAN TEORI
+Bab ini diawali dengan tinjauan pustaka yang membahas penelitian terdahulu serta posisi penelitian. Selanjutnya, landasan teori memuat konsep sistem informasi, penjualan suku cadang, jasa servis, manajemen persediaan, metode pengembangan sistem, pemodelan proses, basis data, teknologi yang digunakan, dan pengujian sistem.
+BAB III ANALISA DAN PERANCANGAN SISTEM
+Bab ini membahas tinjauan umum UPJ Otomotif dan AHASS BLPT DIY, sistem yang sedang berjalan, sistem baru yang diusulkan, analisis kebutuhan, perancangan proses menggunakan Data Flow Diagram (DFD), perancangan basis data menggunakan Entity Relationship Diagram (ERD) dan relasi tabel, serta UI/UX.
+BAB IV IMPLEMENTASI DAN PENGUJIAN SISTEM
+Bab ini menyajikan implementasi sistem dalam bentuk tampilan aplikasi beserta penjelasan fungsi setiap modul. Bab ini juga memuat hasil pengujian menggunakan metode black-box testing untuk memastikan fungsi sistem telah sesuai dengan kebutuhan operasional.
+BAB V PENUTUP
+Bab ini memuat kesimpulan yang menjawab perumusan masalah serta saran yang dapat digunakan sebagai pertimbangan dalam pengembangan sistem selanjutnya.
+BAB II
+LANDASAN TEORI
+2.1. Tinjauan Pustaka
+Tinjauan pustaka merupakan bagian penelitian yang digunakan untuk menelaah hasil penelitian terdahulu yang relevan dengan sistem informasi bengkel, penjualan suku cadang, jasa servis, persediaan, dan pelaporan berbasis Web. Penelaahan dilakukan untuk mengetahui pendekatan yang telah digunakan, membandingkan fungsi sistem, serta menentukan posisi dan pembeda penelitian yang dilaksanakan pada UPJ Otomotif dan AHASS BLPT DIY.
+Berdasarkan Delviani Kurniawati Djami et al., (2021) dikembangkan sistem informasi penjualan suku cadang dan jasa servis motor untuk menggantikan pencatatan konvensional. Sistem tersebut dibangun menggunakan model Waterfall, Visual Basic.Net, dan MySQL serta diuji menggunakan metode black-box. Selanjutnya, Fitri Yunita, Bayu Rianto, (2022) membahas sistem informasi bengkel berbasis Web yang mengelola data pelanggan, transaksi servis, penjualan suku cadang, serta pembuatan laporan pada Kakella Motor.
+Berdasarkan Rahmawati et al., (2023) dirancang sistem penjualan suku cadang berbasis Web yang dilengkapi fungsi pembelian, transfer stok, diskon, retur, dan keluhan pelanggan. Masturoh, (2024) mengembangkan sistem home service dan penjualan suku cadang menggunakan model Waterfall untuk mengelola permintaan layanan, transaksi, persediaan, serta laporan secara terintegrasi.
+Berdasarkan Citra Wuladari & Fersellia, (2025) diimplementasikan sistem informasi manajemen bengkel berbasis Web untuk meningkatkan efisiensi pencatatan layanan, pelanggan, suku cadang, dan aktivitas operasional Bengkel AA Motor. Sosial & Fatahillah, (2025) membangun sistem informasi manajemen bengkel pada AHASS Honda Engine Service di Aceh Timur yang mencakup pengelolaan pelanggan, reservasi servis, stok suku cadang, transaksi, dan laporan. Keenam penelitian tersebut menjadi dasar perbandingan bagi sistem yang dikembangkan dalam penelitian ini.
+Tabel 2. 1 Penelitian Yang Pernah Ada
+Berdasarkan penelitian Delviani Kurniawati Djami et al., (2021) digitalisasi transaksi suku cadang dan jasa servis mampu menggantikan pencatatan konvensional. Penelitian ini mengadopsi integrasi transaksi tersebut, tetapi menggunakan platform berbasis Web dan menambahkan pemantauan stok minimum, riwayat servis kendaraan, serta jumlah pekerjaan mekanik.
+Penelitian Fitri Yunita, Bayu Rianto, (2022) menunjukkan bahwa sistem bengkel berbasis Web dapat mengintegrasikan data pelanggan, servis, penjualan suku cadang, dan laporan. Pembeda penelitian ini terletak pada perubahan stok secara otomatis setiap kali suku cadang digunakan atau dijual serta penyediaan informasi operasional yang dapat dipantau oleh Kepala UPJ.
+Penelitian Rahmawati et al., (2023) menitikberatkan penjualan suku cadang dan interaksi pelanggan melalui fitur keluhan. Penelitian ini tidak mengembangkan e-commerce, diskon, retur, ataupun keluhan pelanggan karena ruang lingkupnya diarahkan pada proses internal UPJ Otomotif dan AHASS BLPT DIY.
+Penelitian Masturoh, (2024) mengembangkan layanan home service dan penjualan suku cadang daring. Sistem dalam penelitian ini tidak mencakup layanan pemesanan dari luar bengkel, tetapi memanfaatkan konsep integrasi transaksi dan persediaan untuk membentuk pencatatan operasional satu pintu.
+Penelitian Citra Wuladari & Fersellia, (2025) serta Muhammad Fajrul Fatahillah, (2025) memperlihatkan bahwa sistem manajemen bengkel berbasis Web dapat meningkatkan keteraturan data layanan, stok, transaksi, dan laporan. Penelitian ini memiliki objek yang lebih khusus, yaitu unit layanan pada instansi pemerintah, sehingga fungsi sistem disesuaikan dengan kebutuhan FrontOffice, pengelola persediaan, mekanik, dan Kepala UPJ.
+Nilai pembeda penelitian ini terletak pada integrasi pencatatan jasa servis dan penjualan suku cadang dalam satu sistem, pemotongan persediaan secara otomatis, peringatan stok minimum, penyimpanan riwayat servis kendaraan, pemantauan jumlah pekerjaan setiap mekanik, serta laporan operasional yang dapat diakses berdasarkan data terkini. Sistem tidak mencakup reservasi daring, e-commerce, perhitungan Harga Pokok Penjualan, laba rugi, maupun komisi mekanik sehingga pengembangan tetap sesuai dengan batasan penelitian.
+2.2. Landasan Teori
+Landasan teori merupakan dasar ilmiah yang digunakan dalam proses analisis, perancangan, implementasi, dan pengujian Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Otomotif Berbasis Web. Teori yang digunakan mencakup konsep pengembangan sistem, konsep operasional bengkel, metode pengembangan perangkat lunak, pemodelan sistem, basis data, teknologi Web serta perangkat yang digunakan dalam pembangunan aplikasi.
+2.2.1 Konsep Pengembangan Sistem
+Konsep pengembangan sistem menjelaskan unsur, proses, dan metode yang menjadi dasar pembangunan perangkat lunak. Konsep ini digunakan untuk memastikan bahwa sistem yang dikembangkan memiliki fungsi yang sesuai dengan kebutuhan operasional UPJ Otomotif dan AHASS BLPT DIY.
+1. Teknologi Informasi
+Teknologi informasi merupakan pemanfaatan perangkat keras, perangkat lunak, jaringan, dan basis data untuk mengumpulkan, mengolah, menyimpan, serta menyampaikan informasi. Dalam pengelolaan bengkel, teknologi informasi dapat menggantikan pencatatan yang terpisah menjadi proses terintegrasi sehingga transaksi, persediaan, dan laporan dapat dikelola dengan lebih teratur (Delviani Kurniawati Djami et al., 2021).
+2. Sistem Informasi
+Sistem informasi merupakan kesatuan komponen manusia, prosedur, data, dan teknologi yang bekerja untuk menghasilkan informasi bagi kegiatan operasional dan pengambilan keputusan. Sistem informasi bengkel menghubungkan data pelanggan, kendaraan, mekanik, jasa, suku cadang, transaksi, dan laporan agar informasi dapat tersedia dari satu sumber data yang sama (Fitri Yunita, Bayu Rianto, 2022).
+3. Penjualan Suku Cadang
+Penjualan suku cadang merupakan proses penyerahan komponen kendaraan kepada pelanggan yang disertai pencatatan barang, jumlah, harga, dan pembayaran. Dalam sistem informasi, transaksi penjualan perlu dihubungkan dengan persediaan agar setiap barang yang terjual mengurangi jumlah stok secara otomatis. Integrasi tersebut mengurangi pencatatan berulang dan membantu menjaga kesesuaian antara data transaksi dengan persediaan (Delviani Kurniawati Djami et al., 2021).
+Sistem penjualan berbasis Web dapat menyimpan data pembelian dan penjualan secara terstruktur serta mendukung pengelolaan transfer stok dan retur Rahmawati et al., (2023) Dalam penelitian ini, penjualan dibatasi pada transaksi suku cadang di UPJ Otomotif dan AHASS BLPT DIY dan tidak mencakup perdagangan elektronik.
+4. Jasa Servis Kendaraan
+Jasa servis kendaraan merupakan layanan pemeriksaan, perawatan, atau perbaikan kendaraan berdasarkan kebutuhan pelanggan. Proses layanan mencakup pencatatan pelanggan dan kendaraan, keluhan, jenis pekerjaan, mekanik, penggunaan suku cadang, serta penyelesaian transaksi. Sistem informasi bengkel mengintegrasikan proses tersebut agar data layanan dan penjualan suku cadang tidak dicatat pada media yang terpisah (Fitri Yunita, Bayu Rianto, 2022).
+5. Persediaan Suku Cadang
+Persediaan suku cadang adalah sejumlah komponen kendaraan yang disimpan untuk memenuhi kebutuhan penjualan dan pekerjaan servis. Pengelolaan persediaan mencakup pencatatan barang masuk, barang keluar, saldo stok, dan riwayat perubahan persediaan. Pemodelan sistem persediaan yang terstruktur membantu mengurangi duplikasi dan menjaga keterhubungan data barang dengan transaksi (Asrin, 2023).
+7. Laporan Operasional dan Informasi Real-Time
+Laporan operasional merupakan ringkasan kegiatan yang digunakan untuk memantau transaksi servis, penjualan suku cadang, persediaan, penggunaan barang, dan aktivitas mekanik. Laporan dihasilkan dari data transaksi yang telah tersimpan sehingga rekapitulasi tidak perlu dilakukan melalui pencatatan ulang. Informasi real-time dalam penelitian ini berarti data pada sistem diperbarui segera setelah transaksi disimpan atau diubah. Kepala UPJ dapat melihat kondisi operasional berdasarkan data terkini tanpa menunggu rekap manual. Sistem manajemen bengkel berbasis Web juga digunakan untuk meningkatkan keteraturan layanan, persediaan, transaksi, dan pelaporan (Muhammad Fajrul Fatahillah, 2025).
+8. Metodologi System Development Life Cycle (SDLC)
+System Development Life Cycle (SDLC) merupakan kerangka kerja yang membagi proses pengembangan sistem ke dalam tahapan terstruktur, mulai dari analisis kebutuhan sampai pemeliharaan. Penerapan tahapan yang jelas membantu pengembang mendokumentasikan kebutuhan, rancangan, implementasi, dan pengujian sehingga proses pembangunan sistem dapat dikendalikan (Vira Adi Kurniyanti, 2022).
+Gambar2. 1 System Development Life Cycle
+Sumber: https://www.binar.co.id
+9. Model Waterfall
+Model Waterfall merupakan model dalam SDLC yang mengatur proses pengembangan secara berurutan. Setiap tahap menghasilkan keluaran yang menjadi dasar bagi tahap berikutnya. Model ini sesuai digunakan apabila ruang lingkup dan kebutuhan utama sistem dapat diidentifikasi sejak awal (Vira Adi Kurniyanti, 2022). Model Waterfall digunakan karena kebutuhan sistem diperoleh melalui observasi, wawancara, dan penelaahan dokumen pada UPJ Otomotif dan AHASS BLPT DIY. Tahapan yang diterapkan meliputi analisis kebutuhan, perancangan sistem, implementasi, verifikasi, dan pemeliharaan.
+a. Analisis Kebutuhan (Requirement Analysis)
+Analisis kebutuhan dilakukan untuk memahami proses operasional yang sedang berjalan dan menentukan fungsi yang harus tersedia. Data diperoleh melalui pengamatan alur transaksi serta persediaan, wawancara dengan pihak terkait, dan penelaahan dokumen pencatatan. Hasil analisis dikelompokkan menjadi kebutuhan fungsional dan nonfungsional.
+b. Perancangan Sistem (System Design)
+Perancangan sistem menerjemahkan kebutuhan ke dalam model proses, struktur data, dan antarmuka. Alur sistem digambarkan menggunakan flowchart dan Data Flow Diagram (DFD), sedangkan struktur data dirancang menggunakan Entity Relationship Diagram (ERD), relasi tabel, serta struktur tabel.
+c. Implementasi (Implementation)
+Tahap implementasi mengubah rancangan menjadi aplikasi berbasis Web. Pembangunan mencakup autentikasi, data master, transaksi jasa servis, penjualan suku cadang, perubahan stok otomatis, peringatan stok minimum, riwayat servis, pemantauan mekanik, dan laporan operasional.
+d. Verifikasi (Verification)
+Verifikasi dilakukan untuk memastikan setiap fungsi sesuai dengan kebutuhan. Pengujian menggunakan metode black-box testing dengan memberikan masukan pada fungsi sistem dan membandingkan keluaran aktual dengan hasil yang diharapkan.
+e. Pemeliharaan (Maintenance)
+Pemeliharaan dilakukan setelah sistem digunakan, meliputi perbaikan kesalahan, pencadangan data, penyesuaian kebutuhan, dan penyempurnaan fungsi. Dalam penelitian ini, tahap pemeliharaan dibatasi pada identifikasi kebutuhan perbaikan dan rekomendasi pengembangan lanjutan.
+Gambar2. 2 Waterfall
+Sumber: 
+2.2.2. Konsep Perancangan Sistem
+Konsep perancangan sistem menjelaskan instrumen pemodelan, struktur data, teknologi, dan perangkat pengembangan yang digunakan untuk menerjemahkan kebutuhan fungsional menjadi aplikasi yang dapat diimplementasikan.
+1. Flowchart
+Flowchart atau bagan alir merupakan representasi grafis yang menggambarkan urutan prosedur dan logika suatu proses. Penggunaan simbol standar membantu memetakan input, proses, keputusan, dokumen, dan output sehingga alur kerja dapat dipahami sebelum pengkodean dilakukan. Dalam penelitian ini, flowchart digunakan untuk menggambarkan sistem yang sedang berjalan dan sistem yang diusulkan.
+Tabel 2. 2 Simbol Flowchart
+2. Data Flow Diagram (DFD)
+Data Flow Diagram (DFD) merupakan model grafis yang menggambarkan aliran data, proses pengolahan, penyimpanan data, dan interaksi sistem dengan entitas eksternal. DFD digunakan untuk memahami logika sistem tanpa menjelaskan kode atau teknologi implementasi. Penelitian sistem bengkel berbasis Web menggunakan pemodelan aliran data untuk mendokumentasikan kebutuhan dan proses sebelum pembangunan aplikasi (Fitri Yunita, Bayu Rianto, 2022).
+Tabel 2. 3 Data Flow Diagram
+a. Diagram Konteks
+Diagram konteks menggambarkan batas sistem secara keseluruhan dan hubungan pertukaran data antara sistem dengan entitas eksternal. Diagram ini digunakan untuk mengidentifikasi pihak yang memberikan input, pihak yang menerima output, dan ruang lingkup proses utama.
+b. Hierarchical Input Process Output (HIPO)
+HIPO menggambarkan struktur fungsi sistem secara hierarkis berdasarkan kelompok input, proses, dan output. Pemecahan fungsi membantu menunjukkan hubungan antara proses utama dan subproses yang akan dirinci pada diagram berikutnya.
+c. Diagram Overview
+Diagram overview merupakan penjabaran proses utama dari diagram konteks. Diagram ini menunjukkan proses tingkat atas, aliran data, entitas eksternal, dan penyimpanan data yang terlibat dalam sistem.
+d. Diagram Detail
+Diagram detail merupakan penguraian proses pada diagram overview menjadi subproses yang lebih rinci. Diagram ini digunakan untuk memastikan setiap aliran data, proses, dan penyimpanan telah didefinisikan sebelum implementasi.
+3. Basis Data
+Basis data merupakan kumpulan data yang saling berhubungan dan disusun agar dapat disimpan, diperbarui, serta diambil kembali secara terstruktur. Pada sistem yang dikembangkan, basis data digunakan untuk menyimpan data pengguna, pelanggan, kendaraan, mekanik, jasa, suku cadang, transaksi, detail transaksi, riwayat servis, mutasi stok, dan laporan. Pengelolaan secara terpusat membantu mengurangi pengulangan data dan menjaga konsistensi informasi.
+a. Entity Relationship Diagram (ERD)
+Entity Relationship Diagram (ERD) merupakan model konseptual yang menggambarkan entitas, atribut, dan hubungan antardata. ERD membantu mengelompokkan data secara logis sebelum tabel dibuat dalam sistem manajemen basis data. Pemodelan persediaan melalui entitas dan relasi mempermudah perubahan pencatatan konvensional menjadi pengelolaan digital yang terstruktur (Asrin, 2023).
+Tabel 2. 4 Simbol Entity Relationship Diagram
+b. Relasi Tabel
+Relasi tabel merupakan skema hubungan antartabel menggunakan kunci primer dan kunci tamu. Relasi digunakan untuk menjaga integritas referensial, menghindari duplikasi, serta memastikan setiap transaksi merujuk pada data master yang sah. Struktur relasi yang tepat memungkinkan data dari beberapa tabel digabungkan menjadi laporan operasional.
+4. Website
+Website merupakan kumpulan halaman dan sumber daya yang dapat diakses melalui jaringan menggunakan peramban. Aplikasi berbasis Web memungkinkan sistem digunakan dari perangkat yang berbeda selama pengguna memiliki koneksi dan hak akses. Pada pengelolaan bengkel, platform Web mendukung pencatatan pelanggan, servis, penjualan suku cadang, dan laporan secara terpusat (Fitri Yunita, Bayu Rianto, 2022).
+5. Web Server
+Web server merupakan perangkat lunak yang melayani permintaan aplikasi dari peramban dan mengirimkan kembali halaman atau data yang dibutuhkan pengguna. Dalam proses pengembangan aplikasi berbasis Web, Apache melalui XAMPP dapat digunakan sebagai server lokal agar fungsi sistem dapat dijalankan dan diuji pada komputer pengembang sebelum diterapkan pada lingkungan operasional. Penggunaan XAMPP sebagai Web server lokal juga diterapkan pada pengembangan sistem home service dan penjualan suku cadang (Masturoh, 2024).
+6. MySQL
+MySQL merupakan sistem manajemen basis data relasional yang digunakan untuk menyimpan dan mengelola data aplikasi secara terstruktur. Dalam sistem bengkel berbasis Web, MySQL digunakan untuk mengelola data pengguna, suku cadang, transaksi, persediaan, dan laporan agar dapat diproses secara terintegrasi. Pemanfaatan MySQL pada sistem manajemen bengkel juga diterapkan oleh (Citra Wuladari & Fersellia, 2025).
+7. XAMPP
+XAMPP digunakan sebagai lingkungan server lokal yang mengintegrasikan Apache, basis data, dan PHP pada komputer pengembang. Lingkungan ini mendukung proses pembangunan serta pengujian aplikasi tanpa harus langsung menggunakan server produksi. Masturoh, (2024) menggunakan XAMPP sebagai Web server dalam pengembangan aplikasi, sedangkan Muhammad Fajrul Fatahillah, (2025) menjalankan sistem manajemen bengkel melalui server lokal XAMPP.
+8. Hypertext Preprocessor (PHP)
+PHP merupakan bahasa pemrograman sisi server yang digunakan untuk mengolah permintaan pengguna, menjalankan logika aplikasi, melakukan validasi, serta menghubungkan aplikasi dengan basis data. Bahasa pemrograman ini digunakan dalam pengembangan sistem penjualan suku cadang berbasis Web oleh Rahmawati et al., (2023) serta sistem manajemen bengkel oleh (Muhammad Fajrul Fatahillah, 2025).
+9. HyperText Markup Language (HTML)
+HTML digunakan untuk membentuk struktur halaman aplikasi Web, seperti judul, menu, tabel, formulir, tombol, dan komponen antarmuka lainnya. Pada pengembangan sistem manajemen bengkel berbasis Web, HTML digunakan sebagai penyusun struktur antarmuka yang diakses oleh pengguna (Muhammad Fajrul Fatahillah, 2025).
+10. Cascading Style Sheets (CSS)
+CSS digunakan untuk mengatur penyajian visual halaman HTML, termasuk tata letak, ukuran, jarak, tipografi, dan penyesuaian tampilan pada perangkat yang berbeda. Penggunaan CSS bersama HTML dalam pembangunan antarmuka sistem bengkel berbasis Web diterapkan oleh (Muhammad Fajrul Fatahillah, 2025).
+11. JavaScript
+JavaScript digunakan untuk menambahkan perilaku dinamis pada halaman Web, seperti validasi masukan, pengelolaan interaksi pengguna, dan perubahan elemen halaman tanpa mengubah struktur utama aplikasi. Rahmawati et al., (2023) menggunakan JavaScript bersama PHP dalam pengembangan sistem informasi penjualan suku cadang berbasis Web.
+12. Visual Studio Code
+Visual Studio Code merupakan perangkat lunak penyunting kode yang digunakan untuk menulis dan mengelola berkas program selama proses pengembangan aplikasi. Masturoh, (2024) menggunakan Visual Studio Code dalam pembangunan sistem home service dan penjualan suku cadang berbasis Web.
+13. Draw.io
+Draw.io digunakan sebagai perangkat bantu untuk menyusun flowchart, DFD, ERD, dan rancangan sistem lainnya pada tahap analisis dan perancangan. Penggunaan pemodelan visual diperlukan agar fungsi, aliran data, serta hubungan antarkomponen dapat dijelaskan sebelum implementasi. Pendekatan pemodelan sistem dan basis data juga digunakan dalam penelitian (Asrin, 2023).
+14. User Interface (UI/UX)
+User Interface atau UI mencakup berbagai elemen visual dan interaktif, seperti tata letak halaman, warna, tipografi, ikon, tombol, yang ditampilkan oleh sistem. Sementara itu, User Experience atau UX berkaitan dengan pengalaman yang dirasakan pengguna ketika mengoperasikan aplikasi. UI dan UX memiliki keterkaitan karena membantu menciptakan pengalaman penggunaan yang lehih baik (Febriani et al., 2023).
+15. Web Browser
+Web browser atau peramban Web digunakan untuk mengakses aplikasi, memasukkan data, menjalankan transaksi, serta menampilkan informasi dan laporan dari sisi pengguna. Akses sistem bengkel melalui peramban pada komputer maupun perangkat bergerak diterapkan dalam penelitian (Citra Wuladari & Fersellia, 2025).
+15. Black-Box Testing
+Black-box testing merupakan metode pengujian yang memeriksa kesesuaian fungsi berdasarkan masukan dan keluaran tanpa menilai struktur internal kode program. Pengujian dilakukan pada fitur login, hak akses, data master, transaksi, perubahan stok, riwayat servis, dan laporan untuk memastikan hasil aktual sesuai dengan hasil yang diharapkan. Metode ini digunakan pada penelitian (Delviani Kurniawati Djami et al., 2021).
+BAB III
+ANALISA DAN PERANCANGAN
+3.1. Tinjauan Umum
+Tinjauan umum memberikan gambaran mengenai objek penelitian yang digunakan sebagai tempat pengumpulan data dan penerapan sistem, yaitu Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta, khususnya Unit Produksi dan Jasa Otomotif dan AHASS. Uraian pada bagian ini meliputi kedudukan, tugas, visi dan misi, struktur organisasi, serta denah lokasi yang berkaitan dengan pelaksanaan layanan otomotif.
+Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta merupakan lembaga teknis yang menyelenggarakan pendidikan dan pelatihan bidang keteknikan. Selain menjalankan layanan pendidikan dan pelatihan, BLPT DIY juga mengelola Unit Produksi dan Jasa sebagai sarana penerapan kompetensi sekaligus pelayanan kepada masyarakat. Salah satu unit tersebut adalah UPJ Otomotif dan AHASS yang memberikan pelayanan perawatan, perbaikan, serta penyediaan suku cadang kendaraan bermotor.
+3.1.1. Kedudukan
+Balai Latihan Pendidikan Teknik Daerah Istimewa Yogyakarta berkedudukan sebagai Unit Pelaksana Teknis Daerah di bawah Dinas Pendidikan, Pemuda, dan Olahraga Daerah Istimewa Yogyakarta. Kedudukan tersebut menempatkan BLPT DIY sebagai lembaga teknis yang melaksanakan program pendidikan, pelatihan, sertifikasi, serta pelayanan bidang keteknikan untuk mendukung peningkatan kompetensi sumber daya manusia.
+BLPT DIY beralamat di Jalan Kyai Mojo Nomor 70, Bener, Kemantren Tegalrejo, Kota Yogyakarta, Daerah Istimewa Yogyakarta. UPJ Otomotif dan AHASS berada di lingkungan BLPT DIY serta menjadi bagian dari Unit Produksi dan Jasa di bawah koordinasi Seksi Layanan Pendidikan Teknik. Kedudukan ini menunjukkan bahwa pelayanan otomotif tidak hanya berfungsi sebagai unit layanan kepada masyarakat, tetapi juga berkaitan dengan pelaksanaan pendidikan dan pelatihan berbasis praktik.
+BLPT Yogyakarta diresmikan oleh Menteri Pendidikan dan Kebudayaan Republik Indonesia pada tanggal 31 Maret 1981 bersama BLPT Padang, BLPT Palembang, dan BLPT Semarang. Dalam perkembangannya, layanan BLPT DIY diperluas untuk menyesuaikan kebutuhan pendidikan vokasi, dunia usaha, dan dunia industri. Pengembangan tersebut mencakup layanan pelatihan, sertifikasi, pengelolaan sarana pembelajaran, serta Unit Produksi dan Jasa.
+3.1.2. Tugas
+UPJ Otomotif dan AHASS berada dalam lingkup Seksi Layanan Pendidikan Teknik. Tugas Seksi Layanan Pendidikan Teknik berkaitan dengan penyelenggaraan pendidikan, pelatihan, pelayanan produksi, serta pengelolaan sarana pembelajaran bidang teknik. Tugas yang berhubungan dengan pelaksanaan layanan tersebut meliputi:
+Penyusunan program Seksi Layanan Pendidikan Teknik.
+Penyiapan teknis layanan pendidikan dan pelatihan bidang teknik.
+Penyiapan teknis pendidikan dan pelatihan bidang layanan produk dan teknik.
+Penyelenggaraan pendidikan dan pelatihan bidang layanan pendidikan teknik.
+Penyelenggaraan pendidikan dan pelatihan bidang layanan produksi teknik.
+Pelaksanaan evaluasi, pemantauan, dan pelaporan program Seksi Layanan Pendidikan Teknik.
+Pengelolaan Lembaga Sertifikasi Profesi dan Unit Produksi dan Jasa.
+Pengelolaan platform pembelajaran elektronik dan media pembelajaran.
+Pembentukan tim efektif untuk mendukung pelaksanaan layanan pendidikan teknik.
+Dalam konteks penelitian ini, pengelolaan Unit Produksi dan Jasa menjadi tugas yang paling berkaitan dengan sistem yang dikembangkan. Kegiatan UPJ Otomotif dan AHASS meliputi penerimaan layanan servis, pencatatan pekerjaan mekanik, penggunaan dan penjualan suku cadang, pengelolaan persediaan, serta penyusunan laporan operasional. Seluruh kegiatan tersebut memerlukan pengelolaan data yang terstruktur agar informasi dapat ditelusuri dan disajikan secara akurat.
+3.1.3. Visi dan Misi
+Visi BLPT DIY sampai dengan tahun 2029 adalah “Menjadi Balai Latihan dan Pendidikan Teknik yang solutif, adaptif, dan inovatif untuk menyiapkan sumber daya manusia yang unggul dan kompetitif.”
+Misi BLPT DIY dalam mewujudkan visi tersebut adalah sebagai berikut:
+Menyelenggarakan layanan pendidikan dan pelatihan yang berkualitas berbasis inovasi dan teknologi terkini sesuai dengan kebutuhan pasar kerja dan industri.
+Menyiapkan sumber daya manusia bidang keteknikan yang kompeten, inovatif, dan berdaya saing global.
+Mewujudkan tata kelola organisasi yang efektif, efisien, transparan, dan akuntabel.
+Membangun kemitraan dan kolaborasi strategis dengan kalangan industri, pemerintah, dan lembaga pendidikan lain.
+Pembangunan Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Otomotif Berbasis Web mendukung misi BLPT DIY dalam mewujudkan tata kelola organisasi yang efektif, efisien, transparan, dan akuntabel. Melalui sistem terintegrasi, data transaksi, persediaan, riwayat layanan, dan laporan operasional dapat dikelola melalui satu sumber data yang sama.
+3.1.4. Struktur Organisasi
+Struktur organisasi BLPT DIY dipimpin oleh Kepala Balai yang dibantu oleh Subbagian Tata Usaha, Seksi Program dan Evaluasi, Seksi Layanan Pendidikan Teknik, jabatan fungsional, serta unsur pendukung lainnya. Struktur tersebut digunakan untuk membagi tugas dan tanggung jawab agar pelaksanaan program pendidikan, pelatihan, pengelolaan administrasi, dan pelayanan teknik dapat berjalan secara terkoordinasi.
+Gambar3. 1 Struktur Organisasi BLPT DIY
+UPJ Otomotif dan AHASS berada di bawah koordinasi Seksi Layanan Pendidikan Teknik. Pada struktur tersebut, Unit Produksi dan Jasa berada dalam satu lingkup dengan Lembaga Sertifikasi Profesi, kegiatan riset dan inovasi, serta pengelolaan sarana dan prasarana pembelajaran. Kedudukan tersebut menegaskan bahwa UPJ memiliki fungsi pelayanan produksi sekaligus mendukung kegiatan pembelajaran dan pelatihan bidang teknik.
+Gambar3. 2 Struktur Seksi Layanan Pendidikan Teknik
+Berdasarkan struktur organisasi tersebut, Kepala Seksi Layanan Pendidikan Teknik bertanggung jawab terhadap pengelolaan Unit Produksi dan Jasa. Pelaksanaan operasional UPJ Otomotif dan AHASS melibatkan petugas Front Office, mekanik, Koperasi, serta Kepala UPJ. Pembagian peran tersebut digunakan sebagai dasar dalam menetapkan pengguna dan hak akses pada sistem yang diusulkan.
+3.1.5. Denah Lokasi
+BLPT DIY berada di kawasan perkotaan dan dapat dijangkau melalui beberapa jalur utama. Akses dari arah utara dapat ditempuh melalui kawasan Jombor, akses dari arah timur melalui Tugu Yogyakarta, akses dari arah barat melalui Godean, sedangkan akses dari arah selatan melalui Wirobrajan. Posisi BLPT DIY berada di sisi Jalan Kyai Mojo sehingga mudah diakses oleh peserta pelatihan, mitra, maupun masyarakat pengguna layanan UPJ Otomotif dan AHASS.
+Gambar3. 3 Denah Lokasi BLPT DIY
+Lokasi penelitian berfokus pada area UPJ Otomotif dan AHASS yang berada di dalam kompleks BLPT DIY. Pada lokasi tersebut dilaksanakan proses penerimaan pelanggan, pemeriksaan kendaraan, pekerjaan servis, penggunaan dan penjualan suku cadang, pencatatan persediaan, serta penyusunan laporan operasional.
+3.2. Sistem yang Sedang Berjalan
+Proses operasional pada UPJ Otomotif dan AHASS BLPT DIY telah memanfaatkan aplikasi layanan AHASS untuk kebutuhan tertentu. Namun, pengelolaan internal yang berkaitan dengan transaksi jasa servis, penjualan suku cadang, persediaan, pembelian atau penerimaan barang, riwayat layanan mekanik, dan laporan operasional masih dilakukan melalui beberapa media yang terpisah. Media yang digunakan antara lain nota transaksi, dokumen fisik, serta lembar kerja Microsoft Excel.
+Alur pelayanan dimulai ketika pelanggan menyampaikan kebutuhan perawatan atau keluhan kendaraan kepada petugas Front Office. Data pelanggan, kendaraan, dan kebutuhan servis dicatat untuk diteruskan kepada mekanik. Mekanik melakukan pemeriksaan dan pekerjaan servis berdasarkan hasil identifikasi. Apabila diperlukan penggantian komponen, suku cadang dikeluarkan dari persediaan atau dimintakan kepada Koperasi apabila barang belum tersedia.
+Setelah pekerjaan selesai, jasa servis dan suku cadang yang digunakan dicatat sebagai transaksi. Nota kemudian disusun dan data transaksi direkap kembali ke dalam Microsoft Excel. Pencatatan stok masuk dan stok keluar belum terhubung secara otomatis dengan transaksi, sehingga perubahan jumlah persediaan harus diperiksa dan disesuaikan secara manual. Proses tersebut dapat menimbulkan perbedaan antara catatan persediaan dengan jumlah fisik yang tersedia.
+Data pembelian atau penerimaan suku cadang dari Koperasi juga belum terintegrasi langsung dengan pencatatan transaksi Front Office. Akibatnya, informasi mengenai barang masuk, barang keluar, sisa persediaan, dan barang yang telah mencapai batas minimum belum dapat dipantau melalui satu sumber data. Rekapitulasi laporan jasa servis, penjualan suku cadang, persediaan, dan pekerjaan mekanik masih memerlukan pengolahan ulang sebelum disampaikan kepada Kepala UPJ.
+Gambar3. 4 Flowcart Sistem Berjalan
+Berdasarkan uraian sistem yang sedang berjalan, beberapa permasalahan yang dapat diidentifikasi adalah sebagai berikut:
+pencatatan transaksi dan persediaan dilakukan melalui media yang terpisah sehingga data harus dimasukkan dan direkap kembali.
+pemotongan stok belum dilakukan secara otomatis ketika suku cadang digunakan atau dijual.
+data pembelian dan penerimaan suku cadang dari Koperasi belum terhubung langsung dengan data persediaan.
+peringatan batas minimum stok belum tersedia sehingga kebutuhan pemesanan ulang tidak dapat diketahui secara cepat.
+riwayat servis dan jumlah pekerjaan yang ditangani mekanik belum tersaji secara terpusat.
+laporan operasional belum dapat diakses secara langsung oleh Kepala UPJ karena masih memerlukan rekapitulasi manual.
+3.3. Usulan Sistem yang Baru
+Sistem yang diusulkan adalah Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Otomotif Berbasis Web pada UPJ Otomotif dan AHASS BLPT DIY. Sistem dikembangkan untuk mengintegrasikan pencatatan layanan jasa servis, penjualan suku cadang, pembelian atau penerimaan barang dari Koperasi, pengelolaan persediaan, riwayat layanan mekanik, dan laporan operasional dalam satu basis data.
+Proses sistem dimulai melalui autentikasi pengguna berdasarkan hak akses. Admin mengelola akun pengguna, data mekanik, data jasa, kategori suku cadang, dan data master suku cadang. FrontOffice mencatat data pelanggan, kendaraan, keluhan, mekanik, jasa servis, serta suku cadang yang digunakan atau dijual dalam satu transaksi. Setelah transaksi disimpan, sistem memperbarui riwayat servis dan mengurangi jumlah stok secara otomatis.
+Sistem melakukan pemeriksaan jumlah persediaan terhadap batas minimum yang telah ditetapkan pada setiap suku cadang. Apabila jumlah stok berada pada atau di bawah batas minimum, sistem menampilkan peringatan yang dapat digunakan sebagai dasar pembuatan order. Koperasi mencatat pemenuhan order dan penerimaan suku cadang. Setelah penerimaan dikonfirmasi, jumlah persediaan bertambah dan riwayat mutasi barang masuk tersimpan dalam sistem.
+Kepala UPJ dapat mengakses laporan berdasarkan periode yang dipilih. Laporan yang disediakan mencakup laporan transaksi jasa servis, penjualan suku cadang, stok dan mutasi persediaan, order atau penerimaan barang, riwayat servis, serta rekapitulasi jumlah pekerjaan yang ditangani mekanik. Sistem tidak mencakup perhitungan Harga Pokok Penjualan, margin keuntungan, laba rugi, komisi, maupun gaji mekanik karena pengembangan difokuskan pada pengelolaan operasional.
+Gambar3. 5 Flowchart Sistem Usulan
+3.3.1. Pengguna Sistem dan Hak Akses
+Hak akses pada sistem dibedakan berdasarkan tugas setiap pengguna. Pembatasan akses diterapkan agar data hanya dapat dikelola oleh pihak yang memiliki kewenangan. Pengguna sistem terdiri atas:
+Admin: mengelola akun pengguna, data mekanik, kategori suku cadang, data master suku cadang, data jasa, serta pengaturan sistem;
+FrontOffice: mencatat data pelanggan dan kendaraan, transaksi jasa servis, penjualan suku cadang, mencetak nota, serta melihat ketersediaan stok;
+Koperasi: melihat order suku cadang, mencatat pembelian atau pemenuhan order, serta mengonfirmasi penerimaan barang yang menambah persediaan; dan
+Kepala UPJ: melihat dashboard dan laporan operasional berdasarkan periode tanpa melakukan perubahan terhadap data transaksi.
+3.3.2. Kebutuhan Fungsional
+Kebutuhan fungsional menjelaskan layanan yang harus tersedia pada sistem agar proses operasional dapat dijalankan secara terintegrasi. Kebutuhan tersebut meliputi:
+Sistem menyediakan proses login dan mengarahkan pengguna menuju halaman sesuai hak akses.
+Sistem menyediakan pengelolaan data pengguna, mekanik, pelanggan, kendaraan, jasa servis, kategori suku cadang, dan master suku cadang.
+Sistem menyediakan pencatatan transaksi jasa servis dan penjualan suku cadang dalam satu proses.
+Sistem menghitung total transaksi dan mencetak nota berdasarkan rincian jasa serta suku cadang.
+Sistem mengurangi stok secara otomatis ketika suku cadang digunakan atau dijual.
+Sistem menampilkan peringatan apabila stok mencapai batas minimum atau habis.
+Sistem menyediakan pembuatan order, pencatatan pembelian, dan penerimaan suku cadang dari Koperasi.
+Sistem mencatat mutasi stok masuk dan stok keluar.
+Sistem menyimpan riwayat servis berdasarkan pelanggan dan kendaraan;
+Sistem menyusun rekapitulasi jumlah layanan yang ditangani oleh mekanik.
+Sistem menyajikan dashboard dan laporan operasional berdasarkan periode.
+3.3.3. Kebutuhan Nonfungsional
+Kebutuhan nonfungsional ditetapkan untuk menjamin sistem dapat digunakan dengan aman, mudah, dan konsisten. Kebutuhan tersebut meliputi:
+sistem dapat diakses melalui peramban Web pada komputer atau laptop yang terhubung dengan jaringan.
+Antarmuka dibuat responsif dan menggunakan navigasi yang konsisten.
+Kata sandi pengguna disimpan dalam bentuk terenkripsi.
+Pengguna hanya dapat mengakses fungsi sesuai dengan perannya.
+Data transaksi dan persediaan disimpan dalam basis data terpusat.
+Input penting divalidasi untuk mencegah data kosong, data ganda, dan jumlah stok negatif.
+Sistem menyediakan pesan keberhasilan atau kesalahan pada setiap proses pengolahan data.
+Sistem mendukung pencadangan basis data untuk mengurangi risiko kehilangan data.
+3.4. Rancangan Sistem
+Rancangan sistem merupakan tahap penerjemahan kebutuhan pengguna ke dalam model proses, struktur basis data, rancangan masukan, dan rancangan keluaran. Tahap ini digunakan sebagai acuan dalam proses implementasi agar setiap fungsi yang dibangun tetap sesuai dengan ruang lingkup penelitian. Pemodelan proses dilakukan menggunakan Data Flow Diagram, sedangkan struktur data dimodelkan melalui Entity Relationship Diagram dan relasi tabel.
+3.4.1. Rancangan Proses
+Rancangan proses digunakan untuk menggambarkan hubungan antara pengguna, aliran data, proses pengolahan, penyimpanan data, serta keluaran yang dihasilkan. Pemodelan disusun secara bertingkat agar fungsi sistem dapat dipahami mulai dari gambaran umum sampai dengan proses yang lebih rinci.
+Diagram Konteks
+Diagram konteks menggambarkan batas Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Otomotif Berbasis Web serta pertukaran data dengan entitas eksternal. Entitas yang berinteraksi dengan sistem terdiri atas Admin, FrontOffice, Koperasi, dan Kepala UPJ. Admin mengirim data master, FrontOffice mengirim data transaksi, Koperasi mengirim data order dan penerimaan suku cadang, sedangkan Kepala UPJ menerima laporan operasional.
+Gambar3. 6 Diagram Konteks
+Diagram HIPO
+Diagram HIPO digunakan untuk menggambarkan hierarki fungsi sistem berdasarkan kelompok masukan, proses, dan keluaran. Kelompok masukan mencakup data pengguna, mekanik, pelanggan, kendaraan, jasa, suku cadang, transaksi, order, dan penerimaan barang. Data tersebut diproses melalui pengelolaan data master, transaksi, persediaan, serta penyusunan laporan.
+Gambar3. 7 Diagram HIPO
+Diagram Overview
+Diagram overview menguraikan sistem menjadi proses utama yang saling berhubungan. Proses utama meliputi pengelolaan data master, pencatatan transaksi jasa dan suku cadang, pengelolaan order dan penerimaan suku cadang, pembaruan stok, serta penyusunan laporan. Diagram ini menjadi penghubung antara diagram konteks dan diagram detail.
+Gambar3. 8 Diagram Overview
+Diagram Detail Input
+Diagram detail input menggambarkan data yang dimasukkan ke dalam sistem oleh setiap pengguna. Admin memasukkan data pengguna dan master, Front Office memasukkan data pelanggan, kendaraan, transaksi jasa, dan transaksi suku cadang, sedangkan Koperasi memasukkan data pemenuhan order serta penerimaan suku cadang.
+Gambar3. 9 Diagram Input
+Diagram Detail Proses
+Diagram detail proses menggambarkan pengolahan data setelah input diterima. Proses yang dilakukan mencakup penyimpanan transaksi, penghitungan total, pembaruan stok, pemeriksaan batas minimum, pencatatan order dan penerimaan barang, penyusunan riwayat servis, serta pembentukan laporan berdasarkan periode.
+Gambar3. 10 Diagram Proses
+Diagram Detail Output
+Diagram detail output menggambarkan informasi yang dihasilkan sistem dan diterima oleh pengguna. Keluaran terdiri atas nota transaksi, daftar persediaan, peringatan stok minimum, laporan transaksi jasa, laporan penjualan suku cadang, laporan order dan penerimaan, riwayat servis, rekapitulasi mekanik, serta dashboard Kepala UPJ.
+Gambar3. 11 Diagram Output
+Rancangan Basis Data
+Rancangan basis data digunakan untuk menentukan data yang harus disimpan serta hubungan antarentitas. Data dikelola secara terpusat agar tidak terjadi pencatatan berulang dan setiap laporan dapat dibentuk dari data transaksi yang sama. Entitas utama meliputi pengguna, peran, mekanik, pelanggan, kendaraan, jasa, suku cadang, transaksi, detail transaksi jasa, detail transaksi suku cadang, order, detail order, pembelian atau penerimaan, serta mutasi persediaan.
+Entity Relationship Diagram
+Entity Relationship Diagram menggambarkan entitas, atribut utama, dan hubungan data yang digunakan pada sistem. Hubungan tersebut dirancang agar satu transaksi dapat memiliki beberapa jasa dan beberapa suku cadang, satu pelanggan dapat memiliki lebih dari satu kendaraan, satu mekanik dapat menangani banyak transaksi jasa, serta satu suku cadang dapat memiliki banyak riwayat penjualan, order, penerimaan, dan mutasi stok.
+Gambar3. 12 Diagram ERD
+Relasi Tabel
+Relasi tabel merupakan bentuk fisik hubungan antarentitas yang diterapkan pada basis data. Hubungan dibentuk melalui kunci utama dan kunci tamu untuk menjaga integritas data. Relasi tersebut memastikan bahwa transaksi selalu merujuk pada pengguna, pelanggan, kendaraan, mekanik, jasa, dan suku cadang yang sah serta setiap perubahan persediaan dapat ditelusuri berdasarkan sumber transaksinya.
+Gambar3. 13 Relasi Tabel
+Struktur Tabel
+Berikut adalah struktur tabel Sistem Informasi Penjualan Suku Cadang Dan Jasa Service Otomotif Berbasis Web pada UPJ Otomotif dan AHASS BLPT DIY yang disusun berdasarkan relasi tabel.
+Tabel User
+Tabel user digunakan untuk menyimpan data pengguna sistem beserta peran yang menentukan hak akses pengguna.
+Nama Tabel	: User
+Primary Key	: id_user
+Jumlah Ukuran	: 130 Byte
+Tabel3. 1 User
+Tabel Login
+Tabel login digunakan untuk menyimpan informasi autentikasi yang digunakan pengguna ketika masuk ke dalam sistem.
+Nama Tabel	: Login
+Primary Key	: id_login
+Jumlah Ukuran: 325 Byte
+Tabel3. 2 Login
+Tabel Mekanik
+Tabel mekanik digunakan untuk menyimpan data mekanik yang menangani layanan jasa servis.
+Nama Tabel	: Mekanik
+Primary Key	: id_mekanik
+Jumlah Ukuran: 110 Byte
+Tabel3. 3 Mekanik
+Tabel Master Suku Cadang
+Tabel master suku cadang digunakan untuk menyimpan data utama setiap suku cadang yang dikelola pada sistem.
+Nama Tabel	: Master_Suku_Cadang
+Primary Key	: id_master_suku_cadang
+Jumlah Ukuran: 212 Byte
+Tabel3. 4 Master Suku Cadang
+Tabel Stok Suku Cadang
+Tabel stok suku cadang digunakan untuk menyimpan jumlah persediaan saat ini dan batas minimum setiap suku cadang.
+Nama Tabel	: Stok_Suku_Cadang
+Primary Key	: id_stok_suku_cadang
+Jumlah Ukuran: 48 Byte
+Tabel3. 5 Stok Suku Cadang
+Tabel Transaksi
+Tabel transaksi digunakan untuk menyimpan data induk transaksi yang dicatat oleh Front Office.
+Nama Tabel	: Transaksi
+Primary Key	: id_transaksi
+Jumlah Ukuran: 64 Byte
+Tabel3. 6 Transaksi
+Tabel Transaksi Jasa
+Tabel transaksi jasa digunakan untuk menyimpan rincian layanan jasa dan mekanik yang menangani transaksi.
+Nama Tabel	: Transaksi_Jasa
+Primary Key	: id_transaksi_jasa
+Jumlah Ukuran: 417 Byte
+Tabel3. 7 Transaksi Jasa
+Tabel Transaksi Suku Cadang
+Tabel transaksi suku cadang digunakan untuk menyimpan rincian suku cadang yang dijual atau digunakan dalam transaksi.
+Nama Tabel	: Transaksi_Suku_Cadang
+Primary Key	: id_transaksi_suku_cadang
+Jumlah Ukuran: 88 Byte
+Tabel3. 8 Transaksi Suku Cadang
+Tabel Order Suku Cadang
+Tabel order suku cadang digunakan untuk menyimpan kebutuhan pemenuhan suku cadang berdasarkan kondisi persediaan.
+Nama Tabel	: Order_Suku_Cadang
+Primary Key	: id_order_suku_cadang
+Jumlah Ukuran: 78 Byte
+Tabel3. 9 Order Suku Cadang
+Tabel Penerimaan Suku Cadang
+Tabel penerimaan suku cadang digunakan untuk menyimpan barang yang diterima berdasarkan order dan menambah persediaan.
+Nama Tabel	: Penerimaan_Suku_Cadang
+Primary Key	: id_penerimaan_suku_cadang
+Jumlah Ukuran: 78 Byte
+Tabel3. 10 Penerimaan Suku Cadang
+3.4.3. Rancangan Masukan (Input)
+Rancangan masukan dibuat untuk memastikan data yang dimasukkan oleh pengguna sesuai dengan struktur basis data dan aturan bisnis. Setiap formulir dilengkapi validasi untuk mencegah data kosong, data ganda, kesalahan format, serta transaksi suku cadang yang melebihi stok tersedia.
+Halaman Login
+Halaman login digunakan oleh seluruh pengguna untuk memasukkan nama pengguna dan kata sandi. Sistem memeriksa kesesuaian akun dan mengarahkan pengguna menuju dashboard sesuai peran. Pesan kesalahan ditampilkan apabila akun tidak ditemukan, kata sandi tidak sesuai, atau akun tidak aktif.
+Gambar3. 14 Dashboard Login
+Halaman Data Pengguna
+Halaman data pengguna digunakan oleh Admin untuk melihat, menambah, mengubah, serta mengatur status akun dan peran pengguna sistem.
+Gambar3. 15 Form Data Pengguna
+Halaman Data Mekanik 
+Halaman data mekanik digunakan oleh Admin untuk mengelola identitas mekanik yang akan dipilih pada pencatatan transaksi jasa servis.
+Gambar3. 16 Form Data Mekanik
+Halaman Master Suku Cadang 
+Halaman master suku cadang digunakan oleh Admin untuk mengelola kode, nama, kategori, harga jual, stok, dan batas minimum suku cadang.
+Gambar3. 17 Form Master Suku Cadang
+Halaman Transaksi Baru
+Halaman transaksi baru digunakan oleh Front Office untuk mencatat jasa servis dan suku cadang serta menghitung total transaksi secara otomatis.
+Gambar3. 18 Form Transakasi Baru
+Halaman Order Suku Cadang
+Halaman order suku cadang digunakan oleh Koperasi untuk melihat kebutuhan barang, memeriksa rincian order, dan memperbarui status pemenuhan.
+Gambar3. 19 Order Suku Cadang
+Halaman Penerimaan Suku Cadang
+Halaman penerimaan suku cadang digunakan oleh Koperasi untuk mencatat jumlah barang yang diterima berdasarkan order dan mengonfirmasi penambahan stok.
+Gambar3. 20 Penerimaan Suku Cadang
+3.4.4. Rancangan Keluaran (Output)
+Rancangan keluaran digunakan untuk menentukan informasi yang akan ditampilkan atau dicetak oleh sistem. Keluaran disesuaikan dengan kebutuhan setiap pengguna dan dapat difilter berdasarkan periode agar informasi yang dihasilkan lebih mudah dianalisis.
+Dashboard Admin
+Dashboard Admin menampilkan ringkasan pengguna, mekanik, master suku cadang, stok minimum, serta aktivitas pengelolaan data.
+Gambar3. 21 Dashboard Admin
+Dashboard Front Office
+Dashboard Front Office menampilkan ringkasan transaksi harian, layanan jasa, penjualan suku cadang, dan informasi stok minimum.
+Gambar3. 22 Dashboard Front Office
+Dashboard Koperasi
+Dashboard Koperasi menampilkan jumlah order baru, order yang diproses, order selesai, dan penerimaan suku cadang.
+Gambar3. 23 Dashboard Koperasi
+Dashboard Kepala UPJ
+Dashboard Kepala UPJ menyajikan ringkasan transaksi operasional, kondisi persediaan, tren transaksi, dan produktivitas mekanik.
+Gambar3. 24 Dashboard Kepala UPJ
+Halaman Daftar Transaksi
+Halaman daftar transaksi menampilkan riwayat transaksi jasa dan suku cadang yang dapat ditelusuri berdasarkan nomor nota, tanggal, dan jenis transaksi.
+Gambar3. 25 Daftar Transaksi
+Halaman Informasi Stok
+Halaman informasi stok menampilkan ketersediaan, batas minimum, kategori, dan status persediaan setiap suku cadang.
+Gambar3. 26 Informasi Stok
+Halaman Riwayat Penerimaan
+Halaman riwayat penerimaan menampilkan daftar penerimaan suku cadang, referensi order, jumlah barang, dan status kesesuaian.
+Gambar3. 27 Riwayat Penerimaan
+Laporan Jasa Servis
+Laporan jasa servis menampilkan jumlah layanan, nilai transaksi jasa, mekanik, jenis layanan, dan rincian transaksi berdasarkan periode.
+Gambar3. 28 Jasa Servis
+Laporan Penjualan Suku Cadang
+Laporan penjualan suku cadang menampilkan jumlah transaksi, unit terjual, nilai penjualan, serta rincian suku cadang berdasarkan periode.
+Gambar3. 29 Penjualan Suku Cadang
+Laporan Persediaan
+Laporan persediaan menampilkan posisi stok, batas minimum, status persediaan, dan barang yang memerlukan tindak lanjut.
+Gambar3. 30 Persediaan
+Laporan Produktivitas Mekanik
+Laporan produktivitas mekanik menampilkan rekapitulasi jumlah layanan dan jenis pekerjaan yang ditangani setiap mekanik dalam periode tertentu.
+Gambar3. 31 Produktivitas Mekanik
+Nota Transaksi
+Nota transaksi merupakan keluaran tercetak yang memuat nomor nota, tanggal, rincian jasa, rincian suku cadang, mekanik, dan total transaksi.
+Gambar3. 32 Nota Transaksi
+Rancangan proses, basis data, masukan, dan keluaran yang telah disusun menjadi acuan pada tahap implementasi. Kesesuaian antara rancangan dan hasil implementasi akan dibahas serta diuji pada BAB IV melalui pengujian fungsi sistem.
+BAB IV
+IMPLEMENTASI DAN PENGUJIAN SISTEM
+4.1. Implementasi Sistem
+Implementasi sistem dilakukan dengan menerjemahkan desain sistem ke dalam bentuk aplikasi berbasis web menggunakan bahasa pemrograman, framework, serta basis data yang telah ditentukan. Setiap fitur yang diimplementasikan disesuaikan dengan kebutuhan masing-masing peran pengguna sehingga sistem dapat berjalan sesuai alur bisnis yang telah ditetapkan untuk UPJ Otomotif dan AHASS BLPT DIY.
+4.1.1. Form Login
+Dashboard Login
+Halaman login digunakan sebagai gerbang masuk ke dalam sistem. Pada halaman ini, pengguna diminta memasukkan username dan password yang telah terdaftar untuk dapat mengakses sistem sesuai dengan hak akses masing-masing role.
+4.1. 2 Bagian Admin
+Dashboard Admin
+Halaman Dashboard Admin menampilkan ringkasan informasi terkait seluruh aktivitas dan master data yang dikelola oleh admin di dalam sistem.
+Dashboard Master Kategori Suku Cadang
+Halaman ini digunakan oleh admin untuk mengelola pengkategorian jenis suku cadang yang tersedia di UPJ, memudahkan dalam proses pencarian dan klasifikasi barang.
+Dashboard Data Personil
+Halaman Data Personil berfungsi untuk menyimpan dan mengelola data identitas pegawai atau karyawan yang bekerja di lingkungan UPJ.
+Dashboard Data Pengguna
+Halaman ini digunakan admin untuk mengatur hak akses akun pengguna (Manajemen User), meliputi penambahan, pengubahan password, dan penetapan role.
+Dashboard Data Mekanik
+Halaman Data Mekanik digunakan khusus untuk menyimpan data mekanik yang akan menangani proses service kendaraan pelanggan.
+Dashboard Master Suku Cadang
+Halaman ini menampilkan seluruh basis data suku cadang yang tersedia di sistem, lengkap dengan informasi stok, satuan, dan deskripsi suku cadang.
+4.1.2. Bagian Front Office
+Dashboard Front Office
+Halaman utama bagi peran Front Office yang menyajikan informasi ringkas terkait status pelayanan, transaksi, dan notifikasi stok suku cadang.
+Dashboard Transaksi
+Halaman ini berfungsi sebagai antarmuka kasir/pelayanan untuk memproses pendaftaran service, memasukkan data keluhan, dan mencatat transaksi pelanggan.
+Dashboard Daftar Transaksi
+Halaman ini menampilkan rekam jejak dari seluruh transaksi service maupun penjualan suku cadang yang sedang berjalan maupun telah selesai.
+Gambar 4. 10 Tampilan Dashboard Daftar Transaksi
+Nota Transaksi
+Menampilkan antarmuka cetak bukti transaksi pembayaran (Nota) kepada pelanggan atas jasa service dan suku cadang yang dibeli.
+Dashboard Informasi Stok
+Halaman ini digunakan untuk memantau sisa ketersediaan stok fisik suku cadang secara real-time.
+Dashboard Order Suku Cadang
+Halaman krusial bagi Front Office untuk mengajukan pesanan suku cadang ke Koperasi. Sistem secara otomatis memfilter dan hanya menampilkan suku cadang yang stoknya berada di bawah batas minimum. Pengguna dapat menambahkan suku cadang ke dalam keranjang sebelum diproses menjadi satu nomor Surat Order.
+Dashboard Penerimaan Stok
+Halaman ini digunakan untuk mencatat dan mengonfirmasi penerimaan fisik suku cadang yang dikirim oleh Koperasi berdasarkan pesanan sebelumnya.
+Laporan Surat Jalan
+Menampilkan informasi dan dokumen pengiriman (Surat Jalan) yang menyertai datangnya stok suku cadang.
+Dashboard Return Suku Cadang
+Digunakan untuk memproses pengembalian (return) suku cadang ke Koperasi apabila terdapat kecacatan atau ketidaksesuaian spesifikasi barang.
+Bagian Koperasi
+Dashboard Koperasi
+Menyajikan visualisasi data ringkas mengenai aktivitas operasional bagian Koperasi, termasuk order masuk dan status stok.
+Dashboard Order Suku Cadang
+Halaman ini menampilkan daftar Order yang diajukan oleh Front Office. Dilengkapi dengan tombol View untuk melihat detail Surat Order agar pihak Koperasi dapat melakukan validasi item yang diminta.
+Laporan Order Suku Cadang
+Halaman untuk merekap dan memantau seluruh riwayat pesanan suku cadang dari Front Office untuk keperluan arsip dan pelaporan.
+Dashboard Penerimaan Suku Cadang
+Digunakan oleh Koperasi untuk mencatat masuknya suku cadang dari Supplier eksternal sebelum didistribusikan.
+Dashboard Return Suku Cadang
+Halaman untuk memproses konfirmasi pengembalian barang (return) dari Front Office ke pihak Koperasi.
+Dashboard Master Suku Cadang
+Halaman ini diakses oleh pihak Koperasi untuk melakukan manajemen harga jual suku cadang, memastikan data harga tetap mutakhir sesuai kebijakan Koperasi.
+4.1.4. Bagian Kepala UPJ
+Dashboard Kepala UPJ
+Halaman eksekutif yang ditujukan bagi pimpinan untuk memantau performa, pendapatan, dan efisiensi operasional UPJ secara keseluruhan.
+Dashboard Laporan Jasa Service
+Menampilkan statistik grafis maupun ringkasan data mengenai layanan jasa service yang telah diberikan kepada pelanggan.
+Laporan Jasa Service
+Menampilkan daftar mendetail dan terperinci terkait histori pengerjaan jasa service untuk di-review oleh Kepala UPJ.
+Dashboard Laporan Suku Cadang
+Menyajikan rekapitulasi data penjualan dan pergerakan persediaan suku cadang.
+Laporan Penjualan Suku Cadang
+Halaman ini menampilkan rincian total omzet atau penjualan suku cadang dalam periode waktu tertentu, yang juga dapat diekspor atau dicetak sebagai laporan resmi.
+Pengujian Black Box
+Pengujian sistem pada penelitian ini dilakukan menggunakan pendekatan Black Box Testing. Pendekatan ini menitikberatkan pada pengujian fungsi sistem dari sisi pengguna, tanpa berfokus pada struktur kode program yang ada di dalamnya. Pengujian dilakukan dengan memberikan sejumlah input pada fitur-fitur sistem, kemudian mengamati keluaran yang dihasilkan untuk melihat kesesuaiannya dengan kebutuhan yang telah dirancang.
+Tabel 4. 1. Hasil Pengujian Black Box
+BAB V PENUTUP
+Kesimpulan
+Saran
