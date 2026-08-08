@@ -114,7 +114,7 @@ export default function KoperasiLogHarga() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="font-mono text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded border border-indigo-100">
                           {log.shipment?.spare_part_order_detail?.spare_part
-                            ?.kode_parts || "-"}
+                            ?.kode_suku_cadang || "-"}
                         </span>
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-800">
