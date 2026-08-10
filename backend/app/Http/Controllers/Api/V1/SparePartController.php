@@ -155,7 +155,6 @@ class SparePartController extends Controller
             // 2. Find the latest verified shipment to attach the price log/update
             $latestShipment = \App\Models\SparePartShipment::where('status', 'disetujui')
                 ->whereNotNull('verified_at')
-                ->whereNotNull('harga_jual')
                 ->whereHas('sparePartOrderDetail', function ($q) use ($sparePart) {
                     $q->where('spare_part_id', $sparePart->id);
                 })
@@ -164,22 +163,29 @@ class SparePartController extends Controller
                 ->first();
 
             if (!$latestShipment) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tidak ditemukan history penerimaan/shipment untuk suku cadang ini. Harga jual tidak dapat diedit.',
-                ], 400);
+                // If there are no shipments, just update the baseline initial price of the Spare Part directly
+                $sparePart->update([
+                    'harga_jual' => $newPrice
+                ]);
+            } else {
+                // 3. Log the old price
+                if ($latestShipment->harga_jual !== null) {
+                    \App\Models\SparePartPriceLog::create([
+                        'spare_part_shipment_id' => $latestShipment->id,
+                        'harga_jual' => $latestShipment->harga_jual,
+                    ]);
+                }
+
+                // 4. Set the active newest price on the target shipment
+                $latestShipment->update([
+                    'harga_jual' => $newPrice,
+                ]);
+
+                // Keep the master in sync just in case
+                $sparePart->update([
+                    'harga_jual' => $newPrice
+                ]);
             }
-
-            // 3. Log the old price
-            \App\Models\SparePartPriceLog::create([
-                'spare_part_shipment_id' => $latestShipment->id,
-                'harga_jual' => $latestShipment->harga_jual,
-            ]);
-
-            // 4. Set the active newest price on the target shipment
-            $latestShipment->update([
-                'harga_jual' => $newPrice,
-            ]);
 
             DB::commit();
 

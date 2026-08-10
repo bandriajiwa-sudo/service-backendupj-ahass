@@ -22,7 +22,13 @@ class ActivePriceService
             ->orderByDesc('id')
             ->first();
 
-        return $shipment?->harga_jual;
+        if ($shipment && $shipment->harga_jual) {
+            return $shipment->harga_jual;
+        }
+
+        // Fallback ke harga_jual di tabel master jika tidak ada histori DO
+        $sparePart = \App\Models\SparePart::find($sparePartId);
+        return $sparePart?->harga_jual;
     }
 
     /**
@@ -49,6 +55,17 @@ class ActivePriceService
         // The query orders ascending, so the last assignment will be the latest record
         foreach ($shipments as $s) {
             $prices[$s->spare_part_id] = $s->harga_jual;
+        }
+
+        // Cari tahu mana yang tidak memiliki histori DO
+        $missingIds = array_diff($sparePartIds, array_keys($prices));
+        if (!empty($missingIds)) {
+            $masterParts = \App\Models\SparePart::whereIn('id', $missingIds)->get(['id', 'harga_jual']);
+            foreach ($masterParts as $part) {
+                if ($part->harga_jual !== null) {
+                    $prices[$part->id] = $part->harga_jual;
+                }
+            }
         }
 
         return $prices;
