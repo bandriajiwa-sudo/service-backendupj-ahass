@@ -255,9 +255,17 @@ export default function ShipmentList() {
       fetchShipments();
     } catch (err: any) {
       console.error(err);
+
+      let errorMsg =
+        err.response?.data?.message || "Gagal menyimpan hasil verifikasi";
+      if (err.response?.status === 422) {
+        errorMsg =
+          "File foto terlalu besar (maksimal 5MB) atau format tidak didukung. Mohon kecilkan ukuran foto.";
+      }
+
       Swal.fire({
         icon: "error",
-        text: err.response?.data?.message || "Gagal menyimpan hasil verifikasi",
+        text: errorMsg,
       });
     } finally {
       setIsSubmitting(false);

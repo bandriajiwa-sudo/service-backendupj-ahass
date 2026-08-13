@@ -127,9 +127,16 @@ export default function KoperasiReturns() {
       setRplInvoiceFile(null);
     } catch (err: any) {
       console.error(err);
+
+      let errorMsg = err.response?.data?.message || "Gagal menyetujui RPL";
+      if (err.response?.status === 422) {
+        errorMsg =
+          "File foto/dokumen terlalu besar (maksimal 5MB) atau format tidak didukung.";
+      }
+
       Swal.fire({
         icon: "error",
-        text: err.response?.data?.message || "Gagal menyetujui RPL",
+        text: errorMsg,
       });
     } finally {
       setIsSubmitting(false);

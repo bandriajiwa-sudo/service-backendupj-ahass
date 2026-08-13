@@ -186,12 +186,19 @@ export default function KoperasiPenerimaan() {
       fetchApprovedOrders();
     } catch (err: any) {
       console.error(err);
+
+      let errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Gagal membuat pengiriman";
+      if (err.response?.status === 422) {
+        errorMsg =
+          "File foto terlalu besar (maksimal 5MB) atau format tidak didukung. Mohon kecilkan ukuran foto.";
+      }
+
       Swal.fire({
         icon: "error",
-        text:
-          err.response?.data?.message ||
-          err.message ||
-          "Gagal membuat pengiriman",
+        text: errorMsg,
       });
     } finally {
       setIsSubmitting(false);
