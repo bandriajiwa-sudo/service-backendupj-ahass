@@ -90,8 +90,7 @@ export default function KoperasiLogHarga() {
                     <th className="px-6 py-4 font-bold">Waktu Penetapan</th>
                     <th className="px-6 py-4 font-bold">ID / Kode Parts</th>
                     <th className="px-6 py-4 font-bold">Nama Suku Cadang</th>
-                    <th className="px-6 py-4 font-bold">Harga Jual Baru</th>
-                    <th className="px-6 py-4 font-bold">Aktor / Penerima DO</th>
+                    <th className="px-6 py-4 font-bold">Harga Jual Lama</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-sm">
@@ -126,24 +125,12 @@ export default function KoperasiLogHarga() {
                           {formatRupiah(log.harga_jual)}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-gray-600 font-semibold flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs text-brand-dark overflow-hidden shrink-0">
-                            {log.shipment?.shipped_by?.name
-                              ? log.shipment.shipped_by.name
-                                  .substring(0, 1)
-                                  .toUpperCase()
-                              : "?"}
-                          </div>
-                          {log.shipment?.shipped_by?.name || "Sistem Automasi"}
-                        </span>
-                      </td>
                     </tr>
                   ))}
 
                   {logs.length === 0 && !isLoading && (
                     <tr>
-                      <td colSpan={5} className="py-20 text-center">
+                      <td colSpan={4} className="py-20 text-center">
                         <div className="inline-flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-100 border-dashed">
                           <RefreshCw className="w-8 h-8 text-gray-400 mb-3" />
                           <h3 className="text-gray-900 font-bold text-lg">
