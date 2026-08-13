@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
-import { Trash2 } from "lucide-react";
+import {  } from "lucide-react";
 import Swal from "sweetalert2";
 import styles from "./MechanicList.module.css";
 
@@ -270,19 +270,19 @@ const MechanicList: React.FC = () => {
                     </td>
                     <td>{getStatusBadge(m.status)}</td>
                     <td>
-                      <div className={styles.actionLinks}>
-                        <span
-                          className={styles.actionLink}
+                      <div className="flex gap-2 items-center">
+                        <button
+                          className="bg-[#f59e0b] hover:bg-[#d97706] text-white font-medium text-sm px-4 py-1.5 rounded transition shadow-sm"
                           onClick={() => handleEdit(m)}
                         >
                           Edit
-                        </span>
-                        <Trash2
-                          size={18}
-                          className={styles.actionIconDanger}
+                        </button>
+                        <button
+                          className="bg-[#ef4444] hover:bg-[#dc2626] text-white font-medium text-sm px-4 py-1.5 rounded transition shadow-sm"
                           onClick={() => handleDelete(m.id)}
-                          style={{ cursor: "pointer", color: "#f43f5e" }}
-                        />
+                        >
+                          Hapus
+                        </button>
                       </div>
                     </td>
                   </tr>
