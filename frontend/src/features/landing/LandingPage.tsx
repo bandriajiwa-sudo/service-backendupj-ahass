@@ -72,7 +72,8 @@ const ParticleNetwork: React.FC = () => {
     if (!ctx) return;
 
     let particlesArray: Particle[] = [];
-    const colors = ["#1E3A8A", "#64748B"]; // Navy & Slate
+    // Colors matching the dark blue/navy background
+    const colors = ["#ffffff", "#93c5fd"]; // White & light blue
 
     const setCanvasSize = () => {
       canvas.width = container.clientWidth;
@@ -146,7 +147,7 @@ const ParticleNetwork: React.FC = () => {
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(30, 58, 138, ${0.12 - (d / 120) * 0.12})`;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 - (d / 120) * 0.12})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
@@ -317,37 +318,39 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 2. HERO SECTION */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-white border-b border-slate-100 relative overflow-hidden">
+      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 relative overflow-hidden bg-[#0f172a]">
+        {/* Rich Blue/Navy Corporate Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A8A] via-[#1e326b] to-[#0f172a] z-0" />
+        
         {/* Dynamic Performance Particle Network & Watermark */}
         <ParticleNetwork />
-
+        
         {/* Faint Govt Watermark Logo */}
-        <div className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none z-0 mix-blend-multiply">
-          <img
-            src="/logo-blpt.png"
-            alt="watermark"
-            className="w-[600px] h-auto object-contain grayscale"
-          />
+        <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none z-0">
+            <img src="/logo-blpt.png" alt="watermark" className="w-[800px] h-auto object-contain drop-shadow-2xl grayscale brightness-200" />
         </div>
+
+        {/* Top/Bottom gradient fade to blend into next section */}
+        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-slate-50 to-transparent z-10 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left */}
             <div className="text-center lg:text-left">
               <FadeInUp delay={0}>
-                <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 font-semibold text-xs px-3 py-1.5 rounded-md mb-6 tracking-wide">
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold text-xs px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
                   PORTAL RESMI &bull; SISTEM INTERNAL
                 </div>
               </FadeInUp>
 
               <FadeInUp delay={100}>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight tracking-tight">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight drop-shadow-md">
                   Sistem Informasi Penjualan Suku Cadang & Jasa Servis
                 </h1>
               </FadeInUp>
 
               <FadeInUp delay={200}>
-                <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                <p className="mt-5 text-base sm:text-lg text-blue-100 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   Pengelolaan terintegrasi untuk UPJ AHASS BLPT DIY, berstandar
                   resmi Honda.
                 </p>
@@ -358,14 +361,14 @@ export default function LandingPage() {
                   <a
                     href="#katalog"
                     onClick={(e) => scrollToSection(e, "katalog")}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-[#D32F2F] font-semibold text-sm px-7 py-3 rounded-md border-2 border-[#D32F2F] hover:bg-[#D32F2F] hover:text-white transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#D32F2F] hover:bg-[#b72424] text-white font-bold text-sm px-7 py-3.5 rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
                   >
                     Katalog Parts
                   </a>
                   <a
                     href="#fitur"
                     onClick={(e) => scrollToSection(e, "fitur")}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-slate-700 font-semibold text-sm px-7 py-3 rounded-md border-2 border-slate-300 hover:bg-slate-50 transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-7 py-3.5 rounded-lg border border-white/30 backdrop-blur-sm transition-all"
                   >
                     Layanan Servis
                   </a>
@@ -375,7 +378,9 @@ export default function LandingPage() {
 
             {/* Right */}
             <FadeInUp delay={200}>
-              <div className="mx-auto w-full max-w-lg lg:max-w-xl">
+              <div className="mx-auto w-full max-w-lg lg:max-w-xl relative">
+                {/* Visual Glow behind the image */}
+                <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full z-0 pointer-events-none" />
                 <img
                   src="/ahass_hero.png"
                   alt="Bengkel AHASS BLPT DIY"
