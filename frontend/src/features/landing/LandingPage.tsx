@@ -321,13 +321,17 @@ export default function LandingPage() {
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 relative overflow-hidden bg-[#0f172a]">
         {/* Rich Blue/Navy Corporate Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A8A] via-[#1e326b] to-[#0f172a] z-0" />
-        
+
         {/* Dynamic Performance Particle Network & Watermark */}
         <ParticleNetwork />
-        
+
         {/* Faint Govt Watermark Logo */}
-        <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none z-0">
-            <img src="/logo-blpt.png" alt="watermark" className="w-[800px] h-auto object-contain drop-shadow-2xl grayscale brightness-200" />
+        <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 opacity-10 pointer-events-none z-0">
+          <img
+            src="/logo-blpt.png"
+            alt="watermark"
+            className="w-[800px] h-auto object-contain drop-shadow-2xl grayscale brightness-200"
+          />
         </div>
 
         {/* Top/Bottom gradient fade to blend into next section */}
@@ -399,7 +403,7 @@ export default function LandingPage() {
       {/* 3. INDIKATOR KUNCI */}
       {/* ──────────────────────────────────────────────────────────── */}
       <section className="bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: Package, stat: "150+", title: "Jenis Sparepart" },
@@ -416,15 +420,15 @@ export default function LandingPage() {
               },
             ].map((item, idx) => (
               <FadeInUp key={idx} delay={idx * 100}>
-                <div className="bg-white rounded-lg p-5 border border-slate-200 flex items-center gap-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                  <div className="w-12 h-12 rounded-md flex shrink-0 items-center justify-center bg-slate-100 text-slate-600">
+                <div className="bg-gradient-to-b from-white to-slate-50 rounded-xl p-5 border border-slate-200/80 flex items-center gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-lg flex shrink-0 items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100/50 text-[#1E3A8A] border border-blue-100">
                     <item.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-slate-900">
+                    <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
                       {item.stat}
                     </div>
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">
                       {item.title}
                     </div>
                   </div>
@@ -432,6 +436,39 @@ export default function LandingPage() {
               </FadeInUp>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* 3.B. KATALOG SECTION */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <section id="katalog" className="py-24 bg-white relative">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <FadeInUp delay={0}>
+            <div className="bg-gradient-to-br from-[#1E3A8A] to-[#152c6b] rounded-2xl overflow-hidden shadow-xl border border-blue-800">
+              <div className="px-8 py-14 sm:p-16 text-center max-w-3xl mx-auto">
+                <Package className="w-12 h-12 text-blue-300 mx-auto mb-6" />
+                <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+                  Katalog Suku Cadang Terintegrasi
+                </h2>
+                <p className="mt-4 text-lg text-blue-100 leading-relaxed">
+                  Pencarian stok, harga, dan ketersediaan komponen asli Honda
+                  kini diatur secara spesifik lewat antarmuka tertutup (Internal
+                  Access Only) guna menjamin validitas data Koperasi BLPT.
+                </p>
+                <div className="mt-8 flex justify-center">
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-[#1E3A8A] font-bold text-sm px-8 py-3.5 rounded-lg shadow-md hover:bg-slate-50 hover:shadow-lg transition-all hover:-translate-y-0.5"
+                  >
+                    <Lock className="w-4 h-4" /> Masuk Untuk Mengecek Stok
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </FadeInUp>
         </div>
       </section>
 
@@ -476,14 +513,14 @@ export default function LandingPage() {
               },
             ].map((f, i) => (
               <FadeInUp key={i} delay={i * 100}>
-                <div className="bg-white border border-slate-200 rounded-lg p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                  <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center text-slate-600 mb-5">
-                    <f.icon className="w-5 h-5" />
+                <div className="bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 rounded-xl p-7 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-300">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-100 to-white shadow-sm border border-slate-100 rounded-lg flex items-center justify-center text-[#1E3A8A] mb-6">
+                    <f.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2">
+                  <h3 className="text-lg font-bold text-slate-800 mb-2">
                     {f.title}
                   </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                  <p className="text-sm text-slate-500 leading-relaxed font-medium">
                     {f.desc}
                   </p>
                 </div>
@@ -526,14 +563,16 @@ export default function LandingPage() {
               { no: "05", label: "Laporan & Rekap", sub: "Admin / Kepala UPJ" },
             ].map((step, idx) => (
               <FadeInUp key={idx} delay={idx * 150}>
-                <div className="bg-white border border-slate-200 rounded-lg p-5 text-center flex flex-col items-center justify-center hover:border-slate-300 hover:shadow-sm transition-all duration-300">
-                  <div className="text-xl font-extrabold text-slate-300 mb-2">
+                <div className="bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 rounded-xl p-6 text-center flex flex-col items-center justify-center hover:shadow-[0_4px_20px_rgb(0,0,0,0.05)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300 group">
+                  <div className="text-2xl font-extrabold text-blue-100 group-hover:text-blue-200 transition-colors mb-3">
                     {step.no}
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900">
+                  <h4 className="text-sm font-bold text-slate-800">
                     {step.label}
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1">{step.sub}</p>
+                  <p className="text-xs text-slate-500 mt-1 font-medium">
+                    {step.sub}
+                  </p>
                 </div>
               </FadeInUp>
             ))}
@@ -601,10 +640,12 @@ export default function LandingPage() {
               },
             ].map((r, i) => (
               <FadeInUp key={i} delay={i * 100}>
-                <div className="bg-slate-50 border border-slate-200 p-6 rounded-lg hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <r.icon className="w-5 h-5 text-slate-700" />
-                    <h3 className="text-base font-bold text-slate-900">
+                <div className="bg-gradient-to-b from-white to-[#f4f7fc] border border-slate-200/80 p-7 rounded-xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2 bg-white rounded-md shadow-sm border border-slate-100 text-[#1E3A8A]">
+                      <r.icon className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-base font-bold text-slate-800">
                       {r.role}
                     </h3>
                   </div>
@@ -612,9 +653,9 @@ export default function LandingPage() {
                     {r.tasks.map((task, tidx) => (
                       <li
                         key={tidx}
-                        className="flex items-start gap-2 text-sm text-slate-600"
+                        className="flex items-start gap-2 text-sm text-slate-600 font-medium"
                       >
-                        <span className="w-1.5 h-1.5 bg-slate-300 rounded-full mt-1.5 shrink-0" />
+                        <span className="w-1.5 h-1.5 bg-blue-300 rounded-full mt-1.5 shrink-0" />
                         <span>{task}</span>
                       </li>
                     ))}
