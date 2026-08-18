@@ -407,7 +407,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 3. INDIKATOR KUNCI */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 border-b border-slate-200">
+      <section className="bg-gradient-to-b from-white to-[#f4f7fb] border-b border-blue-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -447,31 +447,91 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 3.B. KATALOG SECTION */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section id="katalog" className="py-24 bg-white relative">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
-
+      <section
+        id="katalog"
+        className="py-24 bg-gradient-to-br from-[#f4f7fb] to-white relative border-b border-blue-100/50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <FadeInUp delay={0}>
-            <div className="bg-gradient-to-br from-[#1E3A8A] to-[#152c6b] rounded-2xl overflow-hidden shadow-xl border border-blue-800">
-              <div className="px-8 py-14 sm:p-16 text-center max-w-3xl mx-auto">
-                <Package className="w-12 h-12 text-blue-300 mx-auto mb-6" />
-                <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                  Katalog Suku Cadang Terintegrasi
-                </h2>
-                <p className="mt-4 text-lg text-blue-100 leading-relaxed">
-                  Pencarian stok, harga, dan ketersediaan komponen asli Honda
-                  kini diatur secara spesifik lewat antarmuka tertutup (Internal
-                  Access Only) guna menjamin validitas data Koperasi BLPT.
-                </p>
-                <div className="mt-8 flex justify-center">
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-[#1E3A8A] font-bold text-sm px-8 py-3.5 rounded-lg shadow-md hover:bg-slate-50 hover:shadow-lg transition-all hover:-translate-y-0.5"
-                  >
-                    <Lock className="w-4 h-4" /> Masuk Untuk Mengecek Stok
-                  </Link>
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-3xl font-extrabold text-[#1E3A8A]">
+                Modul Katalog & Inventori
+              </h2>
+              <p className="mt-4 text-slate-600 font-medium leading-relaxed">
+                Platform pengelolaan suku cadang terpadu yang memantau alur
+                masuk dan keluar barang secara akurat (Order, Return, dan Mutasi
+                Stok).
+              </p>
+            </div>
+          </FadeInUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Stok */}
+            <FadeInUp delay={100}>
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 text-[#1E3A8A] rounded-xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
+                  <Package className="w-7 h-7 relative z-10" />
                 </div>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">
+                  Monitoring Stok
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                  Pemantauan ketersediaan suku cadang secara real-time. Terdapat
+                  indikator otomatis jika stok mendekati batas minimum untuk
+                  keperluan restock.
+                </p>
               </div>
+            </FadeInUp>
+
+            {/* Order */}
+            <FadeInUp delay={200}>
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-slate-400 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-100/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-100 text-slate-800 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-300 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
+                  <ClipboardList className="w-7 h-7 relative z-10" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">
+                  Manajemen Order
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                  Pencatatan faktur Servis dari antrean pendaftaran hingga
+                  penagihan ke pelanggan (Front Office), terhubung langsung
+                  dengan pengambilan inventori Gudang.
+                </p>
+              </div>
+            </FadeInUp>
+
+            {/* Return */}
+            <FadeInUp delay={300}>
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-red-300 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-50/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-red-100 to-red-50 text-red-600 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-red-200 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
+                  <AlertTriangle className="w-7 h-7 relative z-10" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">
+                  Retur & Evaluasi
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                  Modul pengembalian barang suku cadang cacat/salah ke vendor
+                  (Retur Logistik) maupun pembatalan transaksi dengan rekam
+                  jejak audit yang jelas.
+                </p>
+              </div>
+            </FadeInUp>
+          </div>
+
+          <FadeInUp delay={400}>
+            <div className="mt-12 text-center">
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E3A8A] to-[#152c6b] text-white font-bold text-sm px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-[#152c6b]/50 transition-all"
+              >
+                <Lock className="w-4 h-4" /> Akses Database Internal
+              </Link>
             </div>
           </FadeInUp>
         </div>
@@ -480,7 +540,10 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 4. FITUR UNGGULAN SISTEM */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section id="fitur" className="py-24 bg-white">
+      <section
+        id="fitur"
+        className="py-24 bg-gradient-to-b from-white to-[#e8eff6]"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInUp delay={0}>
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -540,7 +603,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       <section
         id="alur"
-        className="py-24 bg-slate-50 border-t border-slate-200"
+        className="py-24 bg-gradient-to-br from-[#e8eff6] via-[#f0f4f9] to-[#d9e4f1] border-t border-blue-200/50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInUp delay={0}>
@@ -588,7 +651,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 6. PERAN PENGGUNA */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gradient-to-t from-[#f8fafc] to-[#d9e4f1]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInUp delay={0}>
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -675,7 +738,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 7. FOOTER & NOTICE ACCESS */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <footer className="bg-slate-100 border-t border-slate-200 pt-12 pb-8">
+      <footer className="bg-gradient-to-b from-[#f8fafc] to-slate-200 border-t border-blue-200/50 pt-12 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
             <div>
