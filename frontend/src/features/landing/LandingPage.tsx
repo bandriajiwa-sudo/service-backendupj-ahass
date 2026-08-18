@@ -53,6 +53,131 @@ const FadeInUp: React.FC<{ children: React.ReactNode; delay?: number }> = ({
   );
 };
 
+/* ──────────────────────────────────────────────────────────── */
+/* ANIMATION HELPER: Performance-Optimized Particle Network */
+/* ──────────────────────────────────────────────────────────── */
+const ParticleNetwork: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "absolute inset-0 w-full h-full pointer-events-none z-0";
+    canvas.style.opacity = "0.2"; // Sangat tipis/subtle
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let particlesArray: Particle[] = [];
+    const colors = ["#1E3A8A", "#64748B"]; // Navy & Slate
+
+    const setCanvasSize = () => {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    };
+    window.addEventListener("resize", setCanvasSize);
+    setCanvasSize();
+
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.5 + 0.5; // Very tiny dots
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    const init = () => {
+      particlesArray = [];
+      const n = Math.floor((canvas.width * canvas.height) / 15000);
+      for (let i = 0; i < n; i++) particlesArray.push(new Particle());
+    };
+
+    let animationFrameId: number;
+    let isVisible = true;
+
+    // Intersection observer to PAUSE animation when not visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          isVisible = true;
+          animate();
+        } else {
+          isVisible = false;
+          cancelAnimationFrame(animationFrameId);
+        }
+      },
+      { threshold: 0 },
+    );
+    observer.observe(container);
+
+    const handleParticles = () => {
+      if (!ctx) return;
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+        for (let j = i; j < particlesArray.length; j++) {
+          const dx = particlesArray[i].x - particlesArray[j].x;
+          const dy = particlesArray[i].y - particlesArray[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(30, 58, 138, ${0.12 - (d / 120) * 0.12})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+            ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    const animate = () => {
+      if (!isVisible || !ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      handleParticles();
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    init();
+
+    return () => {
+      window.removeEventListener("resize", setCanvasSize);
+      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      if (container.contains(canvas)) container.removeChild(canvas);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden" />
+  );
+};
+
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -192,8 +317,20 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       {/* 2. HERO SECTION */}
       {/* ──────────────────────────────────────────────────────────── */}
-      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28 bg-white border-b border-slate-100 relative overflow-hidden">
+        {/* Dynamic Performance Particle Network & Watermark */}
+        <ParticleNetwork />
+
+        {/* Faint Govt Watermark Logo */}
+        <div className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none z-0 mix-blend-multiply">
+          <img
+            src="/logo-blpt.png"
+            alt="watermark"
+            className="w-[600px] h-auto object-contain grayscale"
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left */}
             <div className="text-center lg:text-left">
