@@ -677,7 +677,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       <footer className="bg-slate-100 border-t border-slate-200 pt-12 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 items-start">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
             <div>
               <div className="flex items-center gap-3">
                 <img
@@ -696,17 +696,6 @@ export default function LandingPage() {
                     Daerah Istimewa Yogyakarta
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-md p-5 text-sm flex gap-3 text-slate-600">
-              <ShieldCheck className="w-5 h-5 text-slate-400 shrink-0" />
-              <div>
-                <strong className="text-slate-900 block mb-1">
-                  Sistem Internal - Akses Terbatas
-                </strong>
-                Sistem ini digunakan secara khusus untuk operasional internal
-                instansi. Hanya entitas teregistrasi yang dapat masuk.
               </div>
             </div>
           </div>

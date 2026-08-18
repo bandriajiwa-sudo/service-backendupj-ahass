@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
@@ -208,10 +208,18 @@ const Login: React.FC = () => {
             UPJ Otomotif & AHASS BLPT DIY
           </h3>
 
-          <p className="text-base md:text-lg text-slate-300 mt-5 leading-relaxed max-w-xl">
-            Pengelolaan Transaksi dan Persediaan Suku Cadang yang Terintegrasi,
-            Akurat, dan Mudah Dipantau.
-          </p>
+          <div className="mt-8 bg-black/30 backdrop-blur-md rounded-xl p-5 border border-white/10 shadow-2xl max-w-xl">
+            <div className="flex items-center gap-3 mb-2">
+              <ShieldCheck className="w-6 h-6 text-blue-400" />
+              <strong className="text-white text-base font-semibold tracking-wide">
+                Sistem Internal - Akses Terbatas
+              </strong>
+            </div>
+            <p className="text-sm text-blue-100/90 leading-relaxed font-medium">
+              Sistem ini digunakan secara khusus untuk operasional internal
+              instansi. Hanya entitas teregistrasi yang dapat masuk.
+            </p>
+          </div>
         </div>
       </div>
 
