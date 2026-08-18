@@ -382,17 +382,22 @@ export default function LandingPage() {
 
             {/* Right */}
             <FadeInUp delay={200}>
-              <div className="mx-auto w-full max-w-lg lg:max-w-xl relative">
-                {/* Visual Glow behind the image */}
-                <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full z-0 pointer-events-none" />
-                <img
-                  src="/ahass_hero.png"
-                  alt="Bengkel AHASS BLPT DIY"
-                  className="w-full h-auto rounded-2xl object-cover shadow-sm border border-slate-100"
-                  onError={(e) => {
-                    e.currentTarget.src = "/gambar_blpt.png";
-                  }}
-                />
+              <div className="mx-auto w-full max-w-lg lg:max-w-xl relative group">
+                {/* Visual Glow behind the video */}
+                <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full z-0 pointer-events-none transition-all duration-700 group-hover:bg-blue-400/30" />
+                <div className="relative z-10 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/10 bg-slate-900">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    poster="/ahass_hero.png"
+                    className="w-full h-auto object-cover aspect-[4/3] scale-105 transition-transform duration-1000 group-hover:scale-100"
+                  >
+                    <source src="/vidio_3D_blpt_diy.mp4" type="video/mp4" />
+                    Gambar Bengkel AHASS
+                  </video>
+                </div>
               </div>
             </FadeInUp>
           </div>
