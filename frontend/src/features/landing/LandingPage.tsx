@@ -7,6 +7,7 @@ import {
   Package,
   Wrench,
   BarChart3,
+  CheckCircle2,
   ShieldCheck,
   ClipboardList,
   Cpu,
@@ -375,6 +376,111 @@ export default function LandingPage() {
                     <source src="/vidio_3D_blpt_diy.mp4" type="video/mp4" />
                     Gambar Bengkel AHASS
                   </video>
+                </div>
+              </div>
+            </FadeInUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────── */}
+      {/* 3.A. MANAJEMEN OPERASIONAL HARIAN */}
+      {/* ──────────────────────────────────────────────────────────── */}
+      <section
+        id="operasional"
+        className="py-24 bg-gradient-to-b from-white to-[#f4f7fb] relative border-b border-blue-100/50"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <FadeInUp delay={0}>
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-3xl font-extrabold text-[#1E3A8A]">
+                Manajemen Operasional Harian
+              </h2>
+              <p className="mt-4 text-slate-600 font-medium leading-relaxed">
+                Platform terpusat untuk memproses penerimaan pelanggan,
+                penugasan teknisi (mekanik), dan kalkulasi transaksi penjualan
+                di titik layanan (Front Office).
+              </p>
+            </div>
+          </FadeInUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            {/* Transaksi Jasa Servis */}
+            <FadeInUp delay={100}>
+              <div className="bg-gradient-to-br from-blue-50/80 to-[#f8fafd] rounded-3xl p-8 lg:p-10 shadow-sm border border-blue-100/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 h-full relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-100/40 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="flex items-start justify-between mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md border border-blue-400 shrink-0 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
+                    <Wrench className="w-8 h-8 relative z-10" />
+                  </div>
+                  <div className="bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
+                    Modul Servis
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">
+                  Transaksi Jasa Servis
+                </h3>
+                <p className="text-base text-slate-600 leading-relaxed font-medium mb-6">
+                  Sistem alur penanganan pelanggan (Service Order) mulai dari
+                  pendaftaran antrean, estimasi pengerjaan, hingga eksekusi
+                  penggantian parts oleh mekanik. Memastikan{" "}
+                  <i>zero-downtime</i> dalam operasional bengkel AHASS.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    "Pencatatan antrean & service record",
+                    "Penugasan mekanik spesifik di lapangan",
+                    "Kalkulasi otomatis tarif jasa & diskon",
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 text-sm text-slate-700 font-semibold bg-white/80 py-2 px-3 rounded-lg border border-slate-100/50"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0" />{" "}
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeInUp>
+
+            {/* Penjualan Suku Cadang */}
+            <FadeInUp delay={200}>
+              <div className="bg-gradient-to-br from-indigo-50/80 to-[#f8fafd] rounded-3xl p-8 lg:p-10 shadow-sm border border-indigo-100/60 hover:shadow-xl hover:border-indigo-300 transition-all duration-300 h-full relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-100/40 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="flex items-start justify-between mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-md border border-indigo-400 shrink-0 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
+                    <BarChart3 className="w-8 h-8 relative z-10" />
+                  </div>
+                  <div className="bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
+                    Modul Penjualan
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">
+                  Penjualan Suku Cadang
+                </h3>
+                <p className="text-base text-slate-600 leading-relaxed font-medium mb-6">
+                  Terminal point of sale (Kasir) terpadu untuk mengakomodasi
+                  pembelian suku cadang secara langsung (beli putus) oleh
+                  pelanggan tanpa layanan perbaikan, tersinkronisasi murni
+                  dengan Koperasi.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    "Manajemen nota tagihan seketika",
+                    "Peringatan ketersediaan stok fisik gudang",
+                    "Sinkronisasi kas pemasukan logistik harian",
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 text-sm text-slate-700 font-semibold bg-white/80 py-2 px-3 rounded-lg border border-slate-100/50"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-indigo-500 shrink-0" />{" "}
+                      {item}
+                    </div>
+                  ))}
                 </div>
               </div>
             </FadeInUp>
