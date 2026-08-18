@@ -28,6 +28,7 @@ import KoperasiLogHarga from "../features/koperasi/KoperasiLogHarga";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
 import LaporanJasa from "../features/upj/LaporanJasa";
 import LaporanSukuCadang from "../features/upj/LaporanSukuCadang";
+import LandingPage from "../features/landing/LandingPage";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -72,6 +73,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/home",
     element: <RootRedirect />,
   },
   {
