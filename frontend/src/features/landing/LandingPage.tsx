@@ -339,7 +339,8 @@ export default function LandingPage() {
             {/* Left */}
             <div className="text-center lg:text-left">
               <FadeInUp delay={0}>
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold text-xs px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
+                <div className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold text-xs px-3.5 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
                   PORTAL RESMI &bull; SISTEM INTERNAL
                 </div>
               </FadeInUp>
@@ -352,28 +353,8 @@ export default function LandingPage() {
 
               <FadeInUp delay={200}>
                 <p className="mt-5 text-base sm:text-lg text-blue-100 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  Pengelolaan terintegrasi untuk UPJ AHASS BLPT DIY, berstandar
-                  resmi Honda.
+                  Pengelolaan terintegrasi untuk UPJ AHASS BLPT DIY
                 </p>
-              </FadeInUp>
-
-              <FadeInUp delay={300}>
-                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                  <a
-                    href="#katalog"
-                    onClick={(e) => scrollToSection(e, "katalog")}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#D32F2F] hover:bg-[#b72424] text-white font-bold text-sm px-7 py-3.5 rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
-                  >
-                    Katalog Parts
-                  </a>
-                  <a
-                    href="#fitur"
-                    onClick={(e) => scrollToSection(e, "fitur")}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-7 py-3.5 rounded-lg border border-white/30 backdrop-blur-sm transition-all"
-                  >
-                    Layanan Servis
-                  </a>
-                </div>
               </FadeInUp>
             </div>
 
@@ -480,8 +461,6 @@ export default function LandingPage() {
               </div>
             </FadeInUp>
           </div>
-
-
         </div>
       </section>
 
@@ -688,9 +667,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────────────── */}
       <footer className="bg-gradient-to-b from-[#f8fafc] to-slate-200 border-t border-blue-200/50 pt-12 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-
-          </div>
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8"></div>
 
           <div className="border-t border-slate-200 pt-6 text-center md:text-left text-xs text-slate-500">
             &copy; {new Date().getFullYear()} BLPT Daerah Istimewa Yogyakarta.
