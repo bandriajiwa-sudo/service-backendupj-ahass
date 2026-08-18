@@ -8,9 +8,6 @@ import {
   Wrench,
   BarChart3,
   ShieldCheck,
-  CheckCircle2,
-  Users,
-  Building2,
   ClipboardList,
   Cpu,
   MonitorCheck,
@@ -405,46 +402,6 @@ export default function LandingPage() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────── */}
-      {/* 3. INDIKATOR KUNCI */}
-      {/* ──────────────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-b from-white to-[#f4f7fb] border-b border-blue-100/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Package, stat: "150+", title: "Jenis Sparepart" },
-              { icon: Users, stat: "4", title: "Peran Sistem" },
-              {
-                icon: CheckCircle2,
-                stat: "Layanan Aktif",
-                title: "Operasional Servis",
-              },
-              {
-                icon: Building2,
-                stat: "1 Unit Terdaftar",
-                title: "AHASS BLPT DIY",
-              },
-            ].map((item, idx) => (
-              <FadeInUp key={idx} delay={idx * 100}>
-                <div className="bg-gradient-to-b from-white to-slate-50 rounded-xl p-5 border border-slate-200/80 flex items-center gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
-                  <div className="w-12 h-12 rounded-lg flex shrink-0 items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100/50 text-[#1E3A8A] border border-blue-100">
-                    <item.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
-                      {item.stat}
-                    </div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">
-                      {item.title}
-                    </div>
-                  </div>
-                </div>
-              </FadeInUp>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ──────────────────────────────────────────────────────────── */}
       {/* 3.B. KATALOG SECTION */}
       {/* ──────────────────────────────────────────────────────────── */}
       <section
@@ -468,9 +425,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Stok */}
             <FadeInUp delay={100}>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 relative overflow-hidden group h-full">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 text-[#1E3A8A] rounded-xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 overflow-hidden relative">
+              <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] rounded-2xl p-8 shadow-sm border border-blue-100/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-md border border-blue-400 overflow-hidden relative">
                   <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
                   <Package className="w-7 h-7 relative z-10" />
                 </div>
@@ -487,9 +444,9 @@ export default function LandingPage() {
 
             {/* Order */}
             <FadeInUp delay={200}>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-slate-400 transition-all duration-300 relative overflow-hidden group h-full">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-100/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
-                <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-100 text-slate-800 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-300 overflow-hidden relative">
+              <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] rounded-2xl p-8 shadow-sm border border-blue-100/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-md border border-blue-400 overflow-hidden relative">
                   <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
                   <ClipboardList className="w-7 h-7 relative z-10" />
                 </div>
@@ -506,9 +463,9 @@ export default function LandingPage() {
 
             {/* Return */}
             <FadeInUp delay={300}>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-red-300 transition-all duration-300 relative overflow-hidden group h-full">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-50/50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
-                <div className="w-14 h-14 bg-gradient-to-br from-red-100 to-red-50 text-red-600 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-red-200 overflow-hidden relative">
+              <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] rounded-2xl p-8 shadow-sm border border-blue-100/60 hover:shadow-xl hover:border-blue-300 transition-all duration-300 relative overflow-hidden group h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-md border border-blue-400 overflow-hidden relative">
                   <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors" />
                   <AlertTriangle className="w-7 h-7 relative z-10" />
                 </div>
@@ -524,16 +481,7 @@ export default function LandingPage() {
             </FadeInUp>
           </div>
 
-          <FadeInUp delay={400}>
-            <div className="mt-12 text-center">
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E3A8A] to-[#152c6b] text-white font-bold text-sm px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-[#152c6b]/50 transition-all"
-              >
-                <Lock className="w-4 h-4" /> Akses Database Internal
-              </Link>
-            </div>
-          </FadeInUp>
+
         </div>
       </section>
 
@@ -581,8 +529,8 @@ export default function LandingPage() {
               },
             ].map((f, i) => (
               <FadeInUp key={i} delay={i * 100}>
-                <div className="bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 rounded-xl p-7 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-300">
-                  <div className="w-12 h-12 bg-gradient-to-br from-slate-100 to-white shadow-sm border border-slate-100 rounded-lg flex items-center justify-center text-[#1E3A8A] mb-6">
+                <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] border border-blue-100/50 rounded-xl p-7 hover:shadow-lg hover:border-blue-300 hover:-translate-y-1 transition-all duration-300">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 shadow-md rounded-lg flex items-center justify-center text-white mb-6">
                     <f.icon className="w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-800 mb-2">
@@ -631,8 +579,8 @@ export default function LandingPage() {
               { no: "05", label: "Laporan & Rekap", sub: "Admin / Kepala UPJ" },
             ].map((step, idx) => (
               <FadeInUp key={idx} delay={idx * 150}>
-                <div className="bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 rounded-xl p-6 text-center flex flex-col items-center justify-center hover:shadow-[0_4px_20px_rgb(0,0,0,0.05)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300 group">
-                  <div className="text-2xl font-extrabold text-blue-100 group-hover:text-blue-200 transition-colors mb-3">
+                <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] border border-blue-100/80 rounded-xl p-6 text-center flex flex-col items-center justify-center hover:shadow-lg hover:-translate-y-1 hover:border-blue-300 transition-all duration-300 group">
+                  <div className="text-3xl font-extrabold text-blue-500/80 group-hover:text-blue-600 transition-colors mb-3">
                     {step.no}
                   </div>
                   <h4 className="text-sm font-bold text-slate-800">
@@ -708,9 +656,9 @@ export default function LandingPage() {
               },
             ].map((r, i) => (
               <FadeInUp key={i} delay={i * 100}>
-                <div className="bg-gradient-to-b from-white to-[#f4f7fc] border border-slate-200/80 p-7 rounded-xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 hover:border-blue-200 transition-all duration-300">
+                <div className="bg-gradient-to-b from-blue-50/80 to-[#f8fafd] border border-blue-100/80 p-7 rounded-xl hover:-translate-y-1 hover:shadow-lg hover:border-blue-300 transition-all duration-300">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2 bg-white rounded-md shadow-sm border border-slate-100 text-[#1E3A8A]">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md shadow-md text-white">
                       <r.icon className="w-5 h-5" />
                     </div>
                     <h3 className="text-base font-bold text-slate-800">
@@ -741,26 +689,7 @@ export default function LandingPage() {
       <footer className="bg-gradient-to-b from-[#f8fafc] to-slate-200 border-t border-blue-200/50 pt-12 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-3">
-                <img
-                  src="/logo-blpt.png"
-                  alt="Logo BLPT"
-                  className="h-10 w-auto opacity-70 grayscale"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-                <div>
-                  <h4 className="text-slate-900 font-bold text-sm">
-                    UPJ Otomotif & AHASS — BLPT DIY
-                  </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Daerah Istimewa Yogyakarta
-                  </p>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           <div className="border-t border-slate-200 pt-6 text-center md:text-left text-xs text-slate-500">
