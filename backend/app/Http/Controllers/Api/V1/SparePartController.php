@@ -10,29 +10,34 @@ use Illuminate\Support\Facades\DB;
 
 class SparePartController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $spareParts = SparePart::with(['stock', 'category'])->paginate(1000);
+        $page = $request->get('page', 1);
+        $cacheKey = "spare_parts_catalog_page_{$page}";
 
-        $items = collect($spareParts->items());
-        $sparePartIds = $items->pluck('id')->toArray();
-        $activePrices = ActivePriceService::getActivePrices($sparePartIds);
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function () {
+            $spareParts = SparePart::with(['stock', 'category'])->paginate(1000);
 
-        $items = $items->map(function ($sp) use ($activePrices) {
-            $sp->harga_aktif = $activePrices[$sp->id] ?? null;
-            return $sp;
+            $items = collect($spareParts->items());
+            $sparePartIds = $items->pluck('id')->toArray();
+            $activePrices = ActivePriceService::getActivePrices($sparePartIds);
+
+            $items = $items->map(function ($sp) use ($activePrices) {
+                $sp->harga_aktif = $activePrices[$sp->id] ?? null;
+                return $sp;
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diambil (Cached)',
+                'data' => $items,
+                'meta' => [
+                    'current_page' => $spareParts->currentPage(),
+                    'per_page' => $spareParts->perPage(),
+                    'total' => $spareParts->total(),
+                ],
+            ]);
         });
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data berhasil diambil',
-            'data' => $items,
-            'meta' => [
-                'current_page' => $spareParts->currentPage(),
-                'per_page' => $spareParts->perPage(),
-                'total' => $spareParts->total(),
-            ],
-        ]);
     }
 
     public function store(Request $request)

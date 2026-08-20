@@ -15,12 +15,15 @@ use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\SparePartPriceLogController;
+use App\Http\Controllers\Api\V1\UploadController;
 use Illuminate\Support\Facades\Route;
 
 $apiRoutes = function () {
-    Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
+    Route::post('/authorizer/login', [AuthorizerController::class, 'login'])->middleware('throttle:login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/storage/presigned-url', [UploadController::class, 'getPresignedUrl']);
+
         Route::get('/authorizer/me', [AuthorizerController::class, 'me']);
         Route::post('/authorizer/logout', [AuthorizerController::class, 'logout']);
 
