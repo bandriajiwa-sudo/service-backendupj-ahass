@@ -228,18 +228,6 @@ const Login: React.FC = () => {
         <ParticleNetwork />
 
         <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full relative z-10 my-8">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 font-semibold group cursor-pointer"
-            type="button"
-          >
-            <ArrowLeft
-              size={16}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            Kembali ke Beranda
-          </button>
-
           <div className="text-center">
             <h2 className="text-gray-900 font-bold text-2xl mb-1">
               Masuk ke Sistem
@@ -325,10 +313,21 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-400">
+          <div className="mt-6 text-center flex flex-col items-center">
+            <p className="text-xs text-gray-400 mb-6">
               Sistem internal UPJ AHASS BLPT DIY &bull; Akses terbatas
             </p>
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center justify-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-all font-semibold group cursor-pointer bg-slate-50 hover:bg-blue-50 py-2.5 px-6 rounded-full w-full max-w-[240px] border border-slate-200 hover:border-blue-200"
+              type="button"
+            >
+              <ArrowLeft
+                size={16}
+                className="group-hover:-translate-x-1 transition-transform"
+              />
+              Kembali ke Beranda
+            </button>
           </div>
         </div>
       </div>
