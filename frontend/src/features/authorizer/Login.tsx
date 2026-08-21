@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
 import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
@@ -228,6 +228,18 @@ const Login: React.FC = () => {
         <ParticleNetwork />
 
         <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full relative z-10 my-8">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 font-semibold group cursor-pointer"
+            type="button"
+          >
+            <ArrowLeft
+              size={16}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+            Kembali ke Beranda
+          </button>
+
           <div className="text-center">
             <h2 className="text-gray-900 font-bold text-2xl mb-1">
               Masuk ke Sistem
